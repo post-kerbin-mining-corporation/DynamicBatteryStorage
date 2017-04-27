@@ -67,31 +67,26 @@ namespace DynamicBatteryStorage
           double production = DetermineShipPowerProduction();
           double consumption = DetermineShipPowerConsumption();
 
-          double managedConsumption = DetermineManagedConsumption();
-
           AllocatePower(production-consumption, managedConsumption);
         }
 
-        protected void AllocatePower(double availablePower, double managedConsumption)
+        protected void AllocatePower(double production, double consumption)
         {
 
-          float powerDeficit = Mathf.Clamp((float)(availablePower - managedConsumption),-9999999f, 0f);
+          float powerNet = Mathf.Clamp((float)(production - consumption),-9999999f, 0f);
 
-         // Debug.Log(String.Format("Power Deficit: {0}", powerDeficit));
-          double usedPower = 0d;
-
-          for (int i = 0; i< managedParts.Count;i++)
+          if (powerNet < 0d)
           {
-              if (usedPower >= availablePower)
-              {
-                managedParts[i].ProcessHighWarp();
-                //usedPower += cryoTanks[i].SetBoiloffState(true);
-              } else
-              {
-                managedParts[i].SetPoweredState(false);
-                  usedPower =managedParts[i].CalculatePowerUsage();
-              }
+            Debug.Log(String.Format("ModuleDynamicBatteryStorage: LOSS: {0} Ec/s NET", powerNet);
           }
+          else
+          {
+            double bufferNeeded = consumption * TimeWarp.fixdDeltaTime;
+            Debug.Log(String.Format("ModuleDynamicBatteryStorage: STABLE {0} Ec/s NET", powerNet);
+            Debug.Log(String.Format("ModuleDynamicBatteryStorage: Used: {0} Ec/s", consumption);
+            Debug.Log(String.Format("ModuleDynamicBatteryStorage: Buffer needed: {0} Ec", bufferNeeded);
+          }
+
         }
 
         public double DetermineManagedConsumption()
