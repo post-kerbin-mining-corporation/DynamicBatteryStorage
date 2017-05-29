@@ -55,13 +55,13 @@ namespace DynamicBatteryStorage
         switch (consumerType)
         {
           case PowerConsumerType.ModuleActiveRadiator:
-            return 0d;
+                return GetModuleActiveRadiatorConsumption();
           case PowerConsumerType.ModuleResourceConverter:
-            return 0d;
+            return GetModuleResourceConverterConsumption();
           case PowerConsumerType.ModuleGenerator:
-            return 0d;
+            return GetModuleGeneratorConsumption();
           case PowerConsumerType.ModuleResourceHarvester:
-            return 0d;
+            return GetModuleResourceHarvesterConsumption();
         }
         return 0d;
       }
@@ -86,11 +86,15 @@ namespace DynamicBatteryStorage
       }
       double GetModuleActiveRadiatorConsumption()
       {
+          //Debug.Log("query radiator");
           if (radiator == null || !radiator.isEnabled)
               return 0d;
           for (int i = 0; i < radiator.resHandler.inputResources.Count; i++)
-            if (radiator.resHandler.inputResources[i].name == "ElectricCharge")
-                return radiator.resHandler.inputResources[i].rate;
+          {
+            
+              if (radiator.resHandler.inputResources[i].name == "ElectricCharge")
+                  return radiator.resHandler.inputResources[i].rate;
+          }
           return 0d;
       }
     }

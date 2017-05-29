@@ -9,7 +9,7 @@ namespace DynamicBatteryStorage
   public class ModuleDynamicBatteryStorage : VesselModule
   {
 
-        float timeWarpLimit = 1000f;
+        float timeWarpLimit = 100f;
         double bufferScale = 1.5d;
         //public List<ModuleCryoTank> cryoTanks = new List<ModuleCryoTank>();
 
@@ -27,7 +27,7 @@ namespace DynamicBatteryStorage
 
         protected override void  OnStart()
         {
- 	          base.OnStart();
+ 	         base.OnStart();
             GetVesselElectricalData();
         }
 
@@ -72,7 +72,7 @@ namespace DynamicBatteryStorage
             double production = DetermineShipPowerProduction();
             double consumption = DetermineShipPowerConsumption();
 
-            AllocatePower(production-consumption, managedConsumption);
+            AllocatePower(production, consumption);
           }
         }
 
@@ -83,34 +83,30 @@ namespace DynamicBatteryStorage
 
           if (powerNet < 0d)
           {
-            Debug.Log(String.Format("ModuleDynamicBatteryStorage: LOSS: {0} Ec/s NET", powerNet);
+            Debug.Log(String.Format("ModuleDynamicBatteryStorage: LOSS: {0} Ec/s NET", powerNet));
+            if (bufferStorage != null)
+            {
+                bufferStorage.maxAmount = originalMax;
+                //bufferStorage.amount = bufferNeeded;
+            }
+
           }
           else
           {
             double bufferNeeded = consumption * (double)TimeWarp.fixedDeltaTime * bufferScale;
-            Debug.Log(String.Format("ModuleDynamicBatteryStorage: STABLE {0} Ec/s NET", powerNet);
-            Debug.Log(String.Format("ModuleDynamicBatteryStorage: Used: {0} Ec/s", consumption);
-            Debug.Log(String.Format("ModuleDynamicBatteryStorage: Buffer needed: {0} Ec", bufferNeeded);
+            //Debug.Log(String.Format("ModuleDynamicBatteryStorage: STABLE {0} Ec/s NET", powerNet));
+            //Debug.Log(String.Format("ModuleDynamicBatteryStorage: Used: {0} Ec/s", consumption));
+            Debug.Log(String.Format("ModuleDynamicBatteryStorage: Buffer needed: {0} Ec", bufferNeeded));
 
-            if (bufferStorage != null)
+            if (bufferStorage != null && bufferNeeded > originalMax)
             {
-              bufferStorage.maxAmount = bufferNeeded;
-              bufferStorage.amount = bufferNeeded;
+              bufferStorage.maxAmount = originalMax + bufferNeeded;
+              //bufferStorage.amount = bufferNeeded;
             }
           }
 
         }
 
-        public double DetermineManagedConsumption()
-        {
-          double totalConsumption = 0d;
-          for (int i = 0; i < managedParts.Count;i++)
-          {
-            totalConsumption += managedParts[i].CalculatePowerUsage();
-          }
-          //Debug.Log(String.Format("CryoTanks: total ship boiloff consumption: {0} Ec/s", totalConsumption));
-          return totalConsumption;
-        }
 
         // TODO: implement me!
         public double DetermineShipPowerConsumption()
@@ -155,18 +151,35 @@ namespace DynamicBatteryStorage
 
             if (powerConsumers.Count > 0)
             {
-              CreateBufferStorage();
+                double amount;
+                double maxAmount;
+                vessel.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, out amount, out maxAmount);
+                totalEcMax = maxAmount;
+                CreateBufferStorage();
             }
           Debug.Log(String.Format("DynamicBatteryStorage: Summary: \n vessel {0} (loaded state {1})\n" +
-            "- {3} stock power producers \n" +
-            "- {4} stock power consumers", vessel.name,vessel.loaded.ToString(), powerProducers.Count, powerConsumers.Count));
+            "- {2} stock power producers \n" +
+            "- {3} stock power consumers", vessel.name,vessel.loaded.ToString(), powerProducers.Count, powerConsumers.Count));
 
           dataReady = true;
         }
 
-        protected CreateBufferStorage()
+        double originalMax = 0d;
+        double totalEcMax = 0d;
+
+        protected void CreateBufferStorage()
         {
-          bufferStorage = vessel.parts[0].Resources.Add("ElectricCharge", 0d, 0d, true, true, false, false, PartResouceFlowMode.Both)
+            for (int i = 0; i < vessel.parts.Count; i++ )
+            {
+                if (vessel.parts[i].Resources.Contains("ElectricCharge"))
+                {
+                    bufferStorage = vessel.parts[i].Resources.Get("ElectricCharge");
+                    originalMax = bufferStorage.maxAmount;
+                    Debug.Log(String.Format("DynamicBatteryStorage: Located storage on {0} with {1} inital EC", vessel.parts[i].partInfo.name, originalMax));
+                    return;
+                }
+                //bufferStorage = vessel.parts[0].Resources.Add("ElectricCharge", 0d, 0d, true, true, false, false, PartResource.FlowMode.Both);
+            }
         }
 
 

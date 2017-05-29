@@ -1,0 +1,5 @@
+G:\KSP Modding\repositories\DynamicBatteryStorage\Source\DynamicBatteryStorage\obj\Debug\DynamicBatteryStorage.csprojResolveAssemblyReference.cache
+G:\KSP Modding\repositories\DynamicBatteryStorage\GameData\DynamicBatteryStorage\Plugins\DynamicBatteryStorage.dll
+G:\KSP Modding\repositories\DynamicBatteryStorage\GameData\DynamicBatteryStorage\Plugins\DynamicBatteryStorage.pdb
+G:\KSP Modding\repositories\DynamicBatteryStorage\Source\DynamicBatteryStorage\obj\Debug\DynamicBatteryStorage.dll
+G:\KSP Modding\repositories\DynamicBatteryStorage\Source\DynamicBatteryStorage\obj\Debug\DynamicBatteryStorage.pdb

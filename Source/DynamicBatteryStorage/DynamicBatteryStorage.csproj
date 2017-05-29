@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPowerConsumingPart.cs" />
-    <Compile Include="ModulePowerMonitor.cs" />
+    <Compile Include="DynamicBatteryStorage.cs" />
     <Compile Include="PowerConsumer.cs" />
     <Compile Include="PowerProducer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
