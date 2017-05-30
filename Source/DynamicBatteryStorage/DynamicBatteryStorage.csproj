@@ -49,6 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DynamicBatteryStorageUI.cs" />
     <Compile Include="IPowerConsumingPart.cs" />
     <Compile Include="DynamicBatteryStorage.cs" />
     <Compile Include="PowerConsumer.cs" />

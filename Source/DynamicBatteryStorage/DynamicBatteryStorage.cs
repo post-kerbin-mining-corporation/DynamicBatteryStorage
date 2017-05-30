@@ -22,8 +22,19 @@ namespace DynamicBatteryStorage
         int partCount = -1;
 
         public bool AnalyticMode {get {return analyticMode;}}
+        public Part BufferPart { get { return bufferPart; } }
+        public PartResource BufferResource { get { return bufferStorage; } }
+        public double BufferScale { get { return bufferScale; } }
+        public double SavedMaxEC { get { return originalMax; } }
+        public double SavedVesselMaxEC { get { return totalEcMax; } }
+
+
+
+        double originalMax = 0d;
+        double totalEcMax = 0d;
 
         PartResource bufferStorage;
+        Part bufferPart;
 
         protected override void  OnStart()
         {
@@ -63,7 +74,10 @@ namespace DynamicBatteryStorage
         }
         protected void DoLowWarpSimulation()
         {
-          // N
+            if (bufferStorage != null && bufferStorage.maxAmount != originalMax)
+            {
+                bufferStorage.maxAmount = originalMax;
+            }
         }
         protected void DoHighWarpSimulation()
         {
@@ -98,9 +112,10 @@ namespace DynamicBatteryStorage
             //Debug.Log(String.Format("ModuleDynamicBatteryStorage: Used: {0} Ec/s", consumption));
             Debug.Log(String.Format("ModuleDynamicBatteryStorage: Buffer needed: {0} Ec", bufferNeeded));
 
-            if (bufferStorage != null && bufferNeeded > originalMax)
+            if (bufferStorage != null && bufferNeeded > totalEcMax)
             {
-              bufferStorage.maxAmount = originalMax + bufferNeeded;
+                double delta = bufferNeeded - totalEcMax;
+                bufferStorage.maxAmount = originalMax + delta;
               //bufferStorage.amount = bufferNeeded;
             }
           }
@@ -135,6 +150,7 @@ namespace DynamicBatteryStorage
         {
           //cryoTanks.Clear();
           powerProducers.Clear();
+          powerConsumers.Clear();
           partCount = vessel.parts.Count;
           for (int i = partCount - 1; i >= 0; --i)
           {
@@ -164,15 +180,14 @@ namespace DynamicBatteryStorage
           dataReady = true;
         }
 
-        double originalMax = 0d;
-        double totalEcMax = 0d;
-
+       
         protected void CreateBufferStorage()
         {
             for (int i = 0; i < vessel.parts.Count; i++ )
             {
                 if (vessel.parts[i].Resources.Contains("ElectricCharge"))
                 {
+                    bufferPart = vessel.parts[i];
                     bufferStorage = vessel.parts[i].Resources.Get("ElectricCharge");
                     originalMax = bufferStorage.maxAmount;
                     Debug.Log(String.Format("DynamicBatteryStorage: Located storage on {0} with {1} inital EC", vessel.parts[i].partInfo.name, originalMax));
