@@ -28,6 +28,8 @@ namespace DynamicBatteryStorage
       ModuleResourceHarvester harvester;
       ModuleActiveRadiator radiator;
 
+      double converterEcRate;
+
       public string ConsumerType { get { return consumerType.ToString(); } }
 
       public PowerConsumer(PowerConsumerType tp, PartModule mod)
@@ -41,6 +43,9 @@ namespace DynamicBatteryStorage
             break;
           case PowerConsumerType.ModuleResourceConverter:
             converter = (ModuleResourceConverter)pm;
+            for (int i = 0; i < converter.resHandler.inputResources.Count; i++)
+                if (converter.resHandler.inputResources[i].name == "ElectricCharge")
+                    converterEcRate = converter.resHandler.inResources[i].rate;
             break;
           case PowerConsumerType.ModuleGenerator:
             gen = (ModuleGenerator)pm;
@@ -55,13 +60,15 @@ namespace DynamicBatteryStorage
         switch (consumerType)
         {
           case PowerConsumerType.ModuleActiveRadiator:
-                return GetModuleActiveRadiatorConsumption();
+            return GetModuleActiveRadiatorConsumption();
           case PowerConsumerType.ModuleResourceConverter:
             return GetModuleResourceConverterConsumption();
           case PowerConsumerType.ModuleGenerator:
             return GetModuleGeneratorConsumption();
           case PowerConsumerType.ModuleResourceHarvester:
             return GetModuleResourceHarvesterConsumption();
+          case PowerConsumerType.ModuleCryoTank:
+            return GetModuleCryoTankConsumption();
         }
         return 0d;
       }
@@ -78,7 +85,9 @@ namespace DynamicBatteryStorage
       }
       double GetModuleResourceConverterConsumption()
       {
-          return 0d;
+          if (converter == null || !converter.IsActivated)
+            return 0d;
+          return converterEcRate * converter.lastTimeFactor;
       }
       double GetModuleResourceHarvesterConsumption()
       {
@@ -91,11 +100,18 @@ namespace DynamicBatteryStorage
               return 0d;
           for (int i = 0; i < radiator.resHandler.inputResources.Count; i++)
           {
-            
               if (radiator.resHandler.inputResources[i].name == "ElectricCharge")
                   return radiator.resHandler.inputResources[i].rate;
           }
           return 0d;
+      }
+      double GetModuleCommandConsumption()
+      {
+        return 0d;
+      }
+      double GetModuleCryoTankConsumption()
+      {
+        return 0d;
       }
     }
 }

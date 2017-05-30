@@ -66,10 +66,8 @@ namespace DynamicBatteryStorage
             return GetModuleResourceConverterProduction();
           case PowerProducerType.ModuleCurvedSolarPanel:
             return GetModuleCurvedSolarPanelProduction();
-
-            case PowerProducerType.FissionGenerator:
+          case PowerProducerType.FissionGenerator:
             return GetFissionGeneratorProduction();
-
           case PowerProducerType.ModuleRadioisotopeGenerator:
             return GetModuleRadioisotopeGeneratorProduction();
         }

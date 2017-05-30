@@ -12,21 +12,17 @@ namespace DynamicBatteryStorage
         Vessel activeVessel;
         int partCount = 0;
         ModuleDynamicBatteryStorage store;
-        bool showWindow = false;
 
         public void Start()
         {
             if (HighLogic.LoadedSceneIsFlight)
             {
-                //RenderingManager.AddToPostDrawQueue(0, DrawCapacitorGUI);
                 FindController();
-
             }
         }
 
         public void ToggleWindow()
         {
-         
             showWindow = !showWindow;
         }
 
@@ -43,6 +39,7 @@ namespace DynamicBatteryStorage
         // ----------
         public Rect windowPos = new Rect(200f, 200f, 500f, 600f);
         public Vector2 scrollPosition = Vector2.zero;
+        bool showWindow = false;
         int windowID = new System.Random(3256231).Next();
         bool initStyles = false;
 
@@ -93,7 +90,6 @@ namespace DynamicBatteryStorage
 
         private void DrawGUI()
         {
-            //Debug.Log("NFE: Start Capacitor UI Draw");
             Vessel activeVessel = FlightGlobals.ActiveVessel;
 
             if (activeVessel != null)
@@ -105,14 +101,13 @@ namespace DynamicBatteryStorage
                 {
                     if (store == null)
                         FindController();
-                    // Debug.Log(windowPos.ToString());
+
                     GUI.skin = HighLogic.Skin;
                     gui_window.padding.top = 5;
 
                     windowPos = GUI.Window(windowID, windowPos, PowerWindow, new GUIContent(), gui_window);
                 }
             }
-            //Debug.Log("NFE: Stop Capacitor UI Draw");
         }
 
 
@@ -121,7 +116,7 @@ namespace DynamicBatteryStorage
         {
             GUI.skin = HighLogic.Skin;
             GUILayout.BeginHorizontal();
-            GUILayout.Label("DBS Controller", gui_header, GUILayout.MaxHeight(26f), GUILayout.MinHeight(26f), GUILayout.MinWidth(120f));
+            GUILayout.Label("Dynamic Battery Storage Controller", gui_header, GUILayout.MaxHeight(26f), GUILayout.MinHeight(26f), GUILayout.MinWidth(120f));
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("X", GUILayout.MaxWidth(26f), GUILayout.MinWidth(26f), GUILayout.MaxHeight(26f), GUILayout.MinHeight(26f)))
             {
@@ -131,14 +126,14 @@ namespace DynamicBatteryStorage
 
             if (store != null && store.AnalyticMode)
             {
-                
+
                 double gain = store.DetermineShipPowerProduction();
                 double draw = store.DetermineShipPowerConsumption();
                 scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.MinWidth(600f), GUILayout.MinHeight(271f));
                 GUILayout.BeginHorizontal();
                 //windowPos.height = 175f + 70f;
-            
-                
+
+
                 GUILayout.BeginVertical(gui_bg);
                 for (int i = 0; i < store.powerProducers.Count; i++)
                 {
@@ -157,13 +152,16 @@ namespace DynamicBatteryStorage
                 GUILayout.EndVertical();
                 GUILayout.EndHorizontal();
                 GUILayout.BeginVertical(gui_bg);
+
+                GUILayout.Label(String.Format("Net Power Deficit: {0:F2} Ec/s", (gain - draw) * (-1.0)), gui_header);
+
                 GUILayout.Label(String.Format("Part used for Buffer: {0} ", store.BufferPart.partInfo.name), gui_header);
-                GUILayout.Label(String.Format("Requested Buffer Size: {0:F2} Ec ", store.BufferScale * draw * (double)TimeWarp.fixedDeltaTime), gui_header);
+                GUILayout.Label(String.Format("Requested Buffer Size: {0:F2} Ec ", store.BufferSize), gui_header);
 
                 GUILayout.Label(String.Format("Part base EC capacity: {0:F2} Ec", store.SavedMaxEC), gui_header);
                 GUILayout.Label(String.Format("Vessel base EC capacity: {0:F2} Ec/s", store.SavedVesselMaxEC), gui_header);
 
-                GUILayout.Label(String.Format("Net Power Deficit: {0:F2} Ec/s", (gain - draw) * (-1.0)), gui_header);
+
                 GUILayout.EndVertical();
                 GUILayout.EndScrollView();
             }
@@ -178,14 +176,14 @@ namespace DynamicBatteryStorage
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(prod.ProducerType, gui_header);
-            GUILayout.Label(String.Format("Producing: {0:F1} Ec/s", prod.GetPowerProduction()), gui_text);
+            GUILayout.Label(String.Format("Producing: {0:F2} Ec/s", prod.GetPowerProduction()), gui_text);
             GUILayout.EndHorizontal();
         }
         private void DrawPowerConsumer(PowerConsumer cons)
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(cons.ConsumerType, gui_header);
-            GUILayout.Label(String.Format("Consuming: {0:F1} Ec/s", cons.GetPowerConsumption()), gui_text);
+            GUILayout.Label(String.Format("Consuming: {0:F2} Ec/s", cons.GetPowerConsumption()), gui_text);
             GUILayout.EndHorizontal();
         }
 
