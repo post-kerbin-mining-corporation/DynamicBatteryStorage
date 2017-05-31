@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace DynamicBatteryStorage
 {
+   
   public class ModuleDynamicBatteryStorage : VesselModule
   {
 
@@ -39,6 +40,11 @@ namespace DynamicBatteryStorage
         PartResource bufferStorage;
         Part bufferPart;
 
+        //public override VesselModule.Activation GetActivation()
+        //{
+            //return Activation..LoadedVessels;
+        //}
+
         protected override void  OnStart()
         {
  	          base.OnStart();
@@ -46,8 +52,14 @@ namespace DynamicBatteryStorage
             GameEvents.onVesselDestroy.Add(new EventData<Vessel>.OnEvent(RefreshVesselElectricalData));
             GameEvents.onVesselGoOnRails.Add(new EventData<Vessel>.OnEvent(RefreshVesselElectricalData));
             GameEvents.onVesselWasModified.Add(new EventData<Vessel>.OnEvent(RefreshVesselElectricalData));
-
+ 
             RefreshVesselElectricalData();
+        }
+
+        protected override void OnSave(ConfigNode node)
+        {
+            ClearBufferStorage();
+            base.OnSave(node);
         }
 
         void OnDestroy()
@@ -63,7 +75,7 @@ namespace DynamicBatteryStorage
              // Debug.Log(String.Format("BufferStorage: Vessel {0}, loaded state is {1}",  vessel.name, vessel.loaded.ToString()));
               if (!vesselLoaded && FlightGlobals.ActiveVessel == vessel)
               {
-                  Debug.Log("Vessel changed state from unfocused to focused");
+                  //Debug.Log("Vessel changed state from unfocused to focused");
                   RefreshVesselElectricalData();
                   vesselLoaded = true;
               }
@@ -117,10 +129,13 @@ namespace DynamicBatteryStorage
           else
           {
             bufferSize = consumption * (double)TimeWarp.fixedDeltaTime * bufferScale;
-            if (bufferStorage != null && bufferSize > totalEcMax)
+            if (bufferStorage != null)
             {
-                double delta = bufferSize - totalEcMax;
+                double delta = (double)Mathf.Clamp((float)(bufferSize - totalEcMax), 0f, 9999999f);
+                Debug.Log(String.Format("delta {0}, target amt {1}", delta, originalMax+delta ));
+                bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax + delta));
                 bufferStorage.maxAmount = originalMax + delta;
+                
             }
           }
         }
@@ -147,9 +162,15 @@ namespace DynamicBatteryStorage
           }
           return currentPowerRate;
         }
-        protected void RefreshVesselElectricalData(Vessel vessel)
+        protected void RefreshVesselElectricalData(Vessel eventVessel)
         {
+            Debug.Log("Refresh from eventVessel");
           RefreshVesselElectricalData();
+        }
+        protected void RefreshVesselElectricalData(ConfigNode node)
+        {
+            Debug.Log("Refresh from save node");
+            RefreshVesselElectricalData();
         }
         protected void RefreshVesselElectricalData()
         {
@@ -180,9 +201,12 @@ namespace DynamicBatteryStorage
 
                 CreateBufferStorage();
             }
-          Debug.Log(String.Format("DynamicBatteryStorage: Summary: \n vessel {0} (loaded state {1})\n" +
-            "- {2} stock power producers \n" +
-            "- {3} stock power consumers", vessel.name,vessel.loaded.ToString(), powerProducers.Count, powerConsumers.Count));
+            if (vessel.loaded)
+            {
+              Debug.Log(String.Format("DynamicBatteryStorage: Summary: \n vessel {0} (loaded state {1})\n" +
+                "- {2} stock power producers \n" +
+                "- {3} stock power consumers", vessel.name,vessel.loaded.ToString(), powerProducers.Count, powerConsumers.Count));
+            }
 
           dataReady = true;
         }
@@ -196,9 +220,14 @@ namespace DynamicBatteryStorage
 
         protected void ClearBufferStorage()
         {
+           Debug.Log("Trying to clear buffer storage");
           if (bufferStorage != null)
           {
+              bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax));
             bufferStorage.maxAmount = originalMax;
+
+            Debug.Log(String.Format("{0}, {1}", bufferStorage.amount, bufferStorage.maxAmount));
+            
           }
         }
 
@@ -215,7 +244,7 @@ namespace DynamicBatteryStorage
                     return;
                 }
             }
-            Debug.Log(String.Format("DynamicBatteryStorage: Could not find an electrical storage part on the vessel");
+            Debug.Log(String.Format("DynamicBatteryStorage: Could not find an electrical storage part on the vessel"));
         }
 
 

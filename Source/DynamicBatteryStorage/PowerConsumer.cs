@@ -45,7 +45,7 @@ namespace DynamicBatteryStorage
             converter = (ModuleResourceConverter)pm;
             for (int i = 0; i < converter.resHandler.inputResources.Count; i++)
                 if (converter.resHandler.inputResources[i].name == "ElectricCharge")
-                    converterEcRate = converter.resHandler.inResources[i].rate;
+                    converterEcRate = converter.resHandler.inputResources[i].rate;
             break;
           case PowerConsumerType.ModuleGenerator:
             gen = (ModuleGenerator)pm;
