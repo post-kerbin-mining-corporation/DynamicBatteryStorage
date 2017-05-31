@@ -227,6 +227,18 @@ namespace DynamicBatteryStorage
             bufferStorage.maxAmount = originalMax;
 
             Debug.Log(String.Format("{0}, {1}", bufferStorage.amount, bufferStorage.maxAmount));
+              foreach(ProtoPartResourceSnapshot proto in bufferPart.protoPartSnapshot.resources)
+              {
+                  if (proto.resourceName == "ElectricCharge")
+                  {
+                      Debug.Log(String.Format("{0}, {1}", proto.amount, proto.maxAmount));
+                      proto.amount = bufferStorage.amount;
+                      proto.maxAmount = originalMax;
+                      Debug.Log(String.Format("{0}, {1}", proto.amount, proto.maxAmount));
+                  }
+                  
+              }
+              
             
           }
         }
