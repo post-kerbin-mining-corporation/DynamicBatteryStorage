@@ -47,9 +47,9 @@ namespace DynamicBatteryStorage
             break;
           case PowerProducerType.ModuleResourceConverter:
             converter = (ModuleResourceConverter)pm;
-            for (int i = 0; i < converter.resHandler.outputResources.Count; i++)
-                if (converter.resHandler.outputResources[i].name == "ElectricCharge")
-                    converterEcRate = converter.resHandler.outputResources[i].rate;
+            for (int i = 0; i < converter.outputList.Count; i++)
+                if (converter.outputList[i].ResourceName == "ElectricCharge")
+                    converterEcRate = converter.outputList[i].Ratio;
             break;
         }
       }

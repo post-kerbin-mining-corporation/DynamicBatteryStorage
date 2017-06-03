@@ -43,15 +43,18 @@ namespace DynamicBatteryStorage
             break;
           case PowerConsumerType.ModuleResourceConverter:
             converter = (ModuleResourceConverter)pm;
-            for (int i = 0; i < converter.resHandler.inputResources.Count; i++)
-                if (converter.resHandler.inputResources[i].name == "ElectricCharge")
-                    converterEcRate = converter.resHandler.inputResources[i].rate;
+            for (int i = 0; i < harvester.inputList.Count; i++)
+                if (converter.inputList[i].ResourceName == "ElectricCharge")
+                    converterEcRate = converter.inputList[i].Ratio;
             break;
           case PowerConsumerType.ModuleGenerator:
             gen = (ModuleGenerator)pm;
             break;
           case PowerConsumerType.ModuleResourceHarvester:
             harvester = (ModuleResourceHarvester)pm;
+            for (int i = 0; i < harvester.inputList.Count; i++)
+                if (harvester.inputList[i].ResourceName == "ElectricCharge")
+                    converterEcRate = harvester.inputList[i].Ratio;
             break;
         }
       }
@@ -91,7 +94,10 @@ namespace DynamicBatteryStorage
       }
       double GetModuleResourceHarvesterConsumption()
       {
-          return 0d;
+          if (harvester == null || !harvester.IsActivated)
+              return 0d;
+          //Debug.Log(harvester.lastTimeFactor);
+          return converterEcRate * harvester.lastTimeFactor;
       }
       double GetModuleActiveRadiatorConsumption()
       {
@@ -111,7 +117,9 @@ namespace DynamicBatteryStorage
       }
       double GetModuleCryoTankConsumption()
       {
-        return 0d;
+          double results = 0d;
+          double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
+          return results;
       }
     }
 }

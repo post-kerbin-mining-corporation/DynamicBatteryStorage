@@ -214,7 +214,7 @@ namespace DynamicBatteryStorage
             }
             if ((Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftControl)) &&
               (Input.GetKey(KeyCode.RightShift) || Input.GetKey(KeyCode.LeftShift)) &&
-              Input.GetKeyDown(KeyCode.P))
+              Input.GetKeyDown(KeyCode.K))
             {
                 ToggleWindow();
                 // CTRL + SHIFT + P
