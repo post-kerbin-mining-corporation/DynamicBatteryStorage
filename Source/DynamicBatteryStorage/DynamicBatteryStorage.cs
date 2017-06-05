@@ -49,6 +49,9 @@ namespace DynamicBatteryStorage
         {
  	          base.OnStart();
 
+              bufferScale = (double)Settings.BufferScaling;
+              timeWarpLimit = Settings.TimeWarpLimit;
+
             GameEvents.onVesselDestroy.Add(new EventData<Vessel>.OnEvent(RefreshVesselElectricalData));
             GameEvents.onVesselGoOnRails.Add(new EventData<Vessel>.OnEvent(RefreshVesselElectricalData));
             GameEvents.onVesselWasModified.Add(new EventData<Vessel>.OnEvent(RefreshVesselElectricalData));
@@ -132,7 +135,7 @@ namespace DynamicBatteryStorage
             if (bufferStorage != null)
             {
                 double delta = (double)Mathf.Clamp((float)(bufferSize - totalEcMax), 0f, 9999999f);
-                Debug.Log(String.Format("delta {0}, target amt {1}", delta, originalMax+delta ));
+                //Debug.Log(String.Format("delta {0}, target amt {1}", delta, originalMax+delta ));
                 bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax + delta));
                 bufferStorage.maxAmount = originalMax + delta;
                 
@@ -164,18 +167,24 @@ namespace DynamicBatteryStorage
         }
         protected void RefreshVesselElectricalData(Vessel eventVessel)
         {
-            Debug.Log("Refresh from eventVessel");
+            Utils.Log("Refreshing data from Vessel event");
           RefreshVesselElectricalData();
         }
         protected void RefreshVesselElectricalData(ConfigNode node)
         {
-            Debug.Log("Refresh from save node");
+            Utils.Log("Refresh from save node event");
             RefreshVesselElectricalData();
         }
         protected void RefreshVesselElectricalData()
         {
           ClearElectricalData();
-          partCount = vessel.parts.Count;
+          if (vessel == null || vessel.Parts == null)
+          {
+              Utils.Log("Refresh failed for vessel, not initialized");
+              return;
+          }
+    
+          partCount = vessel.Parts.Count;
 
           for (int i = partCount - 1; i >= 0; --i)
           {
@@ -203,7 +212,7 @@ namespace DynamicBatteryStorage
             }
             if (vessel.loaded)
             {
-              Debug.Log(String.Format("DynamicBatteryStorage: Summary: \n vessel {0} (loaded state {1})\n" +
+             Utils.Log(String.Format("Summary: \n vessel {0} (loaded state {1})\n" +
                 "- {2} stock power producers \n" +
                 "- {3} stock power consumers", vessel.name,vessel.loaded.ToString(), powerProducers.Count, powerConsumers.Count));
             }
@@ -220,7 +229,7 @@ namespace DynamicBatteryStorage
 
         protected void ClearBufferStorage()
         {
-           Debug.Log("Trying to clear buffer storage");
+            Utils.Log("Trying to clear buffer storage");
           if (bufferStorage != null)
           {
               bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax));
@@ -252,11 +261,11 @@ namespace DynamicBatteryStorage
                     bufferPart = vessel.parts[i];
                     bufferStorage = vessel.parts[i].Resources.Get("ElectricCharge");
                     originalMax = bufferStorage.maxAmount;
-                    Debug.Log(String.Format("DynamicBatteryStorage: Located storage on {0} with {1} inital EC", vessel.parts[i].partInfo.name, originalMax));
+                    Utils.Log(String.Format("Located storage on {0} with {1} inital EC", vessel.parts[i].partInfo.name, originalMax));
                     return;
                 }
             }
-            Debug.Log(String.Format("DynamicBatteryStorage: Could not find an electrical storage part on the vessel"));
+            Utils.Log(String.Format("Could not find an electrical storage part on the vessel"));
         }
 
 
