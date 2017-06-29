@@ -43,7 +43,7 @@ namespace DynamicBatteryStorage
             break;
           case PowerConsumerType.ModuleResourceConverter:
             converter = (ModuleResourceConverter)pm;
-            for (int i = 0; i < harvester.inputList.Count; i++)
+            for (int i = 0; i < converter.inputList.Count; i++)
                 if (converter.inputList[i].ResourceName == "ElectricCharge")
                     converterEcRate = converter.inputList[i].Ratio;
             break;
