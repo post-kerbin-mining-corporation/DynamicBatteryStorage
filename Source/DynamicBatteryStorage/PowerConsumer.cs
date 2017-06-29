@@ -12,7 +12,8 @@ namespace DynamicBatteryStorage
       ModuleResourceHarvester,
       ModuleGenerator,
       ModuleResourceConverter,
-      ModuleCryoTank
+      ModuleCryoTank,
+      ModuleAntimatterTank
     }
 
     public class PowerConsumer
@@ -72,6 +73,8 @@ namespace DynamicBatteryStorage
             return GetModuleResourceHarvesterConsumption();
           case PowerConsumerType.ModuleCryoTank:
             return GetModuleCryoTankConsumption();
+          case PowerConsumerType.ModuleAntimatterTank:
+              return GetModuleAntimatterTankConsumption();
         }
         return 0d;
       }
@@ -116,6 +119,12 @@ namespace DynamicBatteryStorage
         return 0d;
       }
       double GetModuleCryoTankConsumption()
+      {
+          double results = 0d;
+          double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
+          return results;
+      }
+      double GetModuleAntimatterTankConsumption()
       {
           double results = 0d;
           double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
