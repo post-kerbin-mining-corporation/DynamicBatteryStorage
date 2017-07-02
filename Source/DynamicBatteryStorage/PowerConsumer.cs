@@ -12,7 +12,8 @@ namespace DynamicBatteryStorage
       ModuleResourceHarvester,
       ModuleGenerator,
       ModuleResourceConverter,
-      ModuleCryoTank
+      ModuleCryoTank,
+      ModuleAntimatterTank
     }
 
     public class PowerConsumer
@@ -43,7 +44,7 @@ namespace DynamicBatteryStorage
             break;
           case PowerConsumerType.ModuleResourceConverter:
             converter = (ModuleResourceConverter)pm;
-            for (int i = 0; i < harvester.inputList.Count; i++)
+            for (int i = 0; i < converter.inputList.Count; i++)
                 if (converter.inputList[i].ResourceName == "ElectricCharge")
                     converterEcRate = converter.inputList[i].Ratio;
             break;
@@ -72,6 +73,8 @@ namespace DynamicBatteryStorage
             return GetModuleResourceHarvesterConsumption();
           case PowerConsumerType.ModuleCryoTank:
             return GetModuleCryoTankConsumption();
+          case PowerConsumerType.ModuleAntimatterTank:
+              return GetModuleAntimatterTankConsumption();
         }
         return 0d;
       }
@@ -116,6 +119,12 @@ namespace DynamicBatteryStorage
         return 0d;
       }
       double GetModuleCryoTankConsumption()
+      {
+          double results = 0d;
+          double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
+          return results;
+      }
+      double GetModuleAntimatterTankConsumption()
       {
           double results = 0d;
           double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);

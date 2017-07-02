@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace DynamicBatteryStorage
 {
-   
+
   public class ModuleDynamicBatteryStorage : VesselModule
   {
 
@@ -55,7 +55,7 @@ namespace DynamicBatteryStorage
             GameEvents.onVesselDestroy.Add(new EventData<Vessel>.OnEvent(RefreshVesselElectricalData));
             GameEvents.onVesselGoOnRails.Add(new EventData<Vessel>.OnEvent(RefreshVesselElectricalData));
             GameEvents.onVesselWasModified.Add(new EventData<Vessel>.OnEvent(RefreshVesselElectricalData));
- 
+
             RefreshVesselElectricalData();
         }
 
@@ -138,7 +138,7 @@ namespace DynamicBatteryStorage
                 //Debug.Log(String.Format("delta {0}, target amt {1}", delta, originalMax+delta ));
                 bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax + delta));
                 bufferStorage.maxAmount = originalMax + delta;
-                
+
             }
           }
         }
@@ -167,12 +167,12 @@ namespace DynamicBatteryStorage
         }
         protected void RefreshVesselElectricalData(Vessel eventVessel)
         {
-            Utils.Log("Refreshing data from Vessel event");
+          //Utils.Log("Refreshing data from Vessel event");
           RefreshVesselElectricalData();
         }
         protected void RefreshVesselElectricalData(ConfigNode node)
         {
-            Utils.Log("Refresh from save node event");
+            //Utils.Log("Refresh from save node event");
             RefreshVesselElectricalData();
         }
         protected void RefreshVesselElectricalData()
@@ -183,7 +183,7 @@ namespace DynamicBatteryStorage
               Utils.Log("Refresh failed for vessel, not initialized");
               return;
           }
-    
+
           partCount = vessel.Parts.Count;
 
           for (int i = partCount - 1; i >= 0; --i)
@@ -229,7 +229,7 @@ namespace DynamicBatteryStorage
 
         protected void ClearBufferStorage()
         {
-            Utils.Log("Trying to clear buffer storage");
+          //Utils.Log("Trying to clear buffer storage");
           if (bufferStorage != null)
           {
               bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax));
@@ -245,10 +245,10 @@ namespace DynamicBatteryStorage
                       proto.maxAmount = originalMax;
                       //Debug.Log(String.Format("{0}, {1}", proto.amount, proto.maxAmount));
                   }
-                  
+
               }
-              
-            
+
+
           }
         }
 
