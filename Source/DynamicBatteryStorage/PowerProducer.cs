@@ -13,7 +13,8 @@ namespace DynamicBatteryStorage
       ModuleResourceConverter,
       ModuleCurvedSolarPanel,
       FissionGenerator,
-      ModuleRadioisotopeGenerator
+      ModuleRadioisotopeGenerator,
+      RealBattery
     }
 
 
@@ -70,6 +71,8 @@ namespace DynamicBatteryStorage
             return GetFissionGeneratorProduction();
           case PowerProducerType.ModuleRadioisotopeGenerator:
             return GetModuleRadioisotopeGeneratorProduction();
+          case PowerProducerType.RealBattery:
+            return GetModuleRealBatteryProduction();
         }
           return 0d;
       }
@@ -116,6 +119,13 @@ namespace DynamicBatteryStorage
           double results = 0d;
           double.TryParse(pm.Fields.GetValue("energyFlow").ToString(), out results);
           return results;
+      }
+      // RealBattery
+      double GetModuleRealBatteryProduction()
+      {
+          double results = 0d;
+          double.TryParse(pm.Fields.GetValue("lastECpower").ToString(), out results);
+          return results < 0 ? -results : 0d; // negative value means the battery is discharging --> producing EC
       }
 
     }
