@@ -13,7 +13,8 @@ namespace DynamicBatteryStorage
       ModuleGenerator,
       ModuleResourceConverter,
       ModuleCryoTank,
-      ModuleAntimatterTank
+      ModuleAntimatterTank,
+      RealBattery
     }
 
     public class PowerConsumer
@@ -75,7 +76,9 @@ namespace DynamicBatteryStorage
             return GetModuleCryoTankConsumption();
           case PowerConsumerType.ModuleAntimatterTank:
               return GetModuleAntimatterTankConsumption();
-        }
+          case PowerConsumerType.RealBattery:
+              return GetModuleRealBatteryConsumption();
+            }
         return 0d;
       }
 
@@ -129,6 +132,13 @@ namespace DynamicBatteryStorage
           double results = 0d;
           double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
           return results;
+      }
+      // RealBattery
+      double GetModuleRealBatteryConsumption()
+      {
+          double results = 0d;
+          double.TryParse(pm.Fields.GetValue("lastECpower").ToString(), out results);
+          return results > 0 ? results : 0d; // positive value means the battery is charging --> consuming EC
       }
     }
 }
