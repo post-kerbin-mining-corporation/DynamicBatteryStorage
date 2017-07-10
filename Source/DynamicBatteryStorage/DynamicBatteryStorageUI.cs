@@ -127,25 +127,26 @@ namespace DynamicBatteryStorage
             if (store != null && store.AnalyticMode)
             {
 
-                double gain = store.DetermineShipPowerProduction();
-                double draw = store.DetermineShipPowerConsumption();
+                double gain = store.ShipPowerProduction();
+                double draw = store.ShipPowerConsumption();
+
                 scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.MinWidth(600f), GUILayout.MinHeight(271f));
                 GUILayout.BeginHorizontal();
                 //windowPos.height = 175f + 70f;
 
 
                 GUILayout.BeginVertical(gui_bg);
-                for (int i = 0; i < store.powerProducers.Count; i++)
+                for (int i = 0; i < store.ShipProducers.Count; i++)
                 {
-                    DrawPowerProducer(store.powerProducers[i]);
+                    DrawPowerProducer(store.ShipProducers[i]);
                 }
                 GUILayout.Label(String.Format("Total Power Generation: {0:F2} Ec/s", gain), gui_header);
                 GUILayout.EndVertical();
 
                 GUILayout.BeginVertical(gui_bg);
-                for (int i = 0; i < store.powerConsumers.Count; i++)
+                for (int i = 0; i < store.ShipConsumers.Count; i++)
                 {
-                    DrawPowerConsumer(store.powerConsumers[i]);
+                    DrawPowerConsumer(store.ShipConsumers[i]);
                 }
 
                 GUILayout.Label(String.Format("Total Power Consumption: {0:F2} Ec/s", draw), gui_header);
@@ -172,14 +173,14 @@ namespace DynamicBatteryStorage
             GUI.DragWindow();
         }
 
-        private void DrawPowerProducer(PowerProducer prod)
+        private void DrawPowerProducer(PowerHandler prod)
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(prod.ProducerType, gui_header);
             GUILayout.Label(String.Format("Producing: {0:F2} Ec/s", prod.GetPowerProduction()), gui_text);
             GUILayout.EndHorizontal();
         }
-        private void DrawPowerConsumer(PowerConsumer cons)
+        private void DrawPowerConsumer(PowerHandler cons)
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(cons.ConsumerType, gui_header);

@@ -9,13 +9,8 @@ namespace DynamicBatteryStorage
 
   public class ModuleDynamicBatteryStorage : VesselModule
   {
-
         float timeWarpLimit = 100f;
         double bufferScale = 1.5d;
-        //public List<ModuleCryoTank> cryoTanks = new List<ModuleCryoTank>();
-
-        public List<PowerConsumer> powerConsumers = new List<PowerConsumer>();
-        public List<PowerProducer> powerProducers = new List<PowerProducer>();
 
         bool vesselLoaded = false;
         bool analyticMode = false;
@@ -32,6 +27,63 @@ namespace DynamicBatteryStorage
         public double SavedMaxEC { get { return originalMax; } }
         public double SavedVesselMaxEC { get { return totalEcMax; } }
 
+        public double ShipPowerConsumption {
+          get {
+
+            double consumption = 0d;
+            for (int i=0; i < powerHandlers.Count; i++)
+            {
+              double pwr = p.GetPower();
+              if (pwr < 0d)
+                consumption += prw
+            }
+            return consumption;
+          }
+        }
+        public double ShipPowerProduction {
+         get {
+           double production = 0d;
+           for (int i=0; i < powerHandlers.Count; i++)
+           {
+             double pwr = p.GetPower();
+             if (pwr > 0d)
+               production += pwr;
+
+             }
+             return production;
+           }
+        }
+        public List<PowerHandler> ShipProducers
+        {
+          get
+          {
+            List<PowerHandler> handlers = new List<PowerHandler>();
+            for (int i=0; i < powerHandlers.Count; i++)
+            {
+              if (powerHandlers[i].IsProducer)
+              {
+                handlers.Add(powerHandlers[i]);
+              }
+            }
+            return handlers;
+          }
+        }
+        public List<PowerHandler> ShipConsumers
+        {
+          get
+          {
+            List<PowerHandler> handlers = new List<PowerHandler>();
+            for (int i=0; i < powerHandlers.Count; i++)
+            {
+              if (!powerHandlers[i].IsProducer)
+              {
+                handlers.Add(powerHandlers[i]);
+              }
+            }
+            return handlers;
+          }
+        }
+
         double bufferSize;
 
         double originalMax = 0d;
@@ -39,6 +91,8 @@ namespace DynamicBatteryStorage
 
         PartResource bufferStorage;
         Part bufferPart;
+
+        List<PowerHandler> powerHandlers = new List<PowerHandler>();
 
         //public override VesselModule.Activation GetActivation()
         //{
@@ -109,17 +163,28 @@ namespace DynamicBatteryStorage
         }
         protected void DoHighWarpSimulation()
         {
-          if (powerConsumers.Count > 0)
+          if (powerHandlers.Count > 0)
           {
-            double production = DetermineShipPowerProduction();
-            double consumption = DetermineShipPowerConsumption();
 
+            double production = 0d;
+            double consumption = 0d;
+            for (int i=0; i < powerHandlers.Count; i++)
+            {
+              double pwr = p.GetPower();
+              if (pwr > 0d)
+                production += pwr;
+              else
+                consumption += prw
+            }
             AllocatePower(production, consumption);
           }
         }
 
         protected void AllocatePower(double production, double consumption)
         {
+          // normalize this
+          consumption = consumption * 1d;
+
           float powerNet = Mathf.Clamp((float)(production - consumption), -9999999f, 0f);
 
           if (powerNet < 0d)
@@ -138,33 +203,10 @@ namespace DynamicBatteryStorage
                 //Debug.Log(String.Format("delta {0}, target amt {1}", delta, originalMax+delta ));
                 bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax + delta));
                 bufferStorage.maxAmount = originalMax + delta;
-
             }
           }
         }
 
-
-        // Gets the total ship power consumption
-        public double DetermineShipPowerConsumption()
-        {
-          double currentPowerRate = 0d;
-          foreach (PowerConsumer p in powerConsumers)
-          {
-            currentPowerRate += p.GetPowerConsumption();
-          }
-          return currentPowerRate;
-        }
-
-        // Gets the total ship power production
-        public double DetermineShipPowerProduction()
-        {
-          double currentPowerRate = 0d;
-          foreach (PowerProducer p in powerProducers)
-          {
-            currentPowerRate += p.GetPowerProduction();
-          }
-          return currentPowerRate;
-        }
         protected void RefreshVesselElectricalData(Vessel eventVessel)
         {
           //Utils.Log("Refreshing data from Vessel event");
@@ -193,9 +235,10 @@ namespace DynamicBatteryStorage
               {
                   PartModule m = part.Modules[j];
                   // Try to create accessor modules
+
+                  SetupPowerHandler(m);
                   bool success = TrySetupProducer(m);
-                  if (!success)
-                    TrySetupConsumer(m);
+
               }
             }
 
@@ -268,43 +311,18 @@ namespace DynamicBatteryStorage
             Utils.Log(String.Format("Could not find an electrical storage part on the vessel"));
         }
 
-
-        // Tries to setup a new PowerProducer
-        protected bool TrySetupProducer(PartModule pm)
+        protected void SetupPowerHandler(PartModule pm)
         {
-          PowerProducerType prodType;
-          if (TryParse<PowerProducerType>(pm.moduleName, out prodType))
+          PowerHandlerType handlerType;
+          if (TryParse<PowerProducerType>(pm.moduleName, out handlerType))
           {
-            // Verify
-            bool isProducer = VerifyInputs(pm, true);
-            if (isProducer)
-            {
-              PowerProducer prod =  new PowerProducer(prodType, pm);
-              powerProducers.Add(prod);
-              return true;
-            }
+            PowerHandler handler = (PowerHandler)System.Activator.CreateInstance(Type.GetType(pm.ModuleName + "Handler"));
+            handler.Initialize(pm);
+            powerHandlers.Add(pm);
           }
-          return false;
         }
 
 
-        // Tries to setup a new PowerConsumer
-        protected bool TrySetupConsumer(PartModule pm)
-        {
-          PowerConsumerType prodType;
-          if (TryParse<PowerConsumerType>(pm.moduleName, out prodType))
-          {
-            // Verify
-            bool isConsumer = VerifyInputs(pm, false);
-            if (isConsumer)
-            {
-              PowerConsumer con =  new PowerConsumer(prodType, pm);
-              powerConsumers.Add(con);
-              return true;
-            }
-          }
-          return false;
-        }
         /// Checks to see whether a ModuleGenerator/ModuleResourceConverter/ModuleResourceHarvester is a producer or consumer
         protected bool VerifyInputs(PartModule pm, bool isProducer)
         {
