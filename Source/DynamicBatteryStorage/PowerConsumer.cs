@@ -130,7 +130,7 @@ namespace DynamicBatteryStorage
       double GetModuleAntimatterTankConsumption()
       {
           double results = 0d;
-          double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
+          double.TryParse(pm.Fields.GetValue("ContainmentCostCurrent").ToString(), out results);
           return results;
       }
       // RealBattery
