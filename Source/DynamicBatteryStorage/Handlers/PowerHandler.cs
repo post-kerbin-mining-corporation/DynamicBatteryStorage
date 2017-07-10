@@ -20,11 +20,12 @@ namespace DynamicBatteryStorage
         {
           return 0d;
         }
+
         // Must determine if the part is currently producing
-          public virtual bool IsProducer()
-          {
-            return true;
-          }
+        public virtual bool IsProducer()
+        {
+          return true;
+        }
 
     }
 }
