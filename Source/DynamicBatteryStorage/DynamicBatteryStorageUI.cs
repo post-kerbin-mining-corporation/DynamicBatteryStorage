@@ -177,14 +177,14 @@ namespace DynamicBatteryStorage
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(prod.ProducerType, gui_header);
-            GUILayout.Label(String.Format("Producing: {0:F2} Ec/s", prod.GetPowerProduction()), gui_text);
+            GUILayout.Label(String.Format("Producing: {0:F2} Ec/s", prod.GetPower()), gui_text);
             GUILayout.EndHorizontal();
         }
         private void DrawPowerConsumer(PowerHandler cons)
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label(cons.ConsumerType, gui_header);
-            GUILayout.Label(String.Format("Consuming: {0:F2} Ec/s", cons.GetPowerConsumption()), gui_text);
+            GUILayout.Label(String.Format("Consuming: {0:F2} Ec/s", cons.GetPower()), gui_text);
             GUILayout.EndHorizontal();
         }
 
