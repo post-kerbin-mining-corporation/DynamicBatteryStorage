@@ -48,7 +48,7 @@ namespace DynamicBatteryStorage
       {
         double results = 0d;
         double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
-        return results;
+        return results * -1.0d;
       }
     }
 
@@ -59,7 +59,7 @@ namespace DynamicBatteryStorage
       {
         double results = 0d;
         double.TryParse(pm.Fields.GetValue("ContainmentCostCurrent").ToString(), out results);
-        return results;
+        return results* -1.0d;
       }
     }
 
@@ -70,7 +70,7 @@ namespace DynamicBatteryStorage
       {
         double results = 0d;
         double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
-        return results;
+        return results* -1.0d;
       }
     }
 }

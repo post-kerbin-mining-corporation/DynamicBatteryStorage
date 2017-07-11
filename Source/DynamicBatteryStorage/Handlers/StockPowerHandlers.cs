@@ -79,7 +79,7 @@ namespace DynamicBatteryStorage
         for (int i = 0; i < radiator.resHandler.inputResources.Count; i++)
         {
             if (radiator.resHandler.inputResources[i].name == "ElectricCharge")
-                return radiator.resHandler.inputResources[i].rate;
+                return radiator.resHandler.inputResources[i].rate * -1.0d;
         }
         return 0d;
       }
@@ -109,7 +109,7 @@ namespace DynamicBatteryStorage
         if (harvester == null || !harvester.IsActivated)
             return 0d;
         //Debug.Log(harvester.lastTimeFactor);
-        return converterEcRate * harvester.lastTimeFactor;
+        return converterEcRate * harvester.lastTimeFactor * -1.0d;
       }
     }
 
