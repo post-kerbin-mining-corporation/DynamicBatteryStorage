@@ -9,11 +9,12 @@ namespace DynamicBatteryStorage
 {
     public class PowerHandler
     {
-
+        protected PartModule pm;
         // Must initialize the handler, eg cache things for better speed
-        public virtual void Initialize(PartModule pm)
-        {}
-
+        public virtual void Initialize(PartModule module)
+        {
+            pm = module;
+        }
         // Must return the current power use/draw
         // Negative if consuming, positive if producing
         public virtual double GetPower()
@@ -25,6 +26,10 @@ namespace DynamicBatteryStorage
         public virtual bool IsProducer()
         {
           return true;
+        }
+        public string ModuleName()
+        {
+            return pm.moduleName;
         }
 
     }

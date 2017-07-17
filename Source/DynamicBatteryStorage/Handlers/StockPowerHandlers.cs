@@ -15,6 +15,7 @@ namespace DynamicBatteryStorage
 
       public override void Initialize(PartModule pm)
       {
+          base.Initialize(pm);
         panel = (ModuleDeployableSolarPanel)pm;
       }
 
@@ -34,18 +35,21 @@ namespace DynamicBatteryStorage
       double savedRate = 0.0;
       public override void Initialize(PartModule pm)
       {
+          base.Initialize(pm);
         gen = (ModuleGenerator)pm;
+
         for (int i = 0; i < gen.resHandler.inputResources.Count; i++)
             if (gen.resHandler.inputResources[i].name == "ElectricCharge")
             {
               producer = false;
               savedRate = gen.resHandler.inputResources[i].rate;
             }
+
         for (int i = 0; i < gen.resHandler.outputResources.Count; i++)
             if (gen.resHandler.outputResources[i].name == "ElectricCharge")
             {
               producer = true;
-              savedRate = gen.resHandler.inputResources[i].rate;
+              savedRate = gen.resHandler.outputResources[i].rate;
             }
 
       }
@@ -60,6 +64,10 @@ namespace DynamicBatteryStorage
             return (double)gen.efficiency * savedRate * -1.0d;
 
       }
+      public override bool IsProducer()
+      {
+          return producer;
+      }
     }
 
     // Active Radiator
@@ -69,12 +77,13 @@ namespace DynamicBatteryStorage
 
       public override void Initialize(PartModule pm)
       {
-        panel = (ModuleActiveRadiator)pm;
+          base.Initialize(pm);
+        radiator = (ModuleActiveRadiator)pm;
       }
 
       public override double GetPower()
       {
-        if (radiator == null || !radiator.isEnabled)
+        if (radiator == null || !radiator.IsCooling)
             return 0d;
         for (int i = 0; i < radiator.resHandler.inputResources.Count; i++)
         {
@@ -82,6 +91,10 @@ namespace DynamicBatteryStorage
                 return radiator.resHandler.inputResources[i].rate * -1.0d;
         }
         return 0d;
+      }
+      public override bool IsProducer()
+      {
+          return false;
       }
     }
 
@@ -94,6 +107,7 @@ namespace DynamicBatteryStorage
 
       public override void Initialize(PartModule pm)
       {
+          base.Initialize(pm);
         harvester = (ModuleResourceHarvester)pm;
         for (int i = 0; i < harvester.inputList.Count; i++)
         {
@@ -111,6 +125,10 @@ namespace DynamicBatteryStorage
         //Debug.Log(harvester.lastTimeFactor);
         return converterEcRate * harvester.lastTimeFactor * -1.0d;
       }
+      public override bool IsProducer()
+      {
+          return false;
+      }
     }
 
     // Resource Converter
@@ -122,6 +140,7 @@ namespace DynamicBatteryStorage
 
       public override void Initialize(PartModule pm)
       {
+          base.Initialize(pm);
         converter = (ModuleResourceConverter)pm;
 
         for (int i = 0; i < converter.inputList.Count; i++)
@@ -151,6 +170,11 @@ namespace DynamicBatteryStorage
           return converterEcRate * converter.lastTimeFactor;
         else
           return converterEcRate * converter.lastTimeFactor * -1.0d;
+      }
+
+      public override bool IsProducer()
+      {
+          return producer;
       }
     }
 

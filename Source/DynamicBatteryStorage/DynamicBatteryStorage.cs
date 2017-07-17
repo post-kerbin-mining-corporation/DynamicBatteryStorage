@@ -33,9 +33,9 @@ namespace DynamicBatteryStorage
             double consumption = 0d;
             for (int i=0; i < powerHandlers.Count; i++)
             {
-              double pwr = p.GetPower();
+              double pwr = powerHandlers[i].GetPower();
               if (pwr < 0d)
-                consumption += prw
+                  consumption += pwr;
             }
             return consumption;
           }
@@ -45,7 +45,7 @@ namespace DynamicBatteryStorage
            double production = 0d;
            for (int i=0; i < powerHandlers.Count; i++)
            {
-             double pwr = p.GetPower();
+               double pwr = powerHandlers[i].GetPower();
              if (pwr > 0d)
                production += pwr;
 
@@ -60,7 +60,7 @@ namespace DynamicBatteryStorage
             List<PowerHandler> handlers = new List<PowerHandler>();
             for (int i=0; i < powerHandlers.Count; i++)
             {
-              if (powerHandlers[i].IsProducer)
+              if (powerHandlers[i].IsProducer())
               {
                 handlers.Add(powerHandlers[i]);
               }
@@ -75,7 +75,7 @@ namespace DynamicBatteryStorage
             List<PowerHandler> handlers = new List<PowerHandler>();
             for (int i=0; i < powerHandlers.Count; i++)
             {
-              if (!powerHandlers[i].IsProducer)
+              if (!powerHandlers[i].IsProducer())
               {
                 handlers.Add(powerHandlers[i]);
               }
@@ -168,13 +168,14 @@ namespace DynamicBatteryStorage
 
             double production = 0d;
             double consumption = 0d;
+
             for (int i=0; i < powerHandlers.Count; i++)
             {
-              double pwr = p.GetPower();
+                double pwr = powerHandlers[i].GetPower();
               if (pwr > 0d)
-                production += pwr;
+                  production += pwr;
               else
-                consumption += prw
+                  consumption += -pwr;
             }
             AllocatePower(production, consumption);
           }
@@ -237,12 +238,11 @@ namespace DynamicBatteryStorage
                   // Try to create accessor modules
 
                   SetupPowerHandler(m);
-                  bool success = TrySetupProducer(m);
-
+                  
               }
             }
 
-            if (powerConsumers.Count > 0)
+            if (powerHandlers.Count > 0)
             {
                 double amount;
                 double maxAmount;
@@ -256,8 +256,7 @@ namespace DynamicBatteryStorage
             if (vessel.loaded)
             {
              Utils.Log(String.Format("Summary: \n vessel {0} (loaded state {1})\n" +
-                "- {2} stock power producers \n" +
-                "- {3} stock power consumers", vessel.name,vessel.loaded.ToString(), powerProducers.Count, powerConsumers.Count));
+                "- {2} stock power handlers", vessel.name, vessel.loaded.ToString(), powerHandlers.Count));
             }
 
           dataReady = true;
@@ -265,9 +264,7 @@ namespace DynamicBatteryStorage
 
         protected void ClearElectricalData()
         {
-          powerProducers.Clear();
-          powerConsumers.Clear();
-          ClearBufferStorage();
+          powerHandlers.Clear();
         }
 
         protected void ClearBufferStorage()
@@ -295,8 +292,14 @@ namespace DynamicBatteryStorage
           }
         }
 
+        bool hasBuffer = false;
         protected void CreateBufferStorage()
         {
+            if (bufferPart != null)
+            {
+                Utils.Log(String.Format("Has buffer"));
+                return;
+            }
             for (int i = 0; i < vessel.parts.Count; i++ )
             {
                 if (vessel.parts[i].Resources.Contains("ElectricCharge"))
@@ -314,11 +317,13 @@ namespace DynamicBatteryStorage
         protected void SetupPowerHandler(PartModule pm)
         {
           PowerHandlerType handlerType;
-          if (TryParse<PowerProducerType>(pm.moduleName, out handlerType))
+          if (TryParse<PowerHandlerType>(pm.moduleName, out handlerType))
           {
-            PowerHandler handler = (PowerHandler)System.Activator.CreateInstance(Type.GetType(pm.ModuleName + "Handler"));
+              //Utils.Log(String.Format("Type string: {0}", pm.moduleName + "Handler" + ",DynamicBatteryStorage"));
+              //Utils.Log(String.Format("Type: {0}", Type.GetType(pm.moduleName + "Handler"+",DynamicBatteryStorage")));
+              PowerHandler handler = (PowerHandler) System.Activator.CreateInstance("DynamicBatteryStorage", "DynamicBatteryStorage."+ pm.moduleName + "Handler").Unwrap();
             handler.Initialize(pm);
-            powerHandlers.Add(pm);
+            powerHandlers.Add(handler);
           }
         }
 

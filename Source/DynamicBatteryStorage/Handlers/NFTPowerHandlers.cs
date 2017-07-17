@@ -11,7 +11,7 @@ namespace DynamicBatteryStorage
     // Curved Solar Panel
     public class ModuleCurvedSolarPanelHandler: PowerHandler
     {
-        public override double GetPower()
+       public override double GetPower()
       {
         double results = 0d;
         double.TryParse(pm.Fields.GetValue("energyFlow").ToString(), out results);
@@ -50,6 +50,10 @@ namespace DynamicBatteryStorage
         double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
         return results * -1.0d;
       }
+      public override bool IsProducer()
+      {
+          return false;
+      }
     }
 
     // Antimatter Tank
@@ -61,6 +65,10 @@ namespace DynamicBatteryStorage
         double.TryParse(pm.Fields.GetValue("ContainmentCostCurrent").ToString(), out results);
         return results* -1.0d;
       }
+      public override bool IsProducer()
+      {
+          return false;
+      }
     }
 
     // Chargeable Engine
@@ -69,8 +77,12 @@ namespace DynamicBatteryStorage
       public override double GetPower()
       {
         double results = 0d;
-        double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
+        double.TryParse(pm.Fields.GetValue("ChargeRate").ToString(), out results);
         return results* -1.0d;
+      }
+      public override bool IsProducer()
+      {
+          return false;
       }
     }
 }
