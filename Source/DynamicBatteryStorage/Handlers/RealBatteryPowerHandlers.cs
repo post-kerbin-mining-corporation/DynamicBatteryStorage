@@ -9,7 +9,7 @@ namespace DynamicBatteryStorage
         {
             double results = 0d;
             double.TryParse(pm.Fields.GetValue("lastECpower").ToString(), out results);
-            return results * 1.0d; // positive value means the battery is charging --> consuming EC
+            return results * -1.0d; // positive value means the battery is charging --> consuming EC; thus negating result
         }
     }
 }
