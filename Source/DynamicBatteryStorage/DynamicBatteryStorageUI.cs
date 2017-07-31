@@ -127,25 +127,27 @@ namespace DynamicBatteryStorage
             if (store != null && store.AnalyticMode)
             {
 
-                double gain = store.DetermineShipPowerProduction();
-                double draw = store.DetermineShipPowerConsumption();
+                double gain = store.ShipPowerProduction;
+                double draw = store.ShipPowerConsumption;
+                //Utils.Log(String.Format("[DBSUI]: {0} {1}", gain.ToString(), draw.ToString()));
+
                 scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.MinWidth(600f), GUILayout.MinHeight(271f));
                 GUILayout.BeginHorizontal();
                 //windowPos.height = 175f + 70f;
 
 
                 GUILayout.BeginVertical(gui_bg);
-                for (int i = 0; i < store.powerProducers.Count; i++)
+                for (int i = 0; i < store.ShipProducers.Count; i++)
                 {
-                    DrawPowerProducer(store.powerProducers[i]);
+                    DrawPowerProducer(store.ShipProducers[i]);
                 }
                 GUILayout.Label(String.Format("Total Power Generation: {0:F2} Ec/s", gain), gui_header);
                 GUILayout.EndVertical();
 
                 GUILayout.BeginVertical(gui_bg);
-                for (int i = 0; i < store.powerConsumers.Count; i++)
+                for (int i = 0; i < store.ShipConsumers.Count; i++)
                 {
-                    DrawPowerConsumer(store.powerConsumers[i]);
+                    DrawPowerConsumer(store.ShipConsumers[i]);
                 }
 
                 GUILayout.Label(String.Format("Total Power Consumption: {0:F2} Ec/s", draw), gui_header);
@@ -154,13 +156,14 @@ namespace DynamicBatteryStorage
                 GUILayout.BeginVertical(gui_bg);
 
                 GUILayout.Label(String.Format("Net Power Deficit: {0:F2} Ec/s", (gain - draw) * (-1.0)), gui_header);
+                if (store.BufferPart != null)
+                {
+                    GUILayout.Label(String.Format("Part used for Buffer: {0} ", store.BufferPart.partInfo.name), gui_header);
+                    GUILayout.Label(String.Format("Requested Buffer Size: {0:F2} Ec ", store.BufferSize), gui_header);
 
-                GUILayout.Label(String.Format("Part used for Buffer: {0} ", store.BufferPart.partInfo.name), gui_header);
-                GUILayout.Label(String.Format("Requested Buffer Size: {0:F2} Ec ", store.BufferSize), gui_header);
-
-                GUILayout.Label(String.Format("Part base EC capacity: {0:F2} Ec", store.SavedMaxEC), gui_header);
-                GUILayout.Label(String.Format("Vessel base EC capacity: {0:F2} Ec/s", store.SavedVesselMaxEC), gui_header);
-
+                    GUILayout.Label(String.Format("Part base EC capacity: {0:F2} Ec", store.SavedMaxEC), gui_header);
+                    GUILayout.Label(String.Format("Vessel base EC capacity: {0:F2} Ec/s", store.SavedVesselMaxEC), gui_header);
+                }
 
                 GUILayout.EndVertical();
                 GUILayout.EndScrollView();
@@ -172,18 +175,18 @@ namespace DynamicBatteryStorage
             GUI.DragWindow();
         }
 
-        private void DrawPowerProducer(PowerProducer prod)
+        private void DrawPowerProducer(PowerHandler prod)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label(prod.ProducerType, gui_header);
-            GUILayout.Label(String.Format("Producing: {0:F2} Ec/s", prod.GetPowerProduction()), gui_text);
+            GUILayout.Label(prod.ModuleName(), gui_header);
+            GUILayout.Label(String.Format("Producing: {0:F2} Ec/s", prod.GetPower()), gui_text);
             GUILayout.EndHorizontal();
         }
-        private void DrawPowerConsumer(PowerConsumer cons)
+        private void DrawPowerConsumer(PowerHandler cons)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label(cons.ConsumerType, gui_header);
-            GUILayout.Label(String.Format("Consuming: {0:F2} Ec/s", cons.GetPowerConsumption()), gui_text);
+            GUILayout.Label(cons.ModuleName(), gui_header);
+            GUILayout.Label(String.Format("Consuming: {0:F2} Ec/s", cons.GetPower()), gui_text);
             GUILayout.EndHorizontal();
         }
 

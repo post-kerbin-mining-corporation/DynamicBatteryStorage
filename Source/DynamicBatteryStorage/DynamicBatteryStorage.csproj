@@ -50,14 +50,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DynamicBatteryStorageUI.cs" />
-    <Compile Include="IPowerConsumingPart.cs" />
     <Compile Include="DynamicBatteryStorage.cs" />
-    <Compile Include="PowerConsumer.cs" />
-    <Compile Include="PowerProducer.cs" />
+    <Compile Include="Handlers\NFTPowerHandlers.cs" />
+    <Compile Include="Handlers\PowerHandler.cs" />
+    <Compile Include="Handlers\PowerHandlerTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Handlers\RealBatteryPowerHandlers.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Handlers\StockPowerHandlers.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
