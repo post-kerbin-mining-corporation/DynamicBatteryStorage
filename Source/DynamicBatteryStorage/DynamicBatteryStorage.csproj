@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="DynamicBatteryStorageUI.cs" />
     <Compile Include="DynamicBatteryStorage.cs" />
+    <Compile Include="Handlers\KopernicusPowerHandlers.cs" />
     <Compile Include="Handlers\NFTPowerHandlers.cs" />
     <Compile Include="Handlers\PowerHandler.cs" />
     <Compile Include="Handlers\PowerHandlerTypes.cs" />
