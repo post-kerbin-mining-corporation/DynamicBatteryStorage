@@ -24,7 +24,7 @@ namespace DynamicBatteryStorage
     public static class Settings
     {
         public static float TimeWarpLimit = 100f;
-        public static float BufferScaling = 1.5f;
+        public static float BufferScaling = 1.75f;
 
         public static void Load()
         {

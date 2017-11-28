@@ -115,6 +115,7 @@ namespace DynamicBatteryStorage
 
         protected override void OnSave(ConfigNode node)
         {
+            //Debug.Log("Saving, clearing buffer");
             ClearBufferStorage();
             base.OnSave(node);
         }
@@ -183,6 +184,7 @@ namespace DynamicBatteryStorage
 
         protected void AllocatePower(double production, double consumption)
         {
+           // Debug.Log(String.Format("P: {0} C: {1}", production, consumption));
           // normalize this
           consumption = consumption * 1d;
 
@@ -192,6 +194,7 @@ namespace DynamicBatteryStorage
           {
             if (bufferStorage != null)
             {
+                Debug.Log("Power production too low, clearing buffer");
               ClearBufferStorage();
             }
           }
@@ -201,7 +204,7 @@ namespace DynamicBatteryStorage
             if (bufferStorage != null)
             {
                 double delta = (double)Mathf.Clamp((float)(bufferSize - totalEcMax), 0f, 9999999f);
-                //Debug.Log(String.Format("delta {0}, target amt {1}", delta, originalMax+delta ));
+                Debug.Log(String.Format("delta {0}, target amt {1}", delta, originalMax+delta ));
                 bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax + delta));
                 bufferStorage.maxAmount = originalMax + delta;
             }
@@ -247,11 +250,16 @@ namespace DynamicBatteryStorage
                 double amount;
                 double maxAmount;
 
+                if (bufferPart != null)
+                {
+                    
+                } else {
                 vessel.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, out amount, out maxAmount);
-
                 totalEcMax = maxAmount;
-
+                
                 CreateBufferStorage();
+                }
+                //Debug.Log(String.Format("TotalEcMax {0}",totalEcMax));
             }
             if (vessel.loaded)
             {
@@ -297,7 +305,9 @@ namespace DynamicBatteryStorage
         {
             if (bufferPart != null)
             {
-                Utils.Log(String.Format("Has buffer"));
+                Utils.Log(String.Format("Has buffer on {0} with orig max {1}", bufferPart.partInfo.name, originalMax));
+                
+                
                 return;
             }
             for (int i = 0; i < vessel.parts.Count; i++ )

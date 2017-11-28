@@ -24,6 +24,9 @@ namespace DynamicBatteryStorage
     ModuleAntimatterTank,
 
     // RealBattery
-    RealBattery
+    RealBattery,
+
+    // Kopernicus
+    KopernicusSolarPanel 
   }
 }
