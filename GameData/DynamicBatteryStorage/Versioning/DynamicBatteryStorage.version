@@ -5,14 +5,23 @@
     "VERSION":
     {
         "MAJOR":1,
+<<<<<<< HEAD
         "MINOR":3,
+=======
+        "MINOR":2,
+>>>>>>> master
         "PATCH":0,
         "BUILD":0
     },
     "KSP_VERSION":
     {
         "MAJOR":1,
+<<<<<<< HEAD
         "MINOR":4,
         "PATCH":2
+=======
+        "MINOR":3,
+        "PATCH":1
+>>>>>>> master
     }
 }
