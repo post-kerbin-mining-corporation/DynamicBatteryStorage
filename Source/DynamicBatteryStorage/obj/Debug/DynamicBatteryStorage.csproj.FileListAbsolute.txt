@@ -1,5 +1,11 @@
-G:\KSP Modding\repositories\DynamicBatteryStorage\Source\DynamicBatteryStorage\obj\Debug\DynamicBatteryStorage.csprojResolveAssemblyReference.cache
-G:\KSP Modding\repositories\DynamicBatteryStorage\GameData\DynamicBatteryStorage\Plugins\DynamicBatteryStorage.dll
-G:\KSP Modding\repositories\DynamicBatteryStorage\GameData\DynamicBatteryStorage\Plugins\DynamicBatteryStorage.pdb
-G:\KSP Modding\repositories\DynamicBatteryStorage\Source\DynamicBatteryStorage\obj\Debug\DynamicBatteryStorage.dll
-G:\KSP Modding\repositories\DynamicBatteryStorage\Source\DynamicBatteryStorage\obj\Debug\DynamicBatteryStorage.pdb
+G:/KSP Modding/repositories/DynamicBatteryStorage/Source/DynamicBatteryStorage/obj/Debug/DynamicBatteryStorage.csprojResolveAssemblyReference.cache
+G:/KSP Modding/repositories/DynamicBatteryStorage/GameData/DynamicBatteryStorage/Plugins/DynamicBatteryStorage.dll
+G:/KSP Modding/repositories/DynamicBatteryStorage/GameData/DynamicBatteryStorage/Plugins/DynamicBatteryStorage.pdb
+G:/KSP Modding/repositories/DynamicBatteryStorage/Source/DynamicBatteryStorage/obj/Debug/DynamicBatteryStorage.dll
+G:/KSP Modding/repositories/DynamicBatteryStorage/Source/DynamicBatteryStorage/obj/Debug/DynamicBatteryStorage.pdb
+/github/DynamicBatteryStorage/GameData/DynamicBatteryStorage/Plugins/DynamicBatteryStorage.dll
+/github/DynamicBatteryStorage/GameData/DynamicBatteryStorage/Plugins/DynamicBatteryStorage.pdb
+/github/DynamicBatteryStorage/Source/DynamicBatteryStorage/obj/Debug/DynamicBatteryStorage.csprojResolveAssemblyReference.cache
+/github/DynamicBatteryStorage/Source/DynamicBatteryStorage/obj/Debug/DynamicBatteryStorage.csproj.CoreCompileInputs.cache
+/github/DynamicBatteryStorage/Source/DynamicBatteryStorage/obj/Debug/DynamicBatteryStorage.dll
+/github/DynamicBatteryStorage/Source/DynamicBatteryStorage/obj/Debug/DynamicBatteryStorage.pdb
