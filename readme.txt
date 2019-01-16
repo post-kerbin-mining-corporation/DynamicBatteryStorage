@@ -4,7 +4,7 @@ Dynamic Battery Storage v1.4.0
 
 A small utility mod for Kerbal Space Program, intended to support my other projects. Effectively required by Near Future Electrical, CryoEngines, KerballAtomics and CryoTanks.
 
-This mod dynamically adjusts ElectricCharge (EC) storage to combat the game's awful handling of resource genreation/draw mechanics at high timewarp. It should dramatically reduce instances of bad ship consequences due to EC loss at these times.
+This mod dynamically adjusts ElectricCharge (EC) storage to combat the game's awful handling of resource generation/draw mechanics at high timewarp. It should dramatically reduce instances of bad ship consequences due to EC loss at these times.
 
 ============
 INSTALLATION

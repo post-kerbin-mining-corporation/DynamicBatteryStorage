@@ -33,7 +33,7 @@ deploy:
     skip_cleanup: true
     acl: public_read
     region: us-east-2
-    upload-dir: cryo-tanks
+    upload-dir: dynamic-battery-storage
     on:
       condition: $TRAVIS_BRANCH = master
   - deploy:
