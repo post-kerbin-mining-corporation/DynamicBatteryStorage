@@ -332,5 +332,13 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder
 .mfractor/
 
-
 # End of https://www.gitignore.io/api/visualstudio
+
+# Specific items for packaging scripts
+*.pyc
+.idea/
+build/
+tmp/
+deploy/
+build_scripts/version.txt
+build_scripts/changelog.md
