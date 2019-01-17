@@ -1,0 +1,4 @@
+v1.4.0
+------
+- Standalone release, license change (MIT)
+- 1.6.x compatible
