@@ -1,0 +1,17 @@
+mod-name: DynamicBatteryStorage
+package:
+  include-dependencies: true  # Include dependencies in the package
+  included-gamedata:
+    - DynamicBatteryStorage
+  included-support:  # Include these root-level files in packages
+    - readme.txt
+    - changelog.txt
+deploy:
+  SpaceDock:
+    enabled: false  # activate/deactivate this deployment script
+    mod-id: 558  # The Spacedock mod ID for deployment
+  CurseForge:
+    enabled: false  # activate/deactivate this deployment script
+    mod-id: 220671  # The CurseForge mod ID for deployment
+  GitHub:
+    enabled: true  # activate/deactivate this deployment script
