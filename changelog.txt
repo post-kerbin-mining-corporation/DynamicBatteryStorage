@@ -1,3 +1,7 @@
+v1.4.2
+------
+- Fixed wrong .NET version
+
 v1.4.1
 ------
 - 1.7.x compatible
