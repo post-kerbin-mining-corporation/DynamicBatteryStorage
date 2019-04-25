@@ -25,11 +25,12 @@ namespace DynamicBatteryStorage
     {
         public static float TimeWarpLimit = 100f;
         public static float BufferScaling = 1.75f;
+        public static bool DebugMode = false;
+
 
         public static void Load()
         {
             ConfigNode settingsNode;
-
 
             Utils.Log("Settings: Started loading");
             if (GameDatabase.Instance.ExistsConfigNode("DynamicBatteryStorage/DYNAMICBATTERYSTORAGE"))
@@ -39,6 +40,7 @@ namespace DynamicBatteryStorage
                 settingsNode = GameDatabase.Instance.GetConfigNode("DynamicBatteryStorage/DYNAMICBATTERYSTORAGE");
 
                 settingsNode.TryGetValue("MinimumWarpFactor", ref TimeWarpLimit);
+                settingsNode.TryGetValue("DebugMode", ref DebugMode);
                 settingsNode.TryGetValue("BufferScaling ", ref BufferScaling);
             }
             else
