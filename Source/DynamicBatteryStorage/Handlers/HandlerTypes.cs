@@ -27,6 +27,18 @@ namespace DynamicBatteryStorage
     RealBattery,
 
     // Kopernicus
-    KopernicusSolarPanel 
+    KopernicusSolarPanel
+  }
+
+  // This enum consists of all handled types. They MUST match the module name
+  public enum HeatHandlerType {
+    // Stock
+    ModuleCoreHeat,       // ONLY HANDLES PASSIVE HEAT
+    ModuleResourceConverter,
+    ModuleActiveRadiator,
+    ModuleResourceHarvester,
+
+    // NFT
+    FissionReactor
   }
 }

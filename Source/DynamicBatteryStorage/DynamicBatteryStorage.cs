@@ -117,7 +117,7 @@ namespace DynamicBatteryStorage
 
         for (int i=0; i < powerHandlers.Count; i++)
         {
-          double pwr = powerHandlers[i].GetPower();
+          double pwr = powerHandlers[i].GetValue();
           if (pwr > 0d)
             production += pwr;
           else

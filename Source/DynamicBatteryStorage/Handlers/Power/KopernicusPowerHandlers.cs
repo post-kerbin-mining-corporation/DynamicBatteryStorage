@@ -9,7 +9,7 @@ namespace DynamicBatteryStorage
 {
 
     // Special power handler for Kopernicus's replaced panels
-    public class KopernicusSolarPanelHandler: PowerHandler
+    public class KopernicusSolarPanelPowerHandler: ModuleDataHandler
     {
       ModuleDeployableSolarPanel panel;
 
@@ -19,12 +19,12 @@ namespace DynamicBatteryStorage
         panel = (ModuleDeployableSolarPanel)pm;
       }
 
-      public override double GetPower()
+      public override double GetValue()
       {
         if (panel != null)
           return (double)panel.flowRate;
         return 0d;
       }
     }
-    
+
 }

@@ -16,7 +16,7 @@ namespace DynamicBatteryStorage
     #region Accessors
 
     public VesselElectricalData ElectricalData { get {return electricalData; }}
-    public VesselElectricalData HeatData { get {return heatData; }}
+    public VesselThermalData HeatData { get {return heatData; }}
 
     public bool Ready { get {return dataReady; }}
 
@@ -28,7 +28,7 @@ namespace DynamicBatteryStorage
     bool vesselLoaded = false;
 
     VesselElectricalData electricalData;
-    VesselData heatData;
+    VesselThermalData heatData;
     #endregion
 
     protected override void  OnStart()
@@ -80,7 +80,7 @@ namespace DynamicBatteryStorage
     protected void RefreshVesselData(ConfigNode node)
     {
       if (Settings.DebugMode)
-        Utils.Log(String.Format("[{0}]: Refreshind VesselData from save node event", this.GetType().Name));
+        Utils.Log(String.Format("[{0}]: Refreshing VesselData from save node event", this.GetType().Name));
       RefreshVesselData();
     }
 
@@ -94,8 +94,8 @@ namespace DynamicBatteryStorage
       if (vessel == null || vessel.Parts == null)
         return;
 
-      electricalData = new VesselElectricalData(vessel);
-      heatData = new VesselData(vessel);
+      electricalData = new VesselElectricalData(vessel.Parts);
+      heatData = new VesselThermalData(vessel.Parts);
 
       dataReady = true;
 

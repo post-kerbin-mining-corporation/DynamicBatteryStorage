@@ -3,9 +3,9 @@ namespace DynamicBatteryStorage
 {
 
     // RealBattery: Realistic behaving batteries; https://github.com/blackliner/RealBattery
-    public class RealBatteryHandler : PowerHandler
+    public class RealBatteryPowerHandler : ModuleDataHandler
     {
-        public override double GetPower()
+        public override double GetValue()
         {
             double results = 0d;
             double.TryParse(pm.Fields.GetValue("lastECpower").ToString(), out results);

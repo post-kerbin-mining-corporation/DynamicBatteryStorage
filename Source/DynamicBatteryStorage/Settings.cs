@@ -25,7 +25,8 @@ namespace DynamicBatteryStorage
     {
         public static float TimeWarpLimit = 100f;
         public static float BufferScaling = 1.75f;
-        public static bool DebugMode = false;
+        public static bool DebugMode = true;
+        public static bool DebugUIMode = true;
 
 
         public static void Load()
@@ -41,6 +42,7 @@ namespace DynamicBatteryStorage
 
                 settingsNode.TryGetValue("MinimumWarpFactor", ref TimeWarpLimit);
                 settingsNode.TryGetValue("DebugMode", ref DebugMode);
+                settingsNode.TryGetValue("DebugUIMode", ref DebugMode);
                 settingsNode.TryGetValue("BufferScaling ", ref BufferScaling);
             }
             else

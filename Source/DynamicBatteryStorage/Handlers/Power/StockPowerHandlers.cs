@@ -9,7 +9,7 @@ namespace DynamicBatteryStorage
 {
 
     // Deployable Solar Panel
-    public class ModuleDeployableSolarPanelHandler: PowerHandler
+    public class ModuleDeployableSolarPanelPowerHandler: ModuleDataHandler
     {
       ModuleDeployableSolarPanel panel;
 
@@ -19,7 +19,7 @@ namespace DynamicBatteryStorage
         panel = (ModuleDeployableSolarPanel)pm;
       }
 
-      public override double GetPower()
+      public override double GetValue()
       {
         if (panel != null)
           return (double)panel.flowRate;
@@ -28,7 +28,7 @@ namespace DynamicBatteryStorage
     }
 
     // Basic Generator
-    public class ModuleGeneratorHandler: PowerHandler
+    public class ModuleGeneratorPowerHandler: ModuleDataHandler
     {
       ModuleGenerator gen;
       bool producer = false;
@@ -53,7 +53,7 @@ namespace DynamicBatteryStorage
             }
 
       }
-      public override double GetPower()
+      public override double GetValue()
       {
         if (gen == null || !gen.generatorIsActive)
             return 0d;
@@ -71,7 +71,7 @@ namespace DynamicBatteryStorage
     }
 
     // Active Radiator
-    public class ModuleActiveRadiatorHandler: PowerHandler
+    public class ModuleActiveRadiatorPowerHandler: ModuleDataHandler
     {
       ModuleActiveRadiator radiator;
 
@@ -81,7 +81,7 @@ namespace DynamicBatteryStorage
         radiator = (ModuleActiveRadiator)pm;
       }
 
-      public override double GetPower()
+      public override double GetValue()
       {
         if (radiator == null || !radiator.IsCooling)
             return 0d;
@@ -99,7 +99,7 @@ namespace DynamicBatteryStorage
     }
 
     // Resource Harvester
-    public class ModuleResourceHarvesterHandler: PowerHandler
+    public class ModuleResourceHarvesterPowerHandler: ModuleDataHandler
     {
 
       ModuleResourceHarvester harvester;
@@ -118,7 +118,7 @@ namespace DynamicBatteryStorage
           }
       }
 
-      public override double GetPower()
+      public override double GetValue()
       {
         if (harvester == null || !harvester.IsActivated)
             return 0d;
@@ -132,7 +132,7 @@ namespace DynamicBatteryStorage
     }
 
     // Resource Converter
-    public class ModuleResourceConverterHandler: PowerHandler
+    public class ModuleResourceConverterPowerHandler: ModuleDataHandler
     {
       ModuleResourceConverter converter;
       bool producer = false;
@@ -161,7 +161,7 @@ namespace DynamicBatteryStorage
             }
       }
 
-      public override double GetPower()
+      public override double GetValue()
       {
         if (converter == null || !converter.IsActivated)
           return 0d;

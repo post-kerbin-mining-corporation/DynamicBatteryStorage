@@ -16,18 +16,25 @@ namespace DynamicBatteryStorage
             pm = module;
         }
 
-        <<<
         // Must determine if the part is currently producing something or not
         public virtual bool IsProducer()
         {
           return true;
         }
+        public virtual double GetValue()
+        {
+          return 0d;
+        }
         public string ModuleName()
         {
             return pm.moduleName;
         }
+        public string PartTitle()
+        {
+            return pm.part.partInfo.title;
+        }
 
-        public string ToString()
+        public virtual string ToString()
         {
             string pState = "Consuming";
             if (IsProducer):

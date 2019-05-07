@@ -9,9 +9,9 @@ namespace DynamicBatteryStorage
 {
 
     // Curved Solar Panel
-    public class ModuleCurvedSolarPanelHandler: PowerHandler
+    public class ModuleCurvedSolarPanelPowerHandler: ModuleDataHandler
     {
-       public override double GetPower()
+       public override double GetValue()
       {
         double results = 0d;
         double.TryParse(pm.Fields.GetValue("energyFlow").ToString(), out results);
@@ -20,9 +20,9 @@ namespace DynamicBatteryStorage
     }
 
     // Fission Reactor
-    public class FissionGeneratorHandler: PowerHandler
+    public class FissionGeneratorPowerHandler: ModuleDataHandler
     {
-      public override double GetPower()
+      public override double GetValue()
       {
         double results = 0d;
         double.TryParse(pm.Fields.GetValue("CurrentGeneration").ToString(), out results);
@@ -31,9 +31,9 @@ namespace DynamicBatteryStorage
     }
 
     // RTG
-    public class ModuleRadioisotopeGeneratorHandler: PowerHandler
+    public class ModuleRadioisotopeGeneratorPowerHandler: ModuleDataHandler
     {
-      public override double GetPower()
+      public override double GetValue()
       {
         double results = 0d;
         double.TryParse(pm.Fields.GetValue("ActualPower").ToString(), out results);
@@ -42,9 +42,9 @@ namespace DynamicBatteryStorage
     }
 
     // CryoTank
-    public class ModuleCryoTankHandler: PowerHandler
+    public class ModuleCryoTankPowerHandler: ModuleDataHandler
     {
-      public override double GetPower()
+      public override double GetValue()
       {
         double results = 0d;
         double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
@@ -57,9 +57,9 @@ namespace DynamicBatteryStorage
     }
 
     // Antimatter Tank
-    public class ModuleAntimatterTankHandler: PowerHandler
+    public class ModuleAntimatterTankPowerHandler: ModuleDataHandler
     {
-      public override double GetPower()
+      public override double GetValue()
       {
         double results = 0d;
         double.TryParse(pm.Fields.GetValue("ContainmentCostCurrent").ToString(), out results);
@@ -72,9 +72,9 @@ namespace DynamicBatteryStorage
     }
 
     // Chargeable Engine
-    public class ModuleChargeableEngineHandler: PowerHandler
+    public class ModuleChargeableEnginePowerHandler: ModuleDataHandler
     {
-      public override double GetPower()
+      public override double GetValue()
       {
         double results = 0d;
         double.TryParse(pm.Fields.GetValue("ChargeRate").ToString(), out results);
