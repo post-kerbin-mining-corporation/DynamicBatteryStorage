@@ -10,7 +10,7 @@ using KSP.Localization;
 namespace NearFutureElectrical.UI
 {
 
-    public class UIExpandableItem
+    public class UIExpandableItem: UIWidget
     {
       private bool visible = false;
       private bool expanded = false;
@@ -42,17 +42,21 @@ namespace NearFutureElectrical.UI
           Debug.Log("[UI]: [UIExpandableItem]: building new handler category UI element");
       }
 
+
+
       /// <summary>
       /// Draw the UI
       /// </summary>
       public void Draw()
       {
-        GUILayout.BeginVertical(host.GUIResources.GetStyle("block_background"), GUILayout.Width(300f));
-        DrawCategoryHeader();
-        if (expanded)
-          DrawExpanded();
-
-        GUILayout.EndVertical();
+        if (visible)
+        {
+          GUILayout.BeginVertical(host.GUIResources.GetStyle("block_background"), GUILayout.Width(300f));
+          DrawCategoryHeader();
+          if (expanded)
+            DrawExpanded();
+          GUILayout.EndVertical();
+        }
       }
 
       /// <summary>
@@ -73,9 +77,9 @@ namespace NearFutureElectrical.UI
       private void DrawExpandedEntry(UICategoryItem handler)
       {
         GUILayout.BeginHorizontal();
-        GUILayout.Label(handler.PartTitle(), host.GUIResources.GetStyle("data_header"));
+        GUILayout.Label(handler.PartName, UIHost.GUIResources.GetStyle("data_header"));
         GUILayout.FlexibleSpace();
-        GUILayout.Label(handler.PartFlow(), host.GUIResources.GetStyle("data_field"));
+        GUILayout.Label(handler.PartFlow, UIHost.GUIResources.GetStyle("data_field"));
         GUILayout.EndHorizontal();
       }
 
@@ -84,15 +88,13 @@ namespace NearFutureElectrical.UI
       /// </summary>
       private void DrawCategoryHeader()
       {
-        GUILayout.BeginHorizontal();
-        if (GUILayout.Button(categoryName, host.GUIResources.GetStyle("category_header")))
+
+        if (GUILayout.Button("", UIHost.GUIResources.GetStyle("button")))
           expanded = !expanded;
 
-        GUILayout.FlexibleSpace();
+        GUI.Label( GUILayoutUtility.GetLastRect(), categoryName, UIHost.GUIResources.GetStyle("category_header"));
+        GUI.Label( GUILayoutUtility.GetLastRect(), categoryFlow, UIHost.GUIResources.GetStyle("category_header_field"));
 
-        if (GUILayout.Button(categoryTotal, host.GUIResources.GetStyle("category_data_field")))
-          expanded = !expanded;
-        GUILayout.EndHorizontal();
       }
 
       /// <summary>
@@ -106,7 +108,7 @@ namespace NearFutureElectrical.UI
         {
           categoryFlow += cachedHandlers[i].GetValue();
         }
-        categoryFlow = String.Format("{0:F2} {1}", categoryTotal, unit);
+        categoryTotal = String.Format("{0:F2} {1}", categoryFlow, unit);
         // Update each of the subcategories
         for (int i=0; i < uiItems.Count; i++)
         {
@@ -120,12 +122,16 @@ namespace NearFutureElectrical.UI
       /// <param name="catHandlers">The list of handlers to supply to this category</param>
       public void RefreshHandlers(List<ModuleDataHandler> catHandlers)
       {
-
         cachedHandlers = catHandlers;
+        uiItems = new List<UICategoryItem>();
         for (int i=0; i < cachedHandlers.Count; i++)
         {
           uiItems.Add(new UICategoryItem(cachedHandlers, unit));
         }
+        if (uiItems.Count <= 0);
+          visible = false;
+        else
+          visible = true;
       }
     }
 

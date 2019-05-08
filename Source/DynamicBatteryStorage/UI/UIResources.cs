@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using NearFutureElectrical;
 using KSP.UI.Screens;
 
-namespace NearFutureElectrical.UI
+namespace DynamicBatteryStorage.UI
 {
   public class UIResources
   {
@@ -22,30 +21,25 @@ namespace NearFutureElectrical.UI
     // Get any color, given its name
     public Color GetColor(string name)
     {
-        return colorList[name];
+      Color color = Color.white;
+      colorList.TryGetValue(name, out color);
+      return color;
     }
 
     // Get any icon, given its name
     public AtlasIcon GetIcon(string name)
     {
-      return iconList[name];
-    }
-
-    // Get a reactor icon, given its ID
-    public AtlasIcon GetReactorIcon(int id)
-    {
-      return iconList[String.Format("reactor_{0}",id+1)];
-    }
-    // Get a capacitor icon, given its ID
-    public AtlasIcon GetCapacitorIcon(int id)
-    {
-      return iconList[String.Format("capacitor_{0}",id+1)];
+      AtlastIcon icon = iconList.First().Value;
+      iconList.TryGetValue (name, out icon);
+      return icon;
     }
 
     // Get a style, given its name
     public GUIStyle GetStyle(string name)
     {
-      return styleList[name];
+      GUIStyle style = styleList.First().Value;
+      styleList.TryGetValue (name, out style);
+      return style;
     }
 
     // Constructor
@@ -59,10 +53,7 @@ namespace NearFutureElectrical.UI
     // Iniitializes the icon database
     private void CreateIconList()
     {
-      generalIcons = (Texture)GameDatabase.Instance.GetTexture("NearFutureElectrical/UI/icon_general", false);
-      reactorIcons = (Texture)GameDatabase.Instance.GetTexture("NearFutureElectrical/UI/icon_reactor", false);
-      capacitorIcons = (Texture)GameDatabase.Instance.GetTexture("NearFutureElectrical/UI/icon_capacitor", false);
-
+      generalIcons = (Texture)GameDatabase.Instance.GetTexture("DynamicBatteryStorage/UI/icon_general", false);
       iconList = new Dictionary<string, AtlasIcon>();
 
       // Add the general icons
@@ -71,42 +62,9 @@ namespace NearFutureElectrical.UI
       iconList.Add("thermometer", new AtlasIcon(generalIcons, 0.50f, 0.75f, 0.25f, 0.25f));
       iconList.Add("timer", new AtlasIcon(generalIcons, 0.75f, 0.75f, 0.25f, 0.25f));
 
-      iconList.Add("notch", new AtlasIcon(generalIcons, 0.0f, 0.50f, 0.25f, 0.25f));
-      iconList.Add("gear", new AtlasIcon(generalIcons, 0.25f, 0.50f, 0.25f, 0.25f));
-      iconList.Add("capacitor_charge", new AtlasIcon(generalIcons, 0.50f, 0.50f, 0.25f, 0.25f));
-      iconList.Add("throttle", new AtlasIcon(generalIcons, 0.75f, 0.50f, 0.25f, 0.25f));
+      iconList.Add("battery", new AtlasIcon(generalIcons, 0.0f, 0.50f, 0.25f, 0.25f));
 
-      iconList.Add("throttle_auto", new AtlasIcon(generalIcons, 0.00f, 0.25f, 0.25f, 0.25f));
-      iconList.Add("heat_limit", new AtlasIcon(generalIcons, 0.25f, 0.25f, 0.25f, 0.25f));
-      iconList.Add("warp_limit", new AtlasIcon(generalIcons, 0.50f, 0.25f, 0.25f, 0.25f));
-      iconList.Add("capacitor_rate", new AtlasIcon(generalIcons, 0.75f, 0.25f, 0.25f, 0.25f));
-
-      iconList.Add("capacitor_charging", new AtlasIcon(generalIcons, 0.0f, 0.0f, 0.25f, 0.25f));
-      iconList.Add("capacitor_discharge", new AtlasIcon(generalIcons, 0.25f, 0.0f, 0.25f, 0.25f));
-      iconList.Add("accept", new AtlasIcon(generalIcons, 0.50f, 0.0f, 0.25f, 0.25f));
-      iconList.Add("cancel", new AtlasIcon(generalIcons, 0.75f, 0.0f, 0.25f, 0.25f));
-
-      // Add the reactor icons
-      iconList.Add("reactor_1", new AtlasIcon(reactorIcons, 0.00f, 0.66f, 0.33f, 0.33f));
-      iconList.Add("reactor_2", new AtlasIcon(reactorIcons, 0.33f, 0.66f, 0.33f, 0.33f));
-      iconList.Add("reactor_3", new AtlasIcon(reactorIcons, 0.66f, 0.66f, 0.33f, 0.33f));
-      iconList.Add("reactor_4", new AtlasIcon(reactorIcons, 0.00f, 0.33f, 0.33f, 0.33f));
-      iconList.Add("reactor_5", new AtlasIcon(reactorIcons, 0.33f, 0.33f, 0.33f, 0.33f));
-      iconList.Add("reactor_6", new AtlasIcon(reactorIcons, 0.66f, 0.33f, 0.33f, 0.33f));
-      iconList.Add("reactor_7", new AtlasIcon(reactorIcons, 0.00f, 0.00f, 0.33f, 0.33f));
-      iconList.Add("reactor_8", new AtlasIcon(reactorIcons, 0.33f, 0.00f, 0.33f, 0.33f));
-      iconList.Add("reactor_9", new AtlasIcon(reactorIcons, 0.66f, 0.00f, 0.33f, 0.33f));
-
-      // Add the capacitor icons
-      iconList.Add("capacitor_1", new AtlasIcon(capacitorIcons, 0.00f, 0.66f, 0.33f, 0.33f));
-      iconList.Add("capacitor_2", new AtlasIcon(capacitorIcons, 0.33f, 0.66f, 0.33f, 0.33f));
-      iconList.Add("capacitor_3", new AtlasIcon(capacitorIcons, 0.66f, 0.66f, 0.33f, 0.33f));
-      iconList.Add("capacitor_4", new AtlasIcon(capacitorIcons, 0.00f, 0.33f, 0.33f, 0.33f));
-      iconList.Add("capacitor_5", new AtlasIcon(capacitorIcons, 0.33f, 0.33f, 0.33f, 0.33f));
-      iconList.Add("capacitor_6", new AtlasIcon(capacitorIcons, 0.66f, 0.33f, 0.33f, 0.33f));
-      iconList.Add("capacitor_7", new AtlasIcon(capacitorIcons, 0.00f, 0.00f, 0.33f, 0.33f));
-      iconList.Add("capacitor_8", new AtlasIcon(capacitorIcons, 0.33f, 0.00f, 0.33f, 0.33f));
-      iconList.Add("capacitor_9", new AtlasIcon(capacitorIcons, 0.66f, 0.00f, 0.33f, 0.33f));
+      iconList.Add("cancel", new AtlasIcon(generalIcons, 0.0f, 0.50f, 0.25f, 0.25f));
 
     }
 
@@ -117,47 +75,23 @@ namespace NearFutureElectrical.UI
 
         GUIStyle draftStyle;
 
+        // -- REGIONS --
         // Window
         draftStyle = new GUIStyle(HighLogic.Skin.window);
         draftStyle.padding = new RectOffset(draftStyle.padding.left, draftStyle.padding.right, 2, draftStyle.padding.bottom);
         styleList.Add("window_main", new GUIStyle(draftStyle));
-        // Box
-        draftStyle = new GUIStyle(HighLogic.Skin.textArea);
-        draftStyle.normal.background = null;
-        styleList.Add("item_box", new GUIStyle(draftStyle));
-        // Header1
-        draftStyle = new GUIStyle(HighLogic.Skin.label);
-        draftStyle.fontStyle = FontStyle.Bold;
-        draftStyle.alignment = TextAnchor.UpperLeft;
-        draftStyle.fontSize = 12;
-        draftStyle.stretchWidth = true;
-        styleList.Add("header_basic", new GUIStyle(draftStyle));
-        // Header 2
-        draftStyle.alignment = TextAnchor.MiddleLeft;
-        styleList.Add("header_center", new GUIStyle(draftStyle));
-        // Basic text
-        draftStyle = new GUIStyle(HighLogic.Skin.label);
-        draftStyle.fontSize = 12;
-        draftStyle.alignment = TextAnchor.MiddleLeft;
-        styleList.Add("text_basic", new GUIStyle(draftStyle));
-        // Text area
-        draftStyle = new GUIStyle(HighLogic.Skin.textArea);
-        draftStyle.active = draftStyle.hover = draftStyle.normal;
-        draftStyle.fontSize = 11;
-        styleList.Add("text_area", new GUIStyle(draftStyle));
+
         // Area Background
         draftStyle = new GUIStyle(HighLogic.Skin.textArea);
         draftStyle.active = draftStyle.hover = draftStyle.normal;
         draftStyle.padding = new RectOffset(0,0,0,0);
         styleList.Add("block_background", new GUIStyle(draftStyle));
-        // Toggle
-        draftStyle = new GUIStyle(HighLogic.Skin.toggle);
-        draftStyle.normal.textColor = draftStyle.normal.textColor;
-        styleList.Add("button_toggle", new GUIStyle(draftStyle));
-        // Overlaid button
+
+        // --- BUTTONS ---
+        // Toggle Buttonss
         draftStyle = new GUIStyle(HighLogic.Skin.button);
-        draftStyle.normal.textColor = draftStyle.normal.textColor;
-        styleList.Add("button_overlaid", new GUIStyle(draftStyle));
+        styleList.Add("radio_text_button", new GUIStyle(draftStyle));
+
         // Accept button
         draftStyle = new GUIStyle(HighLogic.Skin.button);
         draftStyle.normal.textColor = draftStyle.normal.textColor;
@@ -166,17 +100,85 @@ namespace NearFutureElectrical.UI
         draftStyle = new GUIStyle(HighLogic.Skin.button);
         draftStyle.normal.textColor = draftStyle.normal.textColor;
         styleList.Add("button_cancel", new GUIStyle(draftStyle));
-        // Progress bar
-        // background
-        draftStyle = new GUIStyle(HighLogic.Skin.textField);
-        draftStyle.active = draftStyle.hover = draftStyle.normal;
-        styleList.Add("bar_background", new GUIStyle(draftStyle));
-        // foreground
+        // Image overlaid button
         draftStyle = new GUIStyle(HighLogic.Skin.button);
-        draftStyle.active = draftStyle.hover = draftStyle.normal;
-        draftStyle.border = GetStyle("bar_background").border;
-        draftStyle.padding = GetStyle("bar_background").padding;
-        styleList.Add("bar_foreground", new GUIStyle(draftStyle));
+        draftStyle.normal.textColor = draftStyle.normal.textColor;
+        styleList.Add("button_overlaid", new GUIStyle(draftStyle));
+
+        // Reddish header button type
+        draftStyle = new GUIStyle(HighLogic.Skin.button);
+        draftStyle.fontSize = 12;
+        draftStyle.alignment = TextAnchor.MiddleLeft;
+        styleList.Add("positive_button", new GUIStyle(draftStyle));
+        // Blueish head button type
+        draftStyle = new GUIStyle(HighLogic.Skin.button);
+        draftStyle.fontSize = 12;
+        draftStyle.alignment = TextAnchor.MiddleLeft;
+        styleList.Add("negative_button", new GUIStyle(draftStyle));
+
+
+        // -- TEXT ---
+        // Window Header
+        draftStyle = new GUIStyle(HighLogic.Skin.label);
+        draftStyle.fontStyle = FontStyle.Bold;
+        draftStyle.alignment = TextAnchor.UpperRight;
+        draftStyle.fontSize = 12;
+        draftStyle.stretchWidth = true;
+        styleList.Add("window_header", new GUIStyle(draftStyle));
+        // Basic text
+        draftStyle = new GUIStyle(HighLogic.Skin.label);
+        draftStyle.fontSize = 12;
+        draftStyle.alignment = TextAnchor.MiddleLeft;
+        styleList.Add("text_basic", new GUIStyle(draftStyle));
+
+
+        // Category table left header
+        draftStyle = new GUIStyle(HighLogic.Skin.label);
+        draftStyle.fontSize = 12;
+        draftStyle.alignment = TextAnchor.MiddleLeft;
+        styleList.Add("postive_category_header", new GUIStyle(draftStyle));
+
+        // Category table field right
+        draftStyle = new GUIStyle(HighLogic.Skin.label);
+        draftStyle.fontSize = 12;
+        draftStyle.alignment = TextAnchor.MiddleRight;
+        styleList.Add("positive_category_header_field", new GUIStyle(draftStyle));
+
+        // Category table left header
+        draftStyle = new GUIStyle(HighLogic.Skin.label);
+        draftStyle.fontSize = 12;
+        draftStyle.alignment = TextAnchor.MiddleLeft;
+        styleList.Add("negative_category_header", new GUIStyle(draftStyle));
+
+        // Category table field right
+        draftStyle = new GUIStyle(HighLogic.Skin.label);
+        draftStyle.fontSize = 12;
+        draftStyle.alignment = TextAnchor.MiddleRight;
+        styleList.Add("negative_category_header_field", new GUIStyle(draftStyle));
+
+        // Category table left header
+        draftStyle = new GUIStyle(HighLogic.Skin.label);
+        draftStyle.fontSize = 12;
+        draftStyle.alignment = TextAnchor.MiddleLeft;
+        styleList.Add("category_header", new GUIStyle(draftStyle));
+
+        // Category table field right
+        draftStyle = new GUIStyle(HighLogic.Skin.label);
+        draftStyle.fontSize = 12;
+        draftStyle.alignment = TextAnchor.MiddleRight;
+        styleList.Add("category_header_field", new GUIStyle(draftStyle));
+
+        // Data table left header
+        draftStyle = new GUIStyle(HighLogic.Skin.label);
+        draftStyle.fontSize = 12;
+        draftStyle.alignment = TextAnchor.MiddleLeft;
+        styleList.Add("data_header", new GUIStyle(draftStyle));
+
+        // Data table field right
+        draftStyle = new GUIStyle(HighLogic.Skin.label);
+        draftStyle.fontSize = 12;
+        draftStyle.alignment = TextAnchor.MiddleRight;
+        styleList.Add("data_field", new GUIStyle(draftStyle));
     }
     void CreateColorList()
     {
