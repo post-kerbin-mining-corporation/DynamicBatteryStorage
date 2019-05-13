@@ -10,7 +10,7 @@ namespace DynamicBatteryStorage
   /// <summary>
   /// This version of the VesselDataManager runs in the VAB
   /// </summary>
-  [KSPAddon(KSPAddon.Startup.Editor, false)]
+  [KSPAddon(KSPAddon.Startup.EditorAny, false)]
   public class EditorVesselDataManager: MonoBehaviour
   {
     #region Accessors
@@ -68,12 +68,12 @@ namespace DynamicBatteryStorage
       if (ship != null)
       {
         electricalData = new VesselElectricalData(ship.Parts);
-        thermalData = new VesselThermalData(ship.Parts);
+        heatData = new VesselThermalData(ship.Parts);
 
         if (Settings.DebugMode)
         {
-          Utils.Log(String.Format("Dumping electrical database: \n{}", electricalData.ToString() ) );
-          Utils.Log(String.Format("Dumping thermal database: \n{}", heatData.ToString() ) );
+          Utils.Log(String.Format("Dumping electrical database: \n{0}", electricalData.ToString() ) );
+          Utils.Log(String.Format("Dumping thermal database: \n{0}", heatData.ToString() ) );
         }
         dataReady = true;
       }

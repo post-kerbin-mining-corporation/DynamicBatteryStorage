@@ -13,7 +13,7 @@ namespace DynamicBatteryStorage
         }
         public override bool IsProducer()
         {
-            return GetPower() > 0;
+            return GetValue() > 0;
         }
     }
 }

@@ -117,32 +117,5 @@ namespace DynamicBatteryStorage
 
             return result;
         }
-
-        /// <summary>
-        /// Formats a flux into a flux string given a display mode
-        /// </summary>
-        /// <returns>The flux string.</returns>
-        /// <param name="mode">Mode.</param>
-        /// <param name="flux">Flux.</param>
-        public static string FormatFluxString(int mode, double flux)
-        {
-            if (mode == 0)
-            {
-                return String.Format("{0}Sv/s", FormatUtils.ToSI(flux, "F2"));
-            }
-            if (mode == 1)
-            {
-                if (flux == 0d)
-                    return "∞";
-                return String.Format("{0}", FormatUtils.FormatTimeString(RadioactivityConstants.kerbalSicknessThreshold / flux));
-            }
-            if (mode == 2)
-            {
-                if (flux == 0d)
-                    return "∞";
-                return String.Format("{0}", FormatUtils.FormatTimeString(RadioactivityConstants.kerbalDeathThreshold / flux));
-            }
-            return "";
-        }
     }
 }

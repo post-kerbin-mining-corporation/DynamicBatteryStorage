@@ -34,12 +34,12 @@ namespace DynamicBatteryStorage
             return pm.part.partInfo.title;
         }
 
-        public virtual string ToString()
+        public override string ToString()
         {
             string pState = "Consuming";
-            if (IsProducer):
+            if (IsProducer())
               pState = "Producing";
-            return String.Format("{0}: {1} {2} EC/s", ModuleName(), pState);
+            return String.Format("{0}: {1} {2} EC/s", ModuleName(), pState, GetValue());
         }
 
     }

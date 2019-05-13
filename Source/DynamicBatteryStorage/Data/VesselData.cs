@@ -12,8 +12,8 @@ namespace DynamicBatteryStorage
   public class VesselData
   {
 
-    List<Part> parts;
-    List<ModuleDataHandler> handlers;
+    protected List<Part> parts;
+    protected List<ModuleDataHandler> handlers;
 
     /// <summary>
     /// Constructor
@@ -32,14 +32,14 @@ namespace DynamicBatteryStorage
     public void RefreshData()
     {
       ClearData();
-      if (vesselParts == null)
+      if (parts == null)
       {
         Utils.Warn(String.Format("[{0}]: Refresh failed for vessel, vessel or parts list is null", this.GetType().Name));
         return;
       }
-      for (int i = vesselParts.Count - 1; i >= 0; --i)
+      for (int i = parts.Count - 1; i >= 0; --i)
       {
-        Part part = vesselParts[i];
+        Part part = parts[i];
         for (int j = part.Modules.Count - 1; j >= 0; --j)
         {
           PartModule m = part.Modules[j];
@@ -51,7 +51,7 @@ namespace DynamicBatteryStorage
     /// <summary>
     /// Dumps a string representation of the set of data
     /// </summary>
-    public virtual void ToString()
+    public override string ToString()
     {
       return "";
       // Implement this
@@ -74,6 +74,9 @@ namespace DynamicBatteryStorage
       // Implement this
     }
 
+
+    public List<ModuleDataHandler> AllHandlers { get { return handlers; } }
+
     /// <summary>
     /// Calculates total vessel consumption
     /// </summary>
@@ -82,7 +85,7 @@ namespace DynamicBatteryStorage
         double consumption = 0d;
         for (int i=0; i < handlers.Count; i++)
         {
-          double pwr = handlers[i].GetPower();
+          double pwr = handlers[i].GetValue();
           if (pwr < 0d)
             consumption += pwr;
         }
@@ -98,7 +101,7 @@ namespace DynamicBatteryStorage
         double production = 0d;
         for (int i=0; i < handlers.Count; i++)
         {
-          double pwr = handlers[i].GetPower();
+          double pwr = handlers[i].GetValue();
           if (pwr > 0d)
             production += pwr;
         }
@@ -113,7 +116,7 @@ namespace DynamicBatteryStorage
     {
       get
       {
-        return handlers.Find(handler => handler.IsProducer());
+        return handlers.FindAll(handler => handler.IsProducer());
       }
     }
 
@@ -124,7 +127,7 @@ namespace DynamicBatteryStorage
     {
       get
       {
-        return handlers.Find(handler => !handler.IsProducer());
+        return handlers.FindAll(handler => !handler.IsProducer());
       }
     }
 
@@ -140,7 +143,7 @@ namespace DynamicBatteryStorage
         candidates = VesselProducers;
       else
         candidates = VesselConsumers;
-      return candidates.Find(handler => handler.ModuleName() == "moduleName");
+      return candidates.FindAll(handler => handler.ModuleName() == "moduleName");
     }
   }
 }

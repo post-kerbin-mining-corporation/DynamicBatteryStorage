@@ -8,71 +8,109 @@ using UnityEngine;
 namespace DynamicBatteryStorage
 {
 
-    // Active Radiator
-    public class ModuleActiveRadiatorHeatHandler: ModuleDataHandler
+  // Active Radiator
+  public class ModuleActiveRadiatorHeatHandler: ModuleDataHandler
+  {
+    ModuleActiveRadiator radiator;
+
+    public override void Initialize(PartModule pm)
     {
-      ModuleActiveRadiator radiator;
+      base.Initialize(pm);
+      radiator = (ModuleActiveRadiator)pm;
+    }
 
-      public override void Initialize(PartModule pm)
-      {
-        base.Initialize(pm);
-        radiator = (ModuleActiveRadiator)pm;
-      }
+    public override double GetValue()
+    {
+      if (radiator == null || !radiator.IsCooling)
+        return 0d;
+      return radiator.maxEnergyTransfer/50d;
+    }
+    public override bool IsProducer()
+    {
+      return false;
+    }
+  }
 
-      public override double GetValue()
+  // Resource Harvester
+  public class ModuleResourceHarvesterHeatHandler: ModuleDataHandler
+  {
+
+    ModuleResourceHarvester harvester;
+    ModuleCoreHeat core;
+
+    public override void Initialize(PartModule pm)
+    {
+      base.Initialize(pm);
+      harvester = (ModuleResourceHarvester)pm;
+      core = pm.GetComponent<ModuleCoreHeat>();
+    }
+
+    public override double GetValue()
+    {
+      if (harvester == null || !harvester.IsActivated)
+        return 0d;
+      if (HighLogic.LoadedSceneIsFlight)
+        return harvester.lastHeatFlux;
+      else
       {
-        if (radiator == null || !radiator.IsCooling)
-          return 0d;
-        return radiator.maxEnergyTransfer/50d;
+        // In editor, calculate predicted thermal draw by using goal core temperature
+        if (core != null)
+          return (double)harvester.TemperatureModifier.Evaluate((float)core.CoreTempGoal) / 50f;
+
+        return 0d;
       }
-      public override bool IsProducer()
+  }
+
+  // Resource Converter
+  public class ModuleResourceConverterHeatHandler: ModuleDataHandler
+  {
+    ModuleResourceConverter converter;
+    ModuleCoreHeat core;
+    public override void Initialize(PartModule pm)
+    {
+      base.Initialize(pm);
+      converter = (ModuleResourceConverter)pm;
+      core = pm.GetComponent<ModuleCoreHeat>();
+    }
+
+    public override double GetValue()
+    {
+      if (converter == null || !converter.IsActivated)
+        return 0d;
+
+      if (HighLogic.LoadedSceneIsFlight)
+        return converter.lastHeatFlux;
+      else
       {
-        return false;
+        // In editor, calculate predicted thermal draw by using goal core temperature
+        if (core != null)
+          return (double)converter.TemperatureModifier.Evaluate((float)core.CoreTempGoal)/ 50f;
+
+        return 0d;
       }
     }
 
-    // Resource Harvester
-    public class ModuleResourceHarvesterHeatHandler: ModuleDataHandler
+  }
+  public class ModuleCoreHeatHandler : ModuleDataHandler
+  {
+    ModuleCoreHeat core;
+
+    public override void Initialize(PartModule pm)
     {
-
-      ModuleResourceHarvester harvester;
-      double converterEcRate = 0.0d;
-
-      public override void Initialize(PartModule pm)
-      {
-        base.Initialize(pm);
-        harvester = (ModuleResourceHarvester)pm;
-
-      }
-
-      public override double GetValue()
-      {
-        if (harvester == null || !harvester.IsActivated)
-          return 0d;
-        return lastHeatFlux;
-      }
+      base.Initialize(pm);
+      core = (ModuleCoreHeat)pm;
     }
 
-    // Resource Converter
-    public class ModuleResourceConverterHeatHandler: ModuleDataHandler
+    public override double GetValue()
     {
-      ModuleResourceConverter converter;
-
-      public override void Initialize(PartModule pm)
-      {
-        base.Initialize(pm);
-        converter = (ModuleResourceConverter)pm;
-      }
-
-      public override double GetValue()
-      {
-        if (converter == null || !converter.IsActivated)
-          return 0d;
-
-        return lastHeatFlux;
-      }
-
+      if (core == null)
+        return 0d;
+      if (HighLogic.LoadedSceneIsEditor)
+        return (double)core.PassiveEnergy.Evaluate(300f)/50f;
+      else
+        return (double)core.PassiveEnergy.Evaluate((float)core.CoreTemperature)/50f;
     }
 
+  }
 
 }

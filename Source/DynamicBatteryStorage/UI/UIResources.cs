@@ -15,8 +15,6 @@ namespace DynamicBatteryStorage.UI
     private Dictionary<string, Color> colorList;
 
     private Texture generalIcons;
-    private Texture reactorIcons;
-    private Texture capacitorIcons;
 
     // Get any color, given its name
     public Color GetColor(string name)
@@ -29,7 +27,7 @@ namespace DynamicBatteryStorage.UI
     // Get any icon, given its name
     public AtlasIcon GetIcon(string name)
     {
-      AtlastIcon icon = iconList.First().Value;
+      AtlasIcon icon = iconList.First().Value;
       iconList.TryGetValue (name, out icon);
       return icon;
     }
@@ -48,6 +46,8 @@ namespace DynamicBatteryStorage.UI
       CreateIconList();
       CreateStyleList();
       CreateColorList();
+      if (Settings.DebugUIMode)
+        Utils.Log("[UI]: Loaded Assets");
     }
 
     // Iniitializes the icon database
@@ -62,9 +62,9 @@ namespace DynamicBatteryStorage.UI
       iconList.Add("thermometer", new AtlasIcon(generalIcons, 0.50f, 0.75f, 0.25f, 0.25f));
       iconList.Add("timer", new AtlasIcon(generalIcons, 0.75f, 0.75f, 0.25f, 0.25f));
 
-      iconList.Add("battery", new AtlasIcon(generalIcons, 0.0f, 0.50f, 0.25f, 0.25f));
+      iconList.Add("battery", new AtlasIcon(generalIcons, 0.5f, 0.50f, 0.25f, 0.25f));
 
-      iconList.Add("cancel", new AtlasIcon(generalIcons, 0.0f, 0.50f, 0.25f, 0.25f));
+      iconList.Add("cancel", new AtlasIcon(generalIcons, 0.75f, 0.00f, 0.25f, 0.25f));
 
     }
 
@@ -110,16 +110,24 @@ namespace DynamicBatteryStorage.UI
         draftStyle.fontSize = 12;
         draftStyle.alignment = TextAnchor.MiddleLeft;
         styleList.Add("positive_button", new GUIStyle(draftStyle));
-        // Blueish head button type
-        draftStyle = new GUIStyle(HighLogic.Skin.button);
+      draftStyle.stretchWidth = true;
+      // Blueish head button type
+      draftStyle = new GUIStyle(HighLogic.Skin.button);
         draftStyle.fontSize = 12;
         draftStyle.alignment = TextAnchor.MiddleLeft;
         styleList.Add("negative_button", new GUIStyle(draftStyle));
+      draftStyle.stretchWidth = true;
+      // Blueish head button type
+      draftStyle = new GUIStyle(HighLogic.Skin.button);
+      draftStyle.fontSize = 12;
+      draftStyle.alignment = TextAnchor.MiddleLeft;
+      styleList.Add("category_header_button", new GUIStyle(draftStyle));
+      draftStyle.stretchWidth = true;
 
 
-        // -- TEXT ---
-        // Window Header
-        draftStyle = new GUIStyle(HighLogic.Skin.label);
+      // -- TEXT ---
+      // Window Header
+      draftStyle = new GUIStyle(HighLogic.Skin.label);
         draftStyle.fontStyle = FontStyle.Bold;
         draftStyle.alignment = TextAnchor.UpperRight;
         draftStyle.fontSize = 12;
@@ -136,7 +144,7 @@ namespace DynamicBatteryStorage.UI
         draftStyle = new GUIStyle(HighLogic.Skin.label);
         draftStyle.fontSize = 12;
         draftStyle.alignment = TextAnchor.MiddleLeft;
-        styleList.Add("postive_category_header", new GUIStyle(draftStyle));
+        styleList.Add("positive_category_header", new GUIStyle(draftStyle));
 
         // Category table field right
         draftStyle = new GUIStyle(HighLogic.Skin.label);

@@ -50,7 +50,7 @@ namespace DynamicBatteryStorage
       bufferScale = (double)Settings.BufferScaling;
       timeWarpLimit = Settings.TimeWarpLimit;
 
-      FindDataManager(;)
+      FindDataManager();
       if (Settings.DebugMode)
       {
           Utils.Log(String.Format("[ModuleDynamicBatteryStorage]: Initialization completed with buffer scale {0} and timewarp limit {1}", bufferScale, timeWarpLimit));
@@ -66,8 +66,8 @@ namespace DynamicBatteryStorage
 
     void FindDataManager()
     {
-      dataManager = vessel.GetComponent<VesselDataManager>();
-      if (!dataManager)
+      vesselData = vessel.GetComponent<VesselDataManager>();
+      if (!vesselData)
       {
         Utils.Error(LogVessel("Could not find vessel data manager"));
       }
@@ -109,27 +109,18 @@ namespace DynamicBatteryStorage
     }
     protected void DoHighWarpSimulation()
     {
-      if (powerHandlers.Count > 0)
+      if (vesselData.ElectricalData.AllHandlers.Count > 0)
       {
 
-        double production = 0d;
-        double consumption = 0d;
-
-        for (int i=0; i < powerHandlers.Count; i++)
-        {
-          double pwr = powerHandlers[i].GetValue();
-          if (pwr > 0d)
-            production += pwr;
-          else
-            consumption += -pwr;
-        }
+        double production = vesselData.ElectricalData.CurrentProduction;
+        double consumption = vesselData.ElectricalData.CurrentConsumption;
         AllocatePower(production, consumption);
       }
     }
 
     protected void AllocatePower(double production, double consumption)
     {
-      // Debug.Log(String.Format("P: {0} C: {1}", production, consumption));
+      // Utils.Log(String.Format("P: {0} C: {1}", production, consumption));
       // normalize this
       consumption = consumption * 1d;
 
@@ -149,8 +140,8 @@ namespace DynamicBatteryStorage
         if (bufferStorage != null)
         {
           double delta = (double)Mathf.Clamp((float)(bufferSize - totalEcMax), 0f, 9999999f);
-          if (DebugMode) {
-          Utils.Log(String.Format("delta {0}, target amt {1}", delta, originalMax+delta ));
+          if (Settings.DebugMode) {
+            Utils.Log(String.Format("delta {0}, target amt {1}", delta, originalMax+delta ));
         }
         bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax + delta));
         bufferStorage.maxAmount = originalMax + delta;
@@ -161,30 +152,30 @@ namespace DynamicBatteryStorage
 
 
 
-    if (powerHandlers.Count > 0)
-    {
-    double amount;
-    double maxAmount;
+    //if (powerHandlers.Count > 0)
+    //{
+    //double amount;
+    //double maxAmount;
 
-    if (bufferPart != null)
-    {
+    //if (bufferPart != null)
+    //{
 
-    } else {
-    vessel.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, out amount, out maxAmount);
-    totalEcMax = maxAmount;
+    //} else {
+    //vessel.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, out amount, out maxAmount);
+    //totalEcMax = maxAmount;
 
-    CreateBufferStorage();
-    }
+    //CreateBufferStorage();
+    //}
 
-    }
-    if (vessel.loaded)
-    {
-    Utils.Log(String.Format("Summary: \n vessel {0} (loaded state {1})\n" +
-    "- {2} stock power handlers", vessel.name, vessel.loaded.ToString(), powerHandlers.Count));
-    }
+    //}
+    //if (vessel.loaded)
+    //{
+    //Utils.Log(String.Format("Summary: \n vessel {0} (loaded state {1})\n" +
+    //"- {2} stock power handlers", vessel.name, vessel.loaded.ToString(), powerHandlers.Count));
+    //}
 
-    dataReady = true;
-    }
+    //dataReady = true;
+    //}
 
 
 
@@ -197,15 +188,15 @@ namespace DynamicBatteryStorage
         bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax));
         bufferStorage.maxAmount = originalMax;
 
-        //Debug.Log(String.Format("{0}, {1}", bufferStorage.amount, bufferStorage.maxAmount));
+        //Utils.Log(String.Format("{0}, {1}", bufferStorage.amount, bufferStorage.maxAmount));
         foreach(ProtoPartResourceSnapshot proto in bufferPart.protoPartSnapshot.resources)
         {
           if (proto.resourceName == "ElectricCharge")
           {
-            //Debug.Log(String.Format("{0}, {1}", proto.amount, proto.maxAmount));
+            //Utils.Log(String.Format("{0}, {1}", proto.amount, proto.maxAmount));
             proto.amount = bufferStorage.amount;
             proto.maxAmount = originalMax;
-            //Debug.Log(String.Format("{0}, {1}", proto.amount, proto.maxAmount));
+            //Utils.Log(String.Format("{0}, {1}", proto.amount, proto.maxAmount));
           }
         }
       }
@@ -236,9 +227,9 @@ namespace DynamicBatteryStorage
     }
 
 
-    protected LogVessel(string msg)
+    protected string LogVessel(string msg)
     {
-      return String.Format("[ModuleDynamicBatteryStorage]: {0} on vessel {1}", msg, vessel.name);
+      return String.Format("{0} on vessel {1}", msg, vessel.name);
     }
 
 

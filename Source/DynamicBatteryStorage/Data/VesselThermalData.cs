@@ -23,7 +23,7 @@ namespace DynamicBatteryStorage
     protected override void SetupDataHandler(PartModule pm)
     {
       HeatHandlerType handlerType;
-      if (Enum.TryParse(pm.moduleName, out handlerType))
+      if (Utils.TryParseEnum<HeatHandlerType>(pm.moduleName, false, out handlerType))
       {
         string typeName =  "DynamicBatteryStorage."+ pm.moduleName + "HeatHandler";
         if (Settings.DebugMode)
@@ -39,16 +39,16 @@ namespace DynamicBatteryStorage
     /// <summary>
     /// Dumps the entire handler array as a set of single-line strings defining the handlers on the vessel
     /// </summary>
-    public override void ToString()
+    public override string ToString()
     {
       List<string> handlerStates = new List<string>();
-      if (handlers)
+      if (handlers != null)
       {
         for (int i=0; i < handlers.Count; i++)
         {
           handlerStates.Add(handlers[i].ToString());
         }
-        return string.Join("\n", handlerStates);
+        return string.Join("\n", handlerStates.ToArray());
       }
       return "No Heat Handlers";
     }

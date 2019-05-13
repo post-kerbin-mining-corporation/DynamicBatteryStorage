@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using KSP.UI.Screens;
-using NearFutureElectrical;
 using KSP.Localization;
 
-namespace NearFutureElectrical.UI
+namespace DynamicBatteryStorage.UI
 {
 
     public class UIWidget
@@ -20,6 +19,9 @@ namespace NearFutureElectrical.UI
       public UIWidget(UIBaseWindow uiBase)
       {
         uiHost = uiBase;
+
+        Localize();
+  
       }
 
       protected virtual void Localize()

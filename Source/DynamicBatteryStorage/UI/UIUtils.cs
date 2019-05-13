@@ -8,13 +8,13 @@ namespace DynamicBatteryStorage.UI
 {
   public static class UIUtils
   {
-    public static void IconDataField(Rect uiRect, UIIcon icon, string value, GUIStyle dataStyle)
+    public static void IconDataField(Rect uiRect, AtlasIcon icon, string value, GUIStyle dataStyle)
     {
       Color color = GUI.color;
       IconDataField(uiRect, icon, value, dataStyle, color);
       GUI.color = color;
     }
-    public static void IconDataField(Rect uiRect, UIIcon icon, string value, GUIStyle dataStyle, Color color)
+    public static void IconDataField(Rect uiRect, AtlasIcon icon, string value, GUIStyle dataStyle, Color color)
     {
       Color oldColor = GUI.color;
       GUI.color = color;
@@ -23,8 +23,8 @@ namespace DynamicBatteryStorage.UI
       Rect dataRect = new Rect(0, 0, uiRect.width, uiRect.height);
 
       GUI.DrawTextureWithTexCoords(iconRect, icon.iconAtlas, icon.iconRect);
-      GUI.Label(value, dataStyle);
-      GUI.EndGroup(uiRect);
+      GUI.Label(dataRect, value, dataStyle);
+      GUI.EndGroup();
       GUI.color = oldColor;
     }
 

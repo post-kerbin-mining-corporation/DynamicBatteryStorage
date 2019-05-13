@@ -41,8 +41,26 @@ namespace DynamicBatteryStorage.UI
     private int partCount = 0;
     #endregion
 
-    public VesselThermalData ThermalData { get { return vesselData.ThermalData; } }
-    public VesselElectricalData ElectricalData { get { return vesselData.ElectricalData; } }
+    public VesselThermalData ThermalData
+    {
+      get
+      {
+        if (HighLogic.LoadedSceneIsFlight)
+          return vesselData.HeatData;
+        else
+          return editorVesselData.HeatData;
+      }
+    }
+
+    public VesselElectricalData ElectricalData
+    {
+      get {
+        if (HighLogic.LoadedSceneIsFlight)
+          return vesselData.ElectricalData;
+        else
+          return editorVesselData.ElectricalData;
+       }
+    }
 
     /// <summary>
     /// Find the vessel data manager in flight or editor
@@ -52,15 +70,16 @@ namespace DynamicBatteryStorage.UI
       if (HighLogic.LoadedSceneIsFlight)
       {
         activeVessel = FlightGlobals.ActiveVessel;
-        vesselData = activeVessel.GetComponents<VesselDataManager>();
+        vesselData = activeVessel.GetComponent<VesselDataManager>();
+        partCount = activeVessel.Parts.Count;
         if (Settings.DebugUIMode)
-          Debug.Log("[UI]: Located Flight data");
+          Utils.Log("[UI]: Located Flight data");
       }
       if (HighLogic.LoadedSceneIsEditor)
       {
-        editorVesselData = EditorBVesselDataManager.Instance;
+        editorVesselData = EditorVesselDataManager.Instance;
         if (Settings.DebugUIMode)
-          Debug.Log("[UI]: Located Editor data");
+          Utils.Log("[UI]: Located Editor data");
       }
     }
 
@@ -115,7 +134,8 @@ namespace DynamicBatteryStorage.UI
       // Draw the header/tab controls
       DrawHeaderArea();
 
-      if (vesselData != null)
+      if ((HighLogic.LoadedSceneIsFlight && vesselData != null) || 
+        (HighLogic.LoadedSceneIsEditor && editorVesselData != null))
       {
         GUILayout.Space(3f);
         switch (modeFlag)
@@ -168,10 +188,12 @@ namespace DynamicBatteryStorage.UI
         switch (modeFlag)
         {
           case 0:
-            electricalView.Update();
+            if (electricalView != null)
+              electricalView.Update();
             break;
           case 1:
-            thermalView.Update();
+            if (thermalView != null)
+              thermalView.Update();
             break;
         }
       }
@@ -207,7 +229,7 @@ namespace DynamicBatteryStorage.UI
     void ResetAppLauncher()
     {
       if (Settings.DebugUIMode)
-        Debug.Log("[UI]: Reset App Launcher");
+        Utils.Log("[UI]: Reset App Launcher");
       FindData();
       if (stockToolbarButton == null)
       {
@@ -219,8 +241,9 @@ namespace DynamicBatteryStorage.UI
             DummyVoid,
             DummyVoid,
             ApplicationLauncher.AppScenes.VAB | ApplicationLauncher.AppScenes.SPH | ApplicationLauncher.AppScenes.FLIGHT,
-            (Texture)GameDatabase.Instance.GetTexture("NearFutureElectrical/UI/reactor_toolbar_off", false));
+            (Texture)GameDatabase.Instance.GetTexture(toolbarUIIconURLOff, false));
       }
+
     }
 
   }

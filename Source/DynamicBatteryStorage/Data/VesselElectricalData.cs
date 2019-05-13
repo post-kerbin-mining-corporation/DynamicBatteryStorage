@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using DynamicBatteryStorage.Power;
 
 namespace DynamicBatteryStorage
 {
@@ -25,7 +24,7 @@ namespace DynamicBatteryStorage
     protected override void SetupDataHandler(PartModule pm)
     {
       PowerHandlerType handlerType;
-      if (Enum.TryParse(pm.moduleName, out handlerType))
+      if (Utils.TryParseEnum<PowerHandlerType>(pm.moduleName, false, out handlerType))
       {
         string typeName =  "DynamicBatteryStorage."+ pm.moduleName + "PowerHandler";
         if (Settings.DebugMode)
@@ -41,20 +40,32 @@ namespace DynamicBatteryStorage
     /// <summary>
     /// Dumps the entire handler array as a set of single-line strings defining the handlers on the vessel
     /// </summary>
-    public override void ToString()
+    public override string ToString()
     {
       List<string> handlerStates = new List<string>();
-      if (handlers)
+      if (handlers != null)
       {
         for (int i=0; i < handlers.Count; i++)
         {
           handlerStates.Add(handlers[i].ToString());
         }
-        return string.Join("\n", handlerStates);
+        return string.Join("\n", handlerStates.ToArray());
       }
       return "No Power Handlers";
     }
 
+    public void GetElectricalChargeLevels(out double EC, out double maxEC)
+    {
+
+      if (HighLogic.LoadedSceneIsEditor)
+      {
+        EditorLogic.fetch.ship.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, true, out EC, out maxEC);
+      } else
+      {
+        FlightGlobals.ActiveVessel.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, out EC, out maxEC);
+      }
+    }
+    
 
   }
 }

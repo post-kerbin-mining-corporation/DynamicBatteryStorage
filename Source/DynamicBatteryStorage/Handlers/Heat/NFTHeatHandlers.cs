@@ -8,30 +8,50 @@ using UnityEngine;
 namespace DynamicBatteryStorage
 {
 
-    // Fission Reactor
-    public class FissionReactorHeatHandler: ModuleDataHandler
+  // Fission Reactor
+  public class FissionReactorHeatHandler: ModuleDataHandler
+  {
+    public override double GetValue()
     {
-      public override double GetValue()
+      double results = 0d;
+      if (HighLogic.LoadedSceneIsFlight)
       {
-        double results = 0d;
         double.TryParse(pm.Fields.GetValue("AvailablePower").ToString(), out results);
-        return results;
+        
       }
+      else
+      {
+        double.TryParse(pm.Fields.GetValue("HeatGeneration").ToString(), out results);
+        results /= 50.0d;
+      }
+      return results;
     }
+  }
 
-    // Flow radiator
-    public class FissionFlowRadiatorHeatHandler: ModuleDataHandler
+  // Flow radiator
+  public class FissionFlowRadiatorHeatHandler: ModuleDataHandler
+  {
+    public override double GetValue()
     {
-      public override double GetValue()
+      double results = 0d;
+      if (HighLogic.LoadedSceneIsFlight)
       {
-        double results = 0d;
         double.TryParse(pm.Fields.GetValue("currentCooling").ToString(), out results);
-        return results;
-      }
 
-      public override bool IsProducer()
-      {
-        return false;
       }
+      else
+      {
+        // This currently does not respect the thrust tweakable
+        // TODO: Make that happen
+        double.TryParse(pm.Fields.GetValue("exhaustCooling").ToString(), out results);
+        results /= 50.0d;
+      }
+      return results;
     }
+
+    public override bool IsProducer()
+    {
+      return false;
+    }
+  }
 }

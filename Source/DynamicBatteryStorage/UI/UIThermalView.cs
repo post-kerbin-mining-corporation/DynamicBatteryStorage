@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using System.Collections.Generic;
 using DynamicBatteryStorage;
 
@@ -14,11 +15,11 @@ namespace DynamicBatteryStorage.UI
 
 
 
-    public UIElectricalView(DynamicBatteryStorageUI uiHost)
+    public UIThermalView(DynamicBatteryStorageUI uiHost)
     {
       host = uiHost;
       if (Settings.DebugUIMode)
-        Debug.Log("[UI]: [ThermalView]: New instance created");
+        Utils.Log("[UI]: [ThermalView]: New instance created");
     }
 
     public void Draw()

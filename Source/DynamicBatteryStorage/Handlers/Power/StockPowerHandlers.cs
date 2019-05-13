@@ -15,15 +15,20 @@ namespace DynamicBatteryStorage
 
       public override void Initialize(PartModule pm)
       {
-          base.Initialize(pm);
+        base.Initialize(pm);
         panel = (ModuleDeployableSolarPanel)pm;
       }
 
       public override double GetValue()
       {
-        if (panel != null)
-          return (double)panel.flowRate;
-        return 0d;
+
+      if (panel != null)
+      {
+        if (HighLogic.LoadedSceneIsEditor)
+          return (double)panel.chargeRate;
+        return (double)panel.flowRate;
+      }
+          return 0d;
       }
     }
 
@@ -35,7 +40,7 @@ namespace DynamicBatteryStorage
       double savedRate = 0.0;
       public override void Initialize(PartModule pm)
       {
-          base.Initialize(pm);
+         base.Initialize(pm);
         gen = (ModuleGenerator)pm;
 
         for (int i = 0; i < gen.resHandler.inputResources.Count; i++)

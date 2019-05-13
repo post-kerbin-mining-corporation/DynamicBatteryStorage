@@ -7,7 +7,7 @@ using KSP.UI.Screens;
 using DynamicBatteryStorage;
 using KSP.Localization;
 
-namespace NearFutureElectrical.UI
+namespace DynamicBatteryStorage.UI
 {
 
     public class UIExpandableItem: UIWidget
@@ -30,7 +30,7 @@ namespace NearFutureElectrical.UI
       /// <param name="catHandlers">The list of handlers for the categorym</param>
       /// <param name="uiHost">The instance of the main UI class</param>
       /// <param name="expandedState">Whether the widget should start extended or not</param>
-      public UIExpandableItem(string catName, List<ModuleDataHandler> catHandlers, DynamicBatteryStorageUI uiHost, bool expandedState)
+      public UIExpandableItem(string catName, List<ModuleDataHandler> catHandlers, DynamicBatteryStorageUI uiHost, bool expandedState): base (uiHost)
       {
         host = uiHost;
         expanded = expandedState;
@@ -39,7 +39,7 @@ namespace NearFutureElectrical.UI
         RefreshHandlers(catHandlers);
 
         if (Settings.DebugUIMode)
-          Debug.Log("[UI]: [UIExpandableItem]: building new handler category UI element");
+          Utils.Log(String.Format("[UI]: [UIExpandableItem]: building UI element for category {0}", catName));
       }
 
 
@@ -89,11 +89,11 @@ namespace NearFutureElectrical.UI
       private void DrawCategoryHeader()
       {
 
-        if (GUILayout.Button("", UIHost.GUIResources.GetStyle("button")))
+        if (GUILayout.Button("", UIHost.GUIResources.GetStyle("category_header_button")))
           expanded = !expanded;
 
         GUI.Label( GUILayoutUtility.GetLastRect(), categoryName, UIHost.GUIResources.GetStyle("category_header"));
-        GUI.Label( GUILayoutUtility.GetLastRect(), categoryFlow, UIHost.GUIResources.GetStyle("category_header_field"));
+        GUI.Label( GUILayoutUtility.GetLastRect(), categoryTotal, UIHost.GUIResources.GetStyle("category_header_field"));
 
       }
 
@@ -112,7 +112,7 @@ namespace NearFutureElectrical.UI
         // Update each of the subcategories
         for (int i=0; i < uiItems.Count; i++)
         {
-          uiItems.Update();
+          uiItems[i].Update();
         }
       }
 
@@ -126,9 +126,9 @@ namespace NearFutureElectrical.UI
         uiItems = new List<UICategoryItem>();
         for (int i=0; i < cachedHandlers.Count; i++)
         {
-          uiItems.Add(new UICategoryItem(cachedHandlers, unit));
+          uiItems.Add(new UICategoryItem(catHandlers[i], unit));
         }
-        if (uiItems.Count <= 0);
+        if (uiItems.Count <= 0)
           visible = false;
         else
           visible = true;

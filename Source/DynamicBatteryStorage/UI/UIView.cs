@@ -14,6 +14,9 @@ namespace DynamicBatteryStorage.UI
         protected DynamicBatteryStorageUI host;
         protected bool drawn = false;
 
+
+        public UIBaseWindow UIHost { get { return host; } }
+
         public UIWindow(System.Random randomizer, DynamicBatteryStorageUI uiHost)
         {
             host = uiHost;
