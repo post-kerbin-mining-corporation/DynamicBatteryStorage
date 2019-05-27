@@ -8,32 +8,101 @@ using UnityEngine;
 namespace DynamicBatteryStorage
 {
 
-    // Deployable Solar Panel
-    public class ModuleDeployableSolarPanelPowerHandler: ModuleDataHandler
+  // Deployable Solar Panel
+  public class ModuleDeployableSolarPanelPowerHandler: ModuleDataHandler
+  {
+    ModuleDeployableSolarPanel panel;
+
+    public override void Initialize(PartModule pm)
     {
-      ModuleDeployableSolarPanel panel;
-
-      public override void Initialize(PartModule pm)
-      {
-        base.Initialize(pm);
-        panel = (ModuleDeployableSolarPanel)pm;
-      }
-
-      public override double GetValue()
-      {
-
-      if (panel != null)
-      {
-        if (HighLogic.LoadedSceneIsEditor)
-          return (double)panel.chargeRate;
-        return (double)panel.flowRate;
-      }
-          return 0d;
-      }
+      base.Initialize(pm);
+      panel = (ModuleDeployableSolarPanel)pm;
     }
 
-    // Basic Generator
-    public class ModuleGeneratorPowerHandler: ModuleDataHandler
+    public override double GetValue()
+    {
+
+    if (panel != null)
+    {
+      if (HighLogic.LoadedSceneIsEditor)
+        return (double)panel.chargeRate;
+      return (double)panel.flowRate;
+    }
+        return 0d;
+    }
+    public override double GetValue(float scalar)
+    {
+      return GetValue() * scalar;
+    }
+  }
+
+  // Module COmmand
+  public class ModuleCommandPowerHandler : ModuleDataHandler
+  {
+    ModuleCommand pod;
+
+    bool producer = false;
+    public override void Initialize(PartModule pm)
+    {
+      base.Initialize(pm);
+      pod = (ModuleCommand)pm;
+    }
+
+    public override double GetValue()
+    {
+
+      if (pod != null)
+      {
+        for (int i = 0; i < pod.resHandler.inputResources.Count; i++)
+        {
+          if (pod.resHandler.inputResources[i].name == "ElectricCharge")
+            if (pod.resHandler.inputResources[i].rate > 0.0d)
+            {
+              visible = true;
+            } else
+            {
+              visible = false;
+            }
+            
+            return pod.resHandler.inputResources[i].rate;
+        }
+
+      }
+      return 0d;
+    }
+    public override bool IsProducer()
+    {
+      return false;
+    }
+  }
+  public class ModuleLightPowerHandler : ModuleDataHandler
+  {
+    ModuleLight light;
+    bool producer = false;
+
+    public override void Initialize(PartModule pm)
+    {
+      base.Initialize(pm);
+      light = (ModuleLight)pm;
+    }
+    public override bool IsProducer()
+    {
+      return false;
+    }
+    public override double GetValue()
+    {
+
+      if (light != null)
+      {
+        return light.resourceAmount;
+
+      }
+      return 0d;
+    }
+  }
+
+  // Basic Generator
+  public class ModuleGeneratorPowerHandler: ModuleDataHandler
     {
       ModuleGenerator gen;
       bool producer = false;

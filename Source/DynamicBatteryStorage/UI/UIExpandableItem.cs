@@ -14,7 +14,7 @@ namespace DynamicBatteryStorage.UI
     {
       private bool visible = false;
       private bool expanded = false;
-
+    private float colWidth = 150f;
       private DynamicBatteryStorageUI host;
       private List<ModuleDataHandler> cachedHandlers;
       private List<UICategoryItem> uiItems;
@@ -30,12 +30,12 @@ namespace DynamicBatteryStorage.UI
       /// <param name="catHandlers">The list of handlers for the categorym</param>
       /// <param name="uiHost">The instance of the main UI class</param>
       /// <param name="expandedState">Whether the widget should start extended or not</param>
-      public UIExpandableItem(string catName, List<ModuleDataHandler> catHandlers, DynamicBatteryStorageUI uiHost, bool expandedState): base (uiHost)
+      public UIExpandableItem(string catName, List<ModuleDataHandler> catHandlers, DynamicBatteryStorageUI uiHost, bool expandedState, float width): base (uiHost)
       {
         host = uiHost;
         expanded = expandedState;
         categoryName = String.Format("{0}", HandlerCategories.HandlerLocalizedNames[catName]);
-
+      colWidth = width;
         RefreshHandlers(catHandlers);
 
         if (Settings.DebugUIMode)
@@ -51,7 +51,7 @@ namespace DynamicBatteryStorage.UI
       {
         if (visible)
         {
-          GUILayout.BeginVertical(host.GUIResources.GetStyle("block_background"), GUILayout.Width(300f));
+          GUILayout.BeginVertical(host.GUIResources.GetStyle("block_background"), GUILayout.Width(colWidth));
           DrawCategoryHeader();
           if (expanded)
             DrawExpanded();
@@ -66,7 +66,7 @@ namespace DynamicBatteryStorage.UI
       {
         for (int i=0; i < uiItems.Count; i++)
         {
-          DrawExpandedEntry(uiItems[0]);
+          DrawExpandedEntry(uiItems[i]);
         }
       }
 
@@ -100,19 +100,19 @@ namespace DynamicBatteryStorage.UI
       /// <summary>
       /// Update the UI string fields
       /// </summary>
-      public void Update()
+      public void Update(float scalar)
       {
         // Get the total flow for the category
         double categoryFlow = 0d;
         for (int i = 0; i < cachedHandlers.Count ; i++)
         {
-          categoryFlow += cachedHandlers[i].GetValue();
+          categoryFlow += cachedHandlers[i].GetValue(scalar);
         }
         categoryTotal = String.Format("{0:F2} {1}", categoryFlow, unit);
         // Update each of the subcategories
         for (int i=0; i < uiItems.Count; i++)
         {
-          uiItems[i].Update();
+          uiItems[i].Update(scalar);
         }
       }
 
@@ -124,14 +124,23 @@ namespace DynamicBatteryStorage.UI
       {
         cachedHandlers = catHandlers;
         uiItems = new List<UICategoryItem>();
+      int visItems = 0;
         for (int i=0; i < cachedHandlers.Count; i++)
         {
           uiItems.Add(new UICategoryItem(catHandlers[i], unit));
+          if (catHandlers[i].IsVisible())
+          {
+            visItems++;
+          }
         }
-        if (uiItems.Count <= 0)
-          visible = false;
-        else
-          visible = true;
+      if (cachedHandlers.Count > 0 && visItems > 0)
+      {
+        visible = true;
+      }
+      else
+      {
+        visible = false;
+      }
       }
     }
 
@@ -144,8 +153,8 @@ namespace DynamicBatteryStorage.UI
       ModuleDataHandler cachedHandler;
 
       string uiUnit = "EC/s";
-      string partName;
-      string partFlow;
+      string partName = "Part";
+      string partFlow = "0.0";
 
       public string PartName { get {return partName; }}
       public string PartFlow { get {return partFlow; }}
@@ -161,7 +170,7 @@ namespace DynamicBatteryStorage.UI
 
         unit = uiUnit;
         partName = cachedHandler.PartTitle();
-        partFlow = String.Format("{0:F2} {1}", cachedHandler.GetValue(), uiUnit);
+        partFlow = String.Format("{0:F2} {1}", cachedHandler.GetValue(1.0f), uiUnit);
       }
 
       /// <summary>
@@ -169,8 +178,15 @@ namespace DynamicBatteryStorage.UI
       /// </summary>
       public void Update()
       {
-        partFlow = String.Format("{0:F2} {1}", cachedHandler.GetValue(), uiUnit);
+        Update(1.0f);
       }
-    }
+      /// <summary>
+      /// Update the assoicated flow string
+      /// </summary>
+      public void Update(float scalar)
+      {
+        partFlow = String.Format("{0:F2} {1}", cachedHandler.GetValue(scalar), uiUnit);
+      }
+  }
 
 }

@@ -9,23 +9,36 @@ namespace DynamicBatteryStorage.UI
   public class UIElectricalView: UIWidget
   {
 
+
+    public float SolarSimulationScalar
+    {
+      get { return solarSimulationScalar; }
+      set { solarSimulationScalar = value; }
+    }
     DynamicBatteryStorageUI dataHost;
 
     List<ModuleDataHandler> cachedHandlers;
 
-    Dictionary<string, List<ModuleDataHandler>> producerCats;
-    Dictionary<string, List<ModuleDataHandler>> consumerCats ;
+    List<string> categoryNames;
 
+    Dictionary<string, List<ModuleDataHandler>> producerCats;
+    Dictionary<string, List<ModuleDataHandler>> consumerCats;
+    
     bool showDetails = false;
 
     // Positive power flow flag
     bool charging = false;
+    float solarSimulationScalar;
+    UISolarPanelManager solarManager;
 
-    List<UIExpandableItem> producerCategoryUIItems;
-    List<UIExpandableItem> consumerCategoryUIItems;
+
+    float col_width = 280f;
+    Dictionary<string, UIExpandableItem> producerCategoryUIItems;
+    Dictionary<string, UIExpandableItem> consumerCategoryUIItems;
 
     #region GUI Strings
 
+    string batteryStatusHeader = "";
     string totalPowerConsumptionHeader = "";
     string totalPowerProductionHeader = "";
     string totalPowerConsumption = "0 EC/s";
@@ -48,6 +61,34 @@ namespace DynamicBatteryStorage.UI
     public UIElectricalView(DynamicBatteryStorageUI uiHost):base(uiHost)
     {
       dataHost = uiHost;
+      col_width = (uiHost.WindowPosition.width -20f)/ 2f;
+      if (HighLogic.LoadedSceneIsEditor)
+        solarManager = new UISolarPanelManager(uiHost, this);
+
+      // Build all of the base data and UI components
+      producerCategoryUIItems = new Dictionary<string, UIExpandableItem>();
+      consumerCategoryUIItems = new Dictionary<string, UIExpandableItem>();
+
+      consumerCats = new Dictionary<string, List<ModuleDataHandler>>();
+      producerCats = new Dictionary<string, List<ModuleDataHandler>>();
+      categoryNames = HandlerCategories.HandlerCategoryMap.Keys.ToList();
+
+      foreach (KeyValuePair<string, List<string>> categoryEntry in HandlerCategories.HandlerCategoryMap)
+      {
+        consumerCats.Add(categoryEntry.Key, new List<ModuleDataHandler>());
+        producerCats.Add(categoryEntry.Key, new List<ModuleDataHandler>());
+      }
+      foreach (KeyValuePair<string, List<ModuleDataHandler>> entry in producerCats)
+      {
+        // Currently always generated with Show = false
+        producerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, col_width));
+      }
+      foreach (KeyValuePair<string, List<ModuleDataHandler>> entry in consumerCats)
+      {
+        // Currently always generated with Show = false
+        consumerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, col_width));
+      }
+
       if (Settings.DebugUIMode)
         Utils.Log("[UI]: [ElectricalView]: New instance created");
     }
@@ -60,6 +101,7 @@ namespace DynamicBatteryStorage.UI
       base.Localize();
       totalPowerConsumptionHeader = "Total Power Consumption";
       totalPowerProductionHeader = "Total Power Generation";
+      batteryStatusHeader = "Battery Status";
       powerFlowUnits = "EC/s";
       powerUnits = "EC";
       timeUnits = "s";
@@ -79,21 +121,30 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     void DrawUpperPanel()
     {
-      GUILayout.BeginHorizontal();
+      GUILayout.BeginHorizontal(GUILayout.Height(180f));
 
-      GUILayout.BeginVertical();
-      Rect flowRect = GUILayoutUtility.GetRect(60f, 32f);
-      UIUtils.IconDataField(flowRect, UIHost.GUIResources.GetIcon("lightning"), netPowerFlux, UIHost.GUIResources.GetStyle("data_field"));
+      GUILayout.BeginVertical(GUILayout.MaxWidth(150f));
+      GUILayout.FlexibleSpace();
+      Rect flowRect = GUILayoutUtility.GetRect(80f, 48f);
+      UIUtils.IconDataField(flowRect, UIHost.GUIResources.GetIcon("lightning"), netPowerFlux, UIHost.GUIResources.GetStyle("data_field_large"));
+      GUILayout.FlexibleSpace();
       GUILayout.EndVertical();
 
-      GUILayout.BeginVertical();
-
-      Rect batteryRect = GUILayoutUtility.GetRect(60, 32f);
+      GUILayout.BeginVertical(GUILayout.MaxWidth(200f));
+      GUILayout.FlexibleSpace();
+      GUILayout.BeginVertical(UIHost.GUIResources.GetStyle("block_background"));
+      GUILayout.Label(batteryStatusHeader, UIHost.GUIResources.GetStyle("panel_header_centered"));
+      Rect batteryRect = GUILayoutUtility.GetRect(80f, 32f);
       UIUtils.IconDataField(batteryRect, UIHost.GUIResources.GetIcon("battery"), availableBattery, UIHost.GUIResources.GetStyle("data_field"));
-      Rect chargeRect = GUILayoutUtility.GetRect(60, 32f);
+      Rect chargeRect = GUILayoutUtility.GetRect(80f, 32f);
       UIUtils.IconDataField(chargeRect, UIHost.GUIResources.GetIcon("timer"), chargeTime, UIHost.GUIResources.GetStyle("data_field"));
+      GUILayout.EndVertical();
+      GUILayout.FlexibleSpace();
 
       GUILayout.EndVertical();
+
+      if (HighLogic.LoadedSceneIsEditor)
+        solarManager.Draw();
 
       GUILayout.EndHorizontal();
     }
@@ -103,9 +154,13 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     void DrawDetailPanel()
     {
+      if (showDetails)
+        UIHost.windowPos.height = 500f;
+      else
+        UIHost.windowPos.height = 270f;
       GUILayout.BeginHorizontal();
 
-      if (GUILayout.Button(" ", UIHost.GUIResources.GetStyle("positive_button")))
+      if (GUILayout.Button(" ", UIHost.GUIResources.GetStyle("positive_button"), GUILayout.Width(col_width)))
         showDetails = !showDetails;
 
       Rect overlayRect = GUILayoutUtility.GetLastRect();
@@ -113,7 +168,7 @@ namespace DynamicBatteryStorage.UI
       GUI.Label(overlayRect, totalPowerProductionHeader, UIHost.GUIResources.GetStyle("positive_category_header"));
       GUI.Label(overlayRect, totalPowerProduction, UIHost.GUIResources.GetStyle("positive_category_header_field"));
 
-      if (GUILayout.Button(" ", UIHost.GUIResources.GetStyle("negative_button")))
+      if (GUILayout.Button(" ", UIHost.GUIResources.GetStyle("negative_button"), GUILayout.Width(col_width)))
         showDetails = !showDetails;
 
       overlayRect = GUILayoutUtility.GetLastRect();
@@ -128,16 +183,19 @@ namespace DynamicBatteryStorage.UI
       {
         GUILayout.BeginHorizontal();
 
-        GUILayout.BeginVertical();
-        for (int i = 0 ; i < producerCategoryUIItems.Count ; i++)
+        GUILayout.BeginVertical(GUILayout.Width(col_width));
+        GUILayout.Space(1f);
+        for (int i = 0 ; i < categoryNames.Count ; i++)
         {
-          producerCategoryUIItems[i].Draw();
+          producerCategoryUIItems[categoryNames[i]].Draw();
+         
         }
         GUILayout.EndVertical();
-        GUILayout.BeginVertical();
-        for (int i = 0 ; i < consumerCategoryUIItems.Count ; i++)
+        GUILayout.BeginVertical(GUILayout.Width(col_width));
+        GUILayout.Space(1f);
+        for (int i = 0 ; i < categoryNames.Count ; i++)
         {
-          consumerCategoryUIItems[i].Draw();
+          consumerCategoryUIItems[categoryNames[i]].Draw();
         }
         GUILayout.EndVertical();
         GUILayout.EndHorizontal();
@@ -152,6 +210,8 @@ namespace DynamicBatteryStorage.UI
     {
       if (dataHost.ElectricalData != null)
       {
+        if (HighLogic.LoadedSceneIsEditor)
+          solarManager.Update();
         UpdateHeaderPanelData();
         UpdateDetailPanelData();
       }
@@ -164,40 +224,46 @@ namespace DynamicBatteryStorage.UI
     {
       double EC = 0d;
       double maxEC = 0d;
-      double netPower = dataHost.ElectricalData.CurrentProduction + dataHost.ElectricalData.CurrentConsumption;
+      double netPower = dataHost.ElectricalData.CurrentConsumption + dataHost.ElectricalData.GetSimulatedElectricalProdution(solarSimulationScalar);
       dataHost.ElectricalData.GetElectricalChargeLevels(out EC, out maxEC);
 
       if (netPower == 0d)
       {
         charging = false;
         netPowerFlux = String.Format("{0:F1} {1}", netPower, powerFlowUnits);
-        chargeTime = String.Format("{0}", "Never");
+        chargeTime = String.Format("{0}", "Stable");
       }
       else if (netPower > 0d)
       {
+        
         charging = true;
         netPowerFlux = String.Format("▲ {0:F1} {1}", netPower, powerFlowUnits);
-
-        if (maxEC - EC < 0.01d)
-          chargeTime = "0 s";
-        else
-          chargeTime = String.Format("{0} s", FormatUtils.FormatTimeString((maxEC - EC) / netPower));
+        if (HighLogic.LoadedSceneIsFlight)
+        {
+          if (maxEC - EC < 0.01d)
+            chargeTime = "0 s";
+          else
+            chargeTime = String.Format("Charged in {0}", FormatUtils.FormatTimeString((maxEC - EC) / netPower));
+        } else
+        {
+          chargeTime = String.Format("Full recharge in {0}", FormatUtils.FormatTimeString(maxEC / netPower));
+        }
       }
       else
       {
         charging = false;
-        netPowerFlux = String.Format("▼ {0:F1} {1}", netPower, powerFlowUnits);
+        netPowerFlux = String.Format("<color=red> ▼ {0:F1} {1}</color>", netPower, powerFlowUnits);
         if (EC < 0.01d)
           chargeTime = "0 s";
         else
-          chargeTime = String.Format("{0} s", FormatUtils.FormatTimeString(EC / netPower));
+          chargeTime = String.Format("Depletion in {0}", FormatUtils.FormatTimeString(EC / netPower));
       }
 
       totalPowerConsumption = String.Format("▼ {0:F1} {1}", 
         dataHost.ElectricalData.CurrentConsumption,
         powerFlowUnits);
       totalPowerProduction = String.Format("▲ {0:F1} {1}", 
-        dataHost.ElectricalData.CurrentProduction,
+        dataHost.ElectricalData.GetSimulatedElectricalProdution(solarSimulationScalar),
         powerFlowUnits);
       availableBattery = String.Format("{0:F0} / {1:F0} ({2:F1}%)", EC, maxEC, EC/maxEC * 100d);
     }
@@ -226,13 +292,10 @@ namespace DynamicBatteryStorage.UI
       else
       {
         // Just update if no changes
-        for (int i = 0 ; i < producerCategoryUIItems.Count ; i++)
+        for (int i = 0 ; i < categoryNames.Count ; i++)
         {
-          producerCategoryUIItems[i].Update();
-        }
-        for (int i = 0 ; i < consumerCategoryUIItems.Count ; i++)
-        {
-          consumerCategoryUIItems[i].Update();
+          producerCategoryUIItems[categoryNames[i]].Update(solarSimulationScalar);
+          consumerCategoryUIItems[categoryNames[i]].Update(solarSimulationScalar);
         }
       }
     }
@@ -247,12 +310,11 @@ namespace DynamicBatteryStorage.UI
         Utils.Log("[UI]: [ElectricalView]: Rebuilding electrical handler category map");
 
       // Rebuild the blank dictionary
-      consumerCats = new Dictionary<string, List<ModuleDataHandler>>();
-      producerCats = new Dictionary<string, List<ModuleDataHandler>>();
-      foreach(KeyValuePair<string, List<string>> categoryEntry in HandlerCategories.HandlerCategoryMap)
+
+      foreach (KeyValuePair<string, List<string>> categoryEntry in HandlerCategories.HandlerCategoryMap)
       {
-        consumerCats.Add(categoryEntry.Key, new List<ModuleDataHandler>());
-        producerCats.Add(categoryEntry.Key, new List<ModuleDataHandler>());
+        consumerCats[categoryEntry.Key] = new List<ModuleDataHandler>();
+        producerCats[categoryEntry.Key] = new List<ModuleDataHandler>();
       }
 
       // Sort through all handlers found and add to the appropriate category
@@ -272,19 +334,14 @@ namespace DynamicBatteryStorage.UI
           }
         }
       }
-      // Build all the new UI elements
-      producerCategoryUIItems = new List<UIExpandableItem>();
-      consumerCategoryUIItems = new List<UIExpandableItem>();
-      foreach(KeyValuePair<string, List<ModuleDataHandler>> entry in producerCats)
+
+      for (int i = 0; i < categoryNames.Count; i++)
       {
-        // Currently always generated with Show = false
-        producerCategoryUIItems.Add(new UIExpandableItem(entry.Key, entry.Value, dataHost, false));
+        producerCategoryUIItems[categoryNames[i]].RefreshHandlers(producerCats[categoryNames[i]]);
+        consumerCategoryUIItems[categoryNames[i]].RefreshHandlers(consumerCats[categoryNames[i]]);
       }
-      foreach(KeyValuePair<string, List<ModuleDataHandler>> entry in consumerCats)
-      {
-        // Currently always generated with Show = false
-        consumerCategoryUIItems.Add(new UIExpandableItem(entry.Key, entry.Value, dataHost, false));
-      }
+
+
       // cache the list of handlers to detect changes
       cachedHandlers = new List<ModuleDataHandler>(handlers);
     }

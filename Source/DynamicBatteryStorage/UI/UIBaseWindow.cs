@@ -14,7 +14,7 @@ namespace DynamicBatteryStorage.UI
     // Control Vars
     protected static bool showWindow = false;
     protected int windowID = new System.Random(3256231).Next();
-    private Rect windowPos = new Rect(200f, 200f, 600f, 400f);
+    public Rect windowPos = new Rect(200f, 200f, 700f, 400f);
     private Vector2 scrollPosition = Vector2.zero;
     private float scrollHeight = 0f;
     protected bool initUI = false;
@@ -27,6 +27,7 @@ namespace DynamicBatteryStorage.UI
     // Stock toolbar button
     protected static ApplicationLauncherButton stockToolbarButton = null;
 
+    public Rect WindowPosition { get {return windowPos; } set { windowPos = value; } }
     public UIResources GUIResources { get { return resources; } }
 
     /// <summary>

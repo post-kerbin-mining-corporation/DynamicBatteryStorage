@@ -21,6 +21,8 @@ namespace DynamicBatteryStorage
       {"FusionReactors", new List<string>(new string[] {"ModuleFusionReactor"})},
       {"Batteries", new List<string>(new string[] {"RealBattery"})},
       {"FuelTanks", new List<string>(new string[] {"ModuleCryoTank", "ModuleAntimatterTank"})},
+      {"Lights", new List<string>(new string[] {"ModuleLight"})},
+      {"Command", new List<string>(new string[] {"ModuleCommand"}) }
     };
 
 
@@ -28,14 +30,16 @@ namespace DynamicBatteryStorage
     public static Dictionary<string, string> HandlerLocalizedNames = new Dictionary<string, string>()
     {
       {"SolarPanels", "Solar Panels"},
-      {"Radiators", "Converters"},
-      {"Converters", ""},
+      {"Radiators", "Radiators"},
+      {"Converters", "Converters"},
       {"Harvesters", "Harvesters"},
       {"Generators", "Generators"},
       {"FissionReactors", "Fission Reactors"},
       {"FusionReactors", "Fusion Reactors"},
       {"Batteries","Batteries" },
       {"FuelTanks", "Fuel Tanks"},
+      {"Lights", "Lights" },
+      {"Command", "Command Modules" }
     };
 
   }

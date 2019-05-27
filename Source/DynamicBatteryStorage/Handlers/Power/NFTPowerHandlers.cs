@@ -41,15 +41,38 @@ namespace DynamicBatteryStorage
       }
     }
 
-    // CryoTank
-    public class ModuleCryoTankPowerHandler: ModuleDataHandler
+  // CryoTank
+  public class ModuleCryoTankPowerHandler: ModuleDataHandler
+  {
+    public override double GetValue()
     {
-      public override double GetValue()
+      double resAmt = GetMaxFuelAmt();
+      double results = 0d;
+      if (resAmt > 0d)
       {
-        double results = 0d;
+        
+        if (HighLogic.LoadedSceneIsEditor)
+        {
+          double.TryParse(pm.Fields.GetValue("CoolingCost").ToString(), out results);
+
+          return results * (resAmt / 1000d) * -1d;
+        }
         double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
-        return results * -1.0d;
+      } else
+      {
+        visible = false;
       }
+      return results * -1.0d;
+    }
+    protected double GetMaxFuelAmt()
+    {
+      double max = 0d;
+      int id = PartResourceLibrary.Instance.GetDefinition("LqdHydrogen").id;
+      PartResource res = pm.part.Resources.Get(id);
+      if (res != null)
+        max += res.maxAmount;
+      return max;
+    }
       public override bool IsProducer()
       {
           return false;

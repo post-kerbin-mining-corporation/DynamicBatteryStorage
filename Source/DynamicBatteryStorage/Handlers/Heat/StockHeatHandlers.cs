@@ -9,7 +9,7 @@ namespace DynamicBatteryStorage
 {
 
   // Active Radiator
-  public class ModuleActiveRadiatorHeatHandler: ModuleDataHandler
+  public class ModuleActiveRadiatorHeatHandler : ModuleDataHandler
   {
     ModuleActiveRadiator radiator;
 
@@ -23,7 +23,7 @@ namespace DynamicBatteryStorage
     {
       if (radiator == null || !radiator.IsCooling)
         return 0d;
-      return radiator.maxEnergyTransfer/50d;
+      return radiator.maxEnergyTransfer / 50d;
     }
     public override bool IsProducer()
     {
@@ -32,7 +32,7 @@ namespace DynamicBatteryStorage
   }
 
   // Resource Harvester
-  public class ModuleResourceHarvesterHeatHandler: ModuleDataHandler
+  public class ModuleResourceHarvesterHeatHandler : ModuleDataHandler
   {
 
     ModuleResourceHarvester harvester;
@@ -50,7 +50,9 @@ namespace DynamicBatteryStorage
       if (harvester == null || !harvester.IsActivated)
         return 0d;
       if (HighLogic.LoadedSceneIsFlight)
+      {
         return harvester.lastHeatFlux;
+      }
       else
       {
         // In editor, calculate predicted thermal draw by using goal core temperature
@@ -59,10 +61,11 @@ namespace DynamicBatteryStorage
 
         return 0d;
       }
+    }
   }
 
   // Resource Converter
-  public class ModuleResourceConverterHeatHandler: ModuleDataHandler
+  public class ModuleResourceConverterHeatHandler : ModuleDataHandler
   {
     ModuleResourceConverter converter;
     ModuleCoreHeat core;
@@ -79,19 +82,21 @@ namespace DynamicBatteryStorage
         return 0d;
 
       if (HighLogic.LoadedSceneIsFlight)
+      {
         return converter.lastHeatFlux;
+      }
       else
       {
         // In editor, calculate predicted thermal draw by using goal core temperature
         if (core != null)
-          return (double)converter.TemperatureModifier.Evaluate((float)core.CoreTempGoal)/ 50f;
+          return (double)converter.TemperatureModifier.Evaluate((float)core.CoreTempGoal) / 50f;
 
         return 0d;
       }
     }
 
   }
-  public class ModuleCoreHeatHandler : ModuleDataHandler
+  public class ModuleCoreHeatHeatHandler : ModuleDataHandler
   {
     ModuleCoreHeat core;
 
@@ -106,11 +111,12 @@ namespace DynamicBatteryStorage
       if (core == null)
         return 0d;
       if (HighLogic.LoadedSceneIsEditor)
-        return (double)core.PassiveEnergy.Evaluate(300f)/50f;
+        return (double)core.PassiveEnergy.Evaluate(300f) / 50f;
       else
-        return (double)core.PassiveEnergy.Evaluate((float)core.CoreTemperature)/50f;
+        return (double)core.PassiveEnergy.Evaluate((float)core.CoreTemperature) / 50f;
     }
 
   }
 
+  
 }

@@ -59,13 +59,39 @@ namespace DynamicBatteryStorage
 
       if (HighLogic.LoadedSceneIsEditor)
       {
-        EditorLogic.fetch.ship.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, true, out EC, out maxEC);
+        EditorLogic.fetch.ship.UpdateResourceSets();
+       EditorLogic.fetch.ship.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, true, out EC, out maxEC, true);
       } else
       {
         FlightGlobals.ActiveVessel.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, out EC, out maxEC);
       }
     }
-    
+
+    public double GetSimulatedElectricalProdution(float solarScalar)
+    {
+
+      if (HighLogic.LoadedSceneIsEditor)
+      {
+
+        double production = 0d;
+        for (int i = 0; i < handlers.Count; i++)
+        {
+          
+          double pwr = handlers[i].GetValue();
+          if (handlers[i].ModuleName() == "ModuleDeployableSolarPanel" || handlers[i].ModuleName() == "KopernicusSolarPanel")
+          {
+            pwr *= solarScalar;
+          }
+          if (pwr > 0d)
+            production += pwr;
+        }
+        return production;
+      }
+      else
+      {
+        return CurrentProduction;
+      }
+    }
 
   }
 }

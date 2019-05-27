@@ -72,6 +72,7 @@
     <Compile Include="UI\UIElectricalView.cs" />
     <Compile Include="UI\UIExpandableItem.cs" />
     <Compile Include="UI\UIResources.cs" />
+    <Compile Include="UI\UISolarPanelManager.cs" />
     <Compile Include="UI\UIThermalView.cs" />
     <Compile Include="UI\UIUtils.cs" />
     <Compile Include="UI\UIView.cs" />
