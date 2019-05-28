@@ -77,7 +77,7 @@ namespace DynamicBatteryStorage.UI
       private void DrawExpandedEntry(UICategoryItem handler)
       {
         GUILayout.BeginHorizontal();
-        handler.PartHandler.Simulated = GUILayout.Toggle(handler.PartHandler, "", UIHost.GUIResources.GetStyle("button_toggle") );
+        handler.PartHandler.Simulated = GUILayout.Toggle(handler.PartHandler.Simulated, "", UIHost.GUIResources.GetStyle("button_toggle") );
         GUILayout.Label(handler.PartName, UIHost.GUIResources.GetStyle("data_header"));
         GUILayout.FlexibleSpace();
         GUILayout.Label(handler.PartFlow, UIHost.GUIResources.GetStyle("data_field"));
@@ -107,7 +107,8 @@ namespace DynamicBatteryStorage.UI
         double categoryFlow = 0d;
         for (int i = 0; i < cachedHandlers.Count ; i++)
         {
-          categoryFlow += cachedHandlers[i].GetValue(scalar);
+          if (cachedHandlers[i].Simulated)
+            categoryFlow += cachedHandlers[i].GetValue(scalar);
         }
         categoryTotal = String.Format("{0:F2} {1}", categoryFlow, unit);
         // Update each of the subcategories
@@ -159,7 +160,7 @@ namespace DynamicBatteryStorage.UI
       
       public string PartName { get {return partName; }}
       public string PartFlow { get {return partFlow; }}
-      public string PartHandler { get {return cachedHandler; }}
+      public ModuleDataHandler PartHandler { get {return cachedHandler; }}
 
       /// <summary>
       /// Constructor

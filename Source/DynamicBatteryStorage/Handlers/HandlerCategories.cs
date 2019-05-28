@@ -22,7 +22,8 @@ namespace DynamicBatteryStorage
       {"Batteries", new List<string>(new string[] {"RealBattery"})},
       {"FuelTanks", new List<string>(new string[] {"ModuleCryoTank", "ModuleAntimatterTank"})},
       {"Lights", new List<string>(new string[] {"ModuleLight"})},
-      {"Command", new List<string>(new string[] {"ModuleCommand"}) }
+      {"Command", new List<string>(new string[] {"ModuleCommand"}) },
+      {"Communication", new List<string>(new string[] {"ModuleDataTransmitter"}) }
     };
 
 
@@ -39,7 +40,9 @@ namespace DynamicBatteryStorage
       {"Batteries","Batteries" },
       {"FuelTanks", "Fuel Tanks"},
       {"Lights", "Lights" },
-      {"Command", "Command Modules" }
+      {"Command", "Command Modules" },
+      {"Communication", "Transmitters" }
+
     };
 
   }

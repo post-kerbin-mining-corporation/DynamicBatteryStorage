@@ -111,7 +111,7 @@ namespace DynamicBatteryStorage
             }
             else
             {
-                result = "None";
+                result = "< 1s";
             }
 
 

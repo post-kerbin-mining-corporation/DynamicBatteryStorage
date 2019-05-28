@@ -57,6 +57,7 @@ namespace DynamicBatteryStorage
 
       if (pod != null)
       {
+        visible = false;
         for (int i = 0; i < pod.resHandler.inputResources.Count; i++)
         {
           if (pod.resHandler.inputResources[i].name == "ElectricCharge")
@@ -66,7 +67,6 @@ namespace DynamicBatteryStorage
               visible = true;
             } else
             {
-              visible = false;
             }
             return pod.resHandler.inputResources[i].rate;
           }
@@ -132,7 +132,7 @@ namespace DynamicBatteryStorage
 
       if (antenna != null)
       {
-        return antenna.DataResourceCost * (1.0d / antenna.packetInterval);
+        return -antenna.DataResourceCost * (1.0d / antenna.packetInterval);
 
       }
       return 0d;
@@ -257,7 +257,7 @@ namespace DynamicBatteryStorage
       }
       public override string PartTitle()
       {
-          return String.Format("{0} ({1})", base.PartTitle + harvester.ConverterName);
+          return String.Format("{0} ({1})", base.PartTitle(), harvester.ConverterName);
       }
     }
 
@@ -320,7 +320,7 @@ namespace DynamicBatteryStorage
 
       public override string PartTitle()
       {
-          return String.Format("{0} ({1})", base.PartTitle + converter.ConverterName);
+          return String.Format("{0} ({1})", base.PartTitle(), converter.ConverterName);
       }
 
       public override bool IsProducer()

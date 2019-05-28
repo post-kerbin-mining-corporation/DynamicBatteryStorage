@@ -86,9 +86,11 @@ namespace DynamicBatteryStorage
         for (int i=0; i < handlers.Count; i++)
         {
           if (handlers[i].Simulated)
+          {
             double pwr = handlers[i].GetValue();
             if (pwr < 0d)
               consumption += pwr;
+          }
         }
         return consumption;
       }
@@ -103,9 +105,11 @@ namespace DynamicBatteryStorage
         for (int i=0; i < handlers.Count; i++)
         {
           if (handlers[i].Simulated)
+          {
             double pwr = handlers[i].GetValue();
             if (pwr > 0d)
               production += pwr;
+          }
         }
         return production;
       }

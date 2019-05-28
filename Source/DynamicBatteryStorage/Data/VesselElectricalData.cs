@@ -81,7 +81,7 @@ namespace DynamicBatteryStorage
             double pwr = handlers[i].GetValue();
             if (handlers[i].ModuleName() == "ModuleDeployableSolarPanel" || handlers[i].ModuleName() == "KopernicusSolarPanel")
             {
-              pwr *= solarScalar;
+              pwr = pwr * solarScalar;
             }
             if (pwr > 0d)
               production += pwr;

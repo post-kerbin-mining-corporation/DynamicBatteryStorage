@@ -181,7 +181,7 @@ namespace DynamicBatteryStorage.UI
 
       if (showDetails)
       {
-        GUILayout.BeginHorizontal();
+        GUILayout.BeginHorizontal(GUILayout.Width(col_width*2f));
 
         GUILayout.BeginVertical(GUILayout.Width(col_width));
         GUILayout.Space(1f);
@@ -225,19 +225,20 @@ namespace DynamicBatteryStorage.UI
       double EC = 0d;
       double maxEC = 0d;
       double netPower = dataHost.ElectricalData.CurrentConsumption + dataHost.ElectricalData.GetSimulatedElectricalProdution(solarSimulationScalar);
+
       dataHost.ElectricalData.GetElectricalChargeLevels(out EC, out maxEC);
 
       if (netPower == 0d)
       {
         charging = false;
-        netPowerFlux = String.Format("{0:F1} {1}", netPower, powerFlowUnits);
+        netPowerFlux = String.Format("{0:F2} {1}", netPower, powerFlowUnits);
         chargeTime = String.Format("{0}", "Stable");
       }
       else if (netPower > 0d)
       {
         
         charging = true;
-        netPowerFlux = String.Format("▲ {0:F1} {1}", netPower, powerFlowUnits);
+        netPowerFlux = String.Format("▲ {0:F2} {1}", netPower, powerFlowUnits);
         if (HighLogic.LoadedSceneIsFlight)
         {
           if (maxEC - EC < 0.01d)
@@ -252,17 +253,17 @@ namespace DynamicBatteryStorage.UI
       else
       {
         charging = false;
-        netPowerFlux = String.Format("<color=red> ▼ {0:F1} {1}</color>", netPower, powerFlowUnits);
+        netPowerFlux = String.Format("<color=red> ▼ {0:F2} {1}</color>", netPower, powerFlowUnits);
         if (EC < 0.01d)
           chargeTime = "0 s";
         else
           chargeTime = String.Format("Depletion in {0}", FormatUtils.FormatTimeString(EC / netPower));
       }
 
-      totalPowerConsumption = String.Format("▼ {0:F1} {1}", 
+      totalPowerConsumption = String.Format("▼ {0:F2} {1}", 
         dataHost.ElectricalData.CurrentConsumption,
         powerFlowUnits);
-      totalPowerProduction = String.Format("▲ {0:F1} {1}", 
+      totalPowerProduction = String.Format("▲ {0:F2} {1}", 
         dataHost.ElectricalData.GetSimulatedElectricalProdution(solarSimulationScalar),
         powerFlowUnits);
       availableBattery = String.Format("{0:F0} / {1:F0} ({2:F1}%)", EC, maxEC, EC/maxEC * 100d);
