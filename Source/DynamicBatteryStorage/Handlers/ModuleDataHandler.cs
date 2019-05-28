@@ -11,13 +11,18 @@ namespace DynamicBatteryStorage
   {
     protected PartModule pm;
     protected bool visible = true;
+    protected bool simulated = true;
 
     // Must initialize the handler, eg cache things for better speed
     public virtual void Initialize(PartModule module)
     {
       pm = module;
     }
-
+    public bool Simulated
+    {
+      get {return simulated;}
+      set {simulated = value;}
+    }
     // Must determine if the part is currently producing something or not
     public virtual bool IsProducer()
     {
@@ -39,7 +44,7 @@ namespace DynamicBatteryStorage
     {
       return pm.moduleName;
     }
-    public string PartTitle()
+    public virtual string PartTitle()
     {
       return pm.part.partInfo.title;
     }

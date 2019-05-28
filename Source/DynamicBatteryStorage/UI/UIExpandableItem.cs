@@ -77,6 +77,7 @@ namespace DynamicBatteryStorage.UI
       private void DrawExpandedEntry(UICategoryItem handler)
       {
         GUILayout.BeginHorizontal();
+        handler.PartHandler.Simulated = GUILayout.Toggle(handler.PartHandler, "", UIHost.GUIResources.GetStyle("button_toggle") );
         GUILayout.Label(handler.PartName, UIHost.GUIResources.GetStyle("data_header"));
         GUILayout.FlexibleSpace();
         GUILayout.Label(handler.PartFlow, UIHost.GUIResources.GetStyle("data_field"));
@@ -155,9 +156,10 @@ namespace DynamicBatteryStorage.UI
       string uiUnit = "EC/s";
       string partName = "Part";
       string partFlow = "0.0";
-
+      
       public string PartName { get {return partName; }}
       public string PartFlow { get {return partFlow; }}
+      public string PartHandler { get {return cachedHandler; }}
 
       /// <summary>
       /// Constructor

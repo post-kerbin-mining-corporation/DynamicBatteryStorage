@@ -8,7 +8,9 @@ using UnityEngine;
 namespace DynamicBatteryStorage
 {
 
-  // Deployable Solar Panel
+  /// <summary>
+  /// Deployable Solar Panel
+  /// </summary>
   public class ModuleDeployableSolarPanelPowerHandler: ModuleDataHandler
   {
     ModuleDeployableSolarPanel panel;
@@ -22,13 +24,13 @@ namespace DynamicBatteryStorage
     public override double GetValue()
     {
 
-    if (panel != null)
-    {
-      if (HighLogic.LoadedSceneIsEditor)
-        return (double)panel.chargeRate;
-      return (double)panel.flowRate;
-    }
-        return 0d;
+      if (panel != null)
+      {
+        if (HighLogic.LoadedSceneIsEditor)
+          return (double)panel.chargeRate;
+        return (double)panel.flowRate;
+      }
+      return 0d;
     }
     public override double GetValue(float scalar)
     {
@@ -36,7 +38,9 @@ namespace DynamicBatteryStorage
     }
   }
 
-  // Module COmmand
+  /// <summary>
+  /// ModuleCommand
+  /// </summary>
   public class ModuleCommandPowerHandler : ModuleDataHandler
   {
     ModuleCommand pod;
@@ -56,6 +60,7 @@ namespace DynamicBatteryStorage
         for (int i = 0; i < pod.resHandler.inputResources.Count; i++)
         {
           if (pod.resHandler.inputResources[i].name == "ElectricCharge")
+          {
             if (pod.resHandler.inputResources[i].rate > 0.0d)
             {
               visible = true;
@@ -63,8 +68,8 @@ namespace DynamicBatteryStorage
             {
               visible = false;
             }
-            
             return pod.resHandler.inputResources[i].rate;
+          }
         }
 
       }
@@ -75,6 +80,10 @@ namespace DynamicBatteryStorage
       return false;
     }
   }
+
+  /// <summary>
+  /// ModuleLight
+  /// </summary>
   public class ModuleLightPowerHandler : ModuleDataHandler
   {
     ModuleLight light;
@@ -101,7 +110,38 @@ namespace DynamicBatteryStorage
     }
   }
 
-  // Basic Generator
+  /// <summary>
+  /// ModuleDataTransmitter
+  /// </summary>
+  public class ModuleDataTransmitterPowerHandler : ModuleDataHandler
+  {
+    ModuleDataTransmitter antenna;
+    bool producer = false;
+
+    public override void Initialize(PartModule pm)
+    {
+      base.Initialize(pm);
+      antenna = (ModuleDataTransmitter)pm;
+    }
+    public override bool IsProducer()
+    {
+      return false;
+    }
+    public override double GetValue()
+    {
+
+      if (antenna != null)
+      {
+        return antenna.DataResourceCost * (1.0d / antenna.packetInterval);
+
+      }
+      return 0d;
+    }
+  }
+
+  /// <summary>
+  /// ModuleGenerator
+  /// </summary>
   public class ModuleGeneratorPowerHandler: ModuleDataHandler
     {
       ModuleGenerator gen;
@@ -144,7 +184,9 @@ namespace DynamicBatteryStorage
       }
     }
 
-    // Active Radiator
+    /// <summary>
+    /// ModuleActiveRadiator
+    /// </summary>
     public class ModuleActiveRadiatorPowerHandler: ModuleDataHandler
     {
       ModuleActiveRadiator radiator;
@@ -172,7 +214,9 @@ namespace DynamicBatteryStorage
       }
     }
 
-    // Resource Harvester
+    /// <summary>
+    /// ModuleResourceHarvester
+    /// </summary>
     public class ModuleResourceHarvesterPowerHandler: ModuleDataHandler
     {
 
@@ -181,7 +225,7 @@ namespace DynamicBatteryStorage
 
       public override void Initialize(PartModule pm)
       {
-          base.Initialize(pm);
+        base.Initialize(pm);
         harvester = (ModuleResourceHarvester)pm;
         for (int i = 0; i < harvester.inputList.Count; i++)
         {
@@ -194,18 +238,32 @@ namespace DynamicBatteryStorage
 
       public override double GetValue()
       {
-        if (harvester == null || !harvester.IsActivated)
+        if (harvester == null)
             return 0d;
-        //Debug.Log(harvester.lastTimeFactor);
-        return converterEcRate * harvester.lastTimeFactor * -1.0d;
+        if (HighLogic.LoadedSceneIsEditor)
+        {
+          return -converterEcRate;
+        } else
+        {
+          if (harvester.IsActivated)
+            return converterEcRate * harvester.lastTimeFactor * -1.0d;
+          else
+            return 0d;
+        }
       }
       public override bool IsProducer()
       {
           return false;
       }
+      public override string PartTitle()
+      {
+          return String.Format("{0} ({1})", base.PartTitle + harvester.ConverterName);
+      }
     }
 
-    // Resource Converter
+    /// <summary>
+    /// ModuleResourceConverter
+    /// </summary>
     public class ModuleResourceConverterPowerHandler: ModuleDataHandler
     {
       ModuleResourceConverter converter;
@@ -214,7 +272,7 @@ namespace DynamicBatteryStorage
 
       public override void Initialize(PartModule pm)
       {
-          base.Initialize(pm);
+        base.Initialize(pm);
         converter = (ModuleResourceConverter)pm;
 
         for (int i = 0; i < converter.inputList.Count; i++)
@@ -237,13 +295,32 @@ namespace DynamicBatteryStorage
 
       public override double GetValue()
       {
-        if (converter == null || !converter.IsActivated)
+        if (converter == null)
           return 0d;
 
-        if (producer)
-          return converterEcRate * converter.lastTimeFactor;
-        else
-          return converterEcRate * converter.lastTimeFactor * -1.0d;
+        if (HighLogic.LoadedSceneIsEditor)
+        {
+          if (producer)
+            return converterEcRate;
+          else
+            return -converterEcRate;
+        } else
+        {
+          if (converter.IsActivated)
+          {
+            if (producer)
+              return converterEcRate * converter.lastTimeFactor;
+            else
+              return converterEcRate * converter.lastTimeFactor * -1.0d;
+          }
+          return 0d;
+        }
+
+      }
+
+      public override string PartTitle()
+      {
+          return String.Format("{0} ({1})", base.PartTitle + converter.ConverterName);
       }
 
       public override bool IsProducer()

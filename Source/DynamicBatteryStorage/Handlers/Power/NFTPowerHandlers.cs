@@ -13,8 +13,17 @@ namespace DynamicBatteryStorage
     {
        public override double GetValue()
       {
+
         double results = 0d;
-        double.TryParse(pm.Fields.GetValue("energyFlow").ToString(), out results);
+
+        if (HighLogic.LoadedSceneIsEditor)
+        {
+          double.TryParse(pm.Fields.GetValue("TotalEnergyRate").ToString(), out results);
+        }
+        else
+        {
+          double.TryParse(pm.Fields.GetValue("energyFlow").ToString(), out results);
+        }
         return results;
       }
     }
@@ -50,7 +59,7 @@ namespace DynamicBatteryStorage
       double results = 0d;
       if (resAmt > 0d)
       {
-        
+
         if (HighLogic.LoadedSceneIsEditor)
         {
           double.TryParse(pm.Fields.GetValue("CoolingCost").ToString(), out results);

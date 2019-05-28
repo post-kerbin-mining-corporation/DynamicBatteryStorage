@@ -91,7 +91,7 @@ namespace DynamicBatteryStorage.UI
       // Toggle Buttonss
       draftStyle = new GUIStyle(HighLogic.Skin.button);
       styleList.Add("radio_text_button", new GUIStyle(draftStyle));
-        
+
       // Accept button
       draftStyle = new GUIStyle(HighLogic.Skin.button);
       draftStyle.normal.textColor = draftStyle.normal.textColor;
@@ -104,6 +104,11 @@ namespace DynamicBatteryStorage.UI
       draftStyle = new GUIStyle(HighLogic.Skin.button);
       draftStyle.normal.textColor = draftStyle.normal.textColor;
       styleList.Add("button_overlaid", new GUIStyle(draftStyle));
+      // Image overlaid button
+      draftStyle = new GUIStyle(HighLogic.Skin.toggle);
+      draftStyle.normal.textColor = draftStyle.normal.textColor;
+      styleList.Add("button_toggle", new GUIStyle(draftStyle));
+
 
       // Reddish header button type
       draftStyle = new GUIStyle(HighLogic.Skin.button);
@@ -180,7 +185,7 @@ namespace DynamicBatteryStorage.UI
       draftStyle.padding.right = 5;
       styleList.Add("negative_category_header_field", new GUIStyle(draftStyle));
 
-      
+
         // Category table left header
         draftStyle = new GUIStyle(HighLogic.Skin.label);
         draftStyle.fontSize = 14;

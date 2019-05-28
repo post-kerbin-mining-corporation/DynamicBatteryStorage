@@ -76,15 +76,18 @@ namespace DynamicBatteryStorage
         double production = 0d;
         for (int i = 0; i < handlers.Count; i++)
         {
-          
-          double pwr = handlers[i].GetValue();
-          if (handlers[i].ModuleName() == "ModuleDeployableSolarPanel" || handlers[i].ModuleName() == "KopernicusSolarPanel")
+          if (handlers[i].Simulated)
           {
-            pwr *= solarScalar;
+            double pwr = handlers[i].GetValue();
+            if (handlers[i].ModuleName() == "ModuleDeployableSolarPanel" || handlers[i].ModuleName() == "KopernicusSolarPanel")
+            {
+              pwr *= solarScalar;
+            }
+            if (pwr > 0d)
+              production += pwr;
           }
-          if (pwr > 0d)
-            production += pwr;
         }
+
         return production;
       }
       else

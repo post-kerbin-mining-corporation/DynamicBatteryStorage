@@ -22,8 +22,11 @@ namespace DynamicBatteryStorage
       public override double GetValue()
       {
         if (panel != null)
+        {
+          if (HighLogic.LoadedSceneIsEditor)
+            return (double)panel.chargeRate;
           return (double)panel.flowRate;
-        return 0d;
+        }
       }
     }
 

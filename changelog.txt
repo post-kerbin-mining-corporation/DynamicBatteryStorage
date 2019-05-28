@@ -9,13 +9,20 @@ v1.5.0
   - Shows whole-vessel power flows, separated into draw and generation
   - Can drill down to part categories (eg. Solar Panels, Harvesters, etc)
   - Can drill down to individual parts
-  - Handles previous set of DBS modules - everything stock and some mods (see readme)
+  - Handles several new module types
+   - Stock: ModuleDeployableSolarPanel, ModuleGenerator, ModuleResourceConverter, ModuleActiveRadiator, ModuleResourceHarvester, ModuleCommand, ModuleLight, ModuleDataTransmitter,
+   - NF Suite: ModuleCurvedSolarPanel,FissionGenerator, ModuleRadioisotopeGenerator, ModuleCryoTank, ModuleAntimatterTank,
+   - RealBattery: RealBattery
+   - Other: KopernicusSolarPanel
  - Thermal mode:
   - Shows whole-vessel core heat flows, separated into draw and generation
   - Can drill down to part categories (eg. Solar Panels, Harvesters, etc)
   - Can drill down to individual parts
   - NOTE: does not handle non-core heat
   - NOTE: does not make a distinction between adjacent radiators and full-vessel radiators
+  - Handles relevant module types
+   - Stock: ModuleCoreHeat (Passive heat only), ModuleResourceConverter, ModuleActiveRadiator, ModuleResourceHarvester
+   - NF Suite: FissionReactor, FusionReactor
 - Customize settings with DynamicBatteryStorageSettings.cfg
 
 v1.4.2

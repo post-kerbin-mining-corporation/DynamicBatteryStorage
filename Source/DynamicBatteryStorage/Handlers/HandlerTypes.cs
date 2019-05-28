@@ -17,6 +17,7 @@ namespace DynamicBatteryStorage
     ModuleResourceHarvester,
     ModuleCommand,
     ModuleLight,
+    ModuleDataTransmitter,
 
     // NFT
     ModuleCurvedSolarPanel,
