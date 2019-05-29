@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using KSP.Localization;
 
 namespace DynamicBatteryStorage.UI
 {
@@ -38,6 +39,7 @@ namespace DynamicBatteryStorage.UI
     string panelEfficiency = "";
     string darkTimeTitle = "";
     string darkTime = "";
+    string distanceUnits = "";
 
     /// <summary>
     /// Constructor
@@ -69,12 +71,13 @@ namespace DynamicBatteryStorage.UI
     protected override void Localize()
     {
       base.Localize();
-      panelName = "Solar Panel Simulator";
-      solarAltitudeTitle = "Mean Distance from Sun";
-      bodyAltitudeTitle = "Body Orbital Height";
-      panelEfficiencyTitle = "Estimated Panel Efficiency";
-      darkTimeTitle = "Time in Eclipse";
-      planetNameTitle = "Reference Body";
+      panelName = Localizer.Format("LOC_DynamicBatteryStorage_UI_SolarManagerTitle");
+      solarAltitudeTitle = Localizer.Format("LOC_DynamicBatteryStorage_UI_SolarAltitudeTitle");
+      bodyAltitudeTitle = Localizer.Format("LOC_DynamicBatteryStorage_UI_OrbitAltitudeTitle");
+      panelEfficiencyTitle = Localizer.Format("LOC_DynamicBatteryStorage_UI_SolarEfficiencyTitle");
+      darkTimeTitle = Localizer.Format("LOC_DynamicBatteryStorage_UI_EclipseTimeTitle");
+      planetNameTitle = Localizer.Format("LOC_DynamicBatteryStorage_UI_BodySelectionTitle");
+      distanceUnits = Localizer.Format("LOC_DynamicBatteryStorage_UI_DistanceUnits");
     }
 
     /// <summary>
@@ -140,8 +143,8 @@ namespace DynamicBatteryStorage.UI
     /// </summary>>
     public void Update()
     {
-      solarAltitude = String.Format("{0}m", FormatUtils.ToSI(sunRefOrbitHeight * 1000, "F0"));
-      bodyAltitude = String.Format("{0}m", FormatUtils.ToSI(bodyRefOrbitHeight * 1000, "F0"));
+      solarAltitude = String.Format("{0}{1}", FormatUtils.ToSI(sunRefOrbitHeight * 1000, "F0"), distanceUnits);
+      bodyAltitude = String.Format("{0}{1}", FormatUtils.ToSI(bodyRefOrbitHeight * 1000, "F0"), distanceUnits);
       panelEfficiency = String.Format("{0:F1}%", panelScalar*100f);
       darkTime = FormatUtils.FormatTimeString(occlusionTime);
       // Determine scaling constant

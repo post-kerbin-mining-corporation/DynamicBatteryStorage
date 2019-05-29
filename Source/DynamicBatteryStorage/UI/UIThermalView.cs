@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using DynamicBatteryStorage;
+using KSP.Localization;
 
 namespace DynamicBatteryStorage.UI
 {

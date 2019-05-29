@@ -9,7 +9,6 @@ namespace DynamicBatteryStorage.UI
 {
   public class UIResources
   {
-
     private Dictionary<string, AtlasIcon> iconList;
     private Dictionary<string, GUIStyle> styleList;
     private Dictionary<string, Color> colorList;
@@ -118,9 +117,9 @@ namespace DynamicBatteryStorage.UI
       draftStyle.stretchWidth = true;
       // Blueish head button type
       draftStyle = new GUIStyle(HighLogic.Skin.button);
-        draftStyle.fontSize = 12;
-        draftStyle.alignment = TextAnchor.MiddleLeft;
-        styleList.Add("negative_button", new GUIStyle(draftStyle));
+      draftStyle.fontSize = 12;
+      draftStyle.alignment = TextAnchor.MiddleLeft;
+      styleList.Add("negative_button", new GUIStyle(draftStyle));
       draftStyle.stretchWidth = true;
       // Blueish head button type
       draftStyle = new GUIStyle(HighLogic.Skin.button);
@@ -134,15 +133,15 @@ namespace DynamicBatteryStorage.UI
       // -- TEXT ---
       // Window Header
       draftStyle = new GUIStyle(HighLogic.Skin.label);
-        draftStyle.fontStyle = FontStyle.Bold;
-        draftStyle.alignment = TextAnchor.UpperRight;
-        draftStyle.fontSize = 12;
-        draftStyle.stretchWidth = true;
-        styleList.Add("window_header", new GUIStyle(draftStyle));
-        // Basic text
-        draftStyle = new GUIStyle(HighLogic.Skin.label);
-        draftStyle.fontSize = 12;
-        draftStyle.alignment = TextAnchor.MiddleLeft;
+      draftStyle.fontStyle = FontStyle.Bold;
+      draftStyle.alignment = TextAnchor.UpperRight;
+      draftStyle.fontSize = 12;
+      draftStyle.stretchWidth = true;
+      styleList.Add("window_header", new GUIStyle(draftStyle));
+      // Basic text
+      draftStyle = new GUIStyle(HighLogic.Skin.label);
+      draftStyle.fontSize = 12;
+      draftStyle.alignment = TextAnchor.MiddleLeft;
         styleList.Add("text_basic", new GUIStyle(draftStyle));
 
       // Category table left header
@@ -156,65 +155,65 @@ namespace DynamicBatteryStorage.UI
 
       // Category table left header
       draftStyle = new GUIStyle(HighLogic.Skin.label);
-        draftStyle.fontSize = 12;
+      draftStyle.fontSize = 12;
 
       draftStyle.fontStyle = FontStyle.Bold;
       draftStyle.alignment = TextAnchor.MiddleLeft;
       draftStyle.padding.left = 3;
       styleList.Add("positive_category_header", new GUIStyle(draftStyle));
 
-        // Category table field right
-        draftStyle = new GUIStyle(HighLogic.Skin.label);
-        draftStyle.fontSize = 14;
-        draftStyle.alignment = TextAnchor.MiddleRight;
+      // Category table field right
+      draftStyle = new GUIStyle(HighLogic.Skin.label);
+      draftStyle.fontSize = 14;
+      draftStyle.alignment = TextAnchor.MiddleRight;
       draftStyle.padding.right = 5;
       styleList.Add("positive_category_header_field", new GUIStyle(draftStyle));
 
-        // Category table left header
-        draftStyle = new GUIStyle(HighLogic.Skin.label);
-        draftStyle.fontSize = 14;
+      // Category table left header
+      draftStyle = new GUIStyle(HighLogic.Skin.label);
+      draftStyle.fontSize = 14;
       draftStyle.fontStyle = FontStyle.Bold;
       draftStyle.alignment = TextAnchor.MiddleLeft;
       draftStyle.padding.left = 3;
       styleList.Add("negative_category_header", new GUIStyle(draftStyle));
 
-        // Category table field right
-        draftStyle = new GUIStyle(HighLogic.Skin.label);
-        draftStyle.fontSize = 14;
-        draftStyle.alignment = TextAnchor.MiddleRight;
+      // Category table field right
+      draftStyle = new GUIStyle(HighLogic.Skin.label);
+      draftStyle.fontSize = 14;
+      draftStyle.alignment = TextAnchor.MiddleRight;
       draftStyle.padding.right = 5;
       styleList.Add("negative_category_header_field", new GUIStyle(draftStyle));
 
 
-        // Category table left header
-        draftStyle = new GUIStyle(HighLogic.Skin.label);
-        draftStyle.fontSize = 14;
+      // Category table left header
+      draftStyle = new GUIStyle(HighLogic.Skin.label);
+      draftStyle.fontSize = 14;
       draftStyle.fontStyle = FontStyle.Bold;
       draftStyle.alignment = TextAnchor.MiddleLeft;
       draftStyle.padding.left = 3;
       styleList.Add("category_header", new GUIStyle(draftStyle));
 
-        // Category table field right
-        draftStyle = new GUIStyle(HighLogic.Skin.label);
-        draftStyle.fontSize = 14;
-        draftStyle.alignment = TextAnchor.MiddleRight;
+      // Category table field right
+      draftStyle = new GUIStyle(HighLogic.Skin.label);
+      draftStyle.fontSize = 14;
+      draftStyle.alignment = TextAnchor.MiddleRight;
       draftStyle.padding.right = 5;
       styleList.Add("category_header_field", new GUIStyle(draftStyle));
 
-        // Data table left header
-        draftStyle = new GUIStyle(HighLogic.Skin.label);
-        draftStyle.fontSize = 14;
+      // Data table left header
+      draftStyle = new GUIStyle(HighLogic.Skin.label);
+      draftStyle.fontSize = 14;
       draftStyle.fontStyle = FontStyle.Bold;
-        draftStyle.alignment = TextAnchor.MiddleLeft;
+      draftStyle.alignment = TextAnchor.MiddleLeft;
       draftStyle.padding.left = 5;
       styleList.Add("data_header", new GUIStyle(draftStyle));
 
-        // Data table field right
-        draftStyle = new GUIStyle(HighLogic.Skin.label);
-        draftStyle.fontSize = 14;
+      // Data table field right
+      draftStyle = new GUIStyle(HighLogic.Skin.label);
+      draftStyle.fontSize = 14;
       draftStyle.padding.right = 3;
       draftStyle.alignment = TextAnchor.MiddleRight;
-        styleList.Add("data_field", new GUIStyle(draftStyle));
+      styleList.Add("data_field", new GUIStyle(draftStyle));
 
       // Data table field right
       draftStyle = new GUIStyle(HighLogic.Skin.label);

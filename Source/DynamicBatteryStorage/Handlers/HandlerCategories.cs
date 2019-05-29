@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-
+using KSP.Localization;
 
 namespace DynamicBatteryStorage
 {
@@ -30,7 +30,7 @@ namespace DynamicBatteryStorage
     // This enum maps code neames of all UI categories to localized version
     public static Dictionary<string, string> HandlerLocalizedNames = new Dictionary<string, string>()
     {
-      {"SolarPanels", "Solar Panels"},
+      {"SolarPanels", ""},
       {"Radiators", "Radiators"},
       {"Converters", "Converters"},
       {"Harvesters", "Harvesters"},
@@ -44,6 +44,23 @@ namespace DynamicBatteryStorage
       {"Communication", "Transmitters" }
 
     };
+    public static LocalizeStrings()
+    {
+      HandlerLocalizedNames = new Dictionary<string, string>()
+      {
+        {"SolarPanels", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_SolarPanels")},
+        {"Radiators", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Radiators")},
+        {"Converters", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Converters")},
+        {"Harvesters", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Harvesters")},
+        {"Generators", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Generators")},
+        {"FissionReactors", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_FissionReactors")},
+        {"FusionReactors", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_FusionReactors")},
+        {"Batteries", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Batteries") },
+        {"FuelTanks", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_FuelTanks")},
+        {"Lights", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Lights") },
+        {"Command", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Command") },
+        {"Communication", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Communication") }
 
+    }
   }
 }

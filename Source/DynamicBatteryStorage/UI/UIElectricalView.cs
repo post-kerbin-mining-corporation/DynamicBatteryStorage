@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using DynamicBatteryStorage;
+using KSP.Localization;
 
 namespace DynamicBatteryStorage.UI
 {
@@ -23,7 +24,7 @@ namespace DynamicBatteryStorage.UI
 
     Dictionary<string, List<ModuleDataHandler>> producerCats;
     Dictionary<string, List<ModuleDataHandler>> consumerCats;
-    
+
     bool showDetails = false;
 
     // Positive power flow flag
@@ -43,6 +44,11 @@ namespace DynamicBatteryStorage.UI
     string totalPowerProductionHeader = "";
     string totalPowerConsumption = "0 EC/s";
     string totalPowerProduction = "0 EC/s";
+
+    string batteryChargeDepleted = "";
+    string batteryChargeStable = "";
+    string batteryChargeFullCharge = "";
+    string batteryChargeCharging = "";
 
     string powerFlowUnits = "";
     string powerUnits = "";
@@ -99,12 +105,17 @@ namespace DynamicBatteryStorage.UI
     protected override void Localize()
     {
       base.Localize();
-      totalPowerConsumptionHeader = "Total Power Consumption";
-      totalPowerProductionHeader = "Total Power Generation";
-      batteryStatusHeader = "Battery Status";
-      powerFlowUnits = "EC/s";
-      powerUnits = "EC";
-      timeUnits = "s";
+      totalPowerConsumptionHeader = Localizer.Format("LOC_DynamicBatteryStorage_UI_TotalPowerConsumptionTitle");
+      totalPowerProductionHeader = Localizer.Format("LOC_DynamicBatteryStorage_UI_TotalPowerGenerationTitle");
+      batteryStatusHeader = Localizer.Format("LOC_DynamicBatteryStorage_UI_BatteryManagerTitle");
+      batteryChargeDepleted = Localizer.Format("#LOC_DynamicBatteryStorage_UI_BatteryTimeDepleted");
+      batteryChargeStable = Localizer.Format("#LOC_DynamicBatteryStorage_UI_BatteryTimeStable");
+      batteryChargeCharging = Localizer.Format("#LOC_DynamicBatteryStorage_UI_BatteryTimeCharging");
+      batteryChargeFullCharge = Localizer.Format("#LOC_DynamicBatteryStorage_UI_BatteryTimeFullCharge");
+
+      powerFlowUnits = Localizer.Format("LOC_DynamicBatteryStorage_UI_ElectricalFlowUnits");
+      powerUnits = Localizer.Format("LOC_DynamicBatteryStorage_UI_ElectricalUnits");
+      timeUnits = Localizer.Format("LOC_DynamicBatteryStorage_UI_TimeUnits");
     }
 
     /// <summary>
@@ -164,7 +175,7 @@ namespace DynamicBatteryStorage.UI
         showDetails = !showDetails;
 
       Rect overlayRect = GUILayoutUtility.GetLastRect();
-      
+
       GUI.Label(overlayRect, totalPowerProductionHeader, UIHost.GUIResources.GetStyle("positive_category_header"));
       GUI.Label(overlayRect, totalPowerProduction, UIHost.GUIResources.GetStyle("positive_category_header_field"));
 
@@ -173,7 +184,7 @@ namespace DynamicBatteryStorage.UI
 
       overlayRect = GUILayoutUtility.GetLastRect();
 
-      
+
       GUI.Label(overlayRect, totalPowerConsumptionHeader, UIHost.GUIResources.GetStyle("negative_category_header"));
       GUI.Label(overlayRect, totalPowerConsumption, UIHost.GUIResources.GetStyle("negative_category_header_field"));
 
@@ -188,7 +199,7 @@ namespace DynamicBatteryStorage.UI
         for (int i = 0 ; i < categoryNames.Count ; i++)
         {
           producerCategoryUIItems[categoryNames[i]].Draw();
-         
+
         }
         GUILayout.EndVertical();
         GUILayout.BeginVertical(GUILayout.Width(col_width));
@@ -232,11 +243,11 @@ namespace DynamicBatteryStorage.UI
       {
         charging = false;
         netPowerFlux = String.Format("{0:F2} {1}", netPower, powerFlowUnits);
-        chargeTime = String.Format("{0}", "Stable");
+        chargeTime = String.Format("{0}", batteryChargeStable);
       }
       else if (netPower > 0d)
       {
-        
+
         charging = true;
         netPowerFlux = String.Format("▲ {0:F2} {1}", netPower, powerFlowUnits);
         if (HighLogic.LoadedSceneIsFlight)
@@ -244,10 +255,10 @@ namespace DynamicBatteryStorage.UI
           if (maxEC - EC < 0.01d)
             chargeTime = "0 s";
           else
-            chargeTime = String.Format("Charged in {0}", FormatUtils.FormatTimeString((maxEC - EC) / netPower));
+            chargeTime = String.Format("{0} {1}", batteryChargeCharging, FormatUtils.FormatTimeString((maxEC - EC) / netPower));
         } else
         {
-          chargeTime = String.Format("Full recharge in {0}", FormatUtils.FormatTimeString(maxEC / netPower));
+          chargeTime = String.Format("{0} {1}", batteryChargeFullCharge, FormatUtils.FormatTimeString(maxEC / netPower));
         }
       }
       else
@@ -257,18 +268,18 @@ namespace DynamicBatteryStorage.UI
         if (EC < 0.01d)
           chargeTime = "0 s";
         else
-          chargeTime = String.Format("Depletion in {0}", FormatUtils.FormatTimeString(EC / netPower));
+          chargeTime = String.Format("{0} in {1}", batteryChargeDepleted, FormatUtils.FormatTimeString(EC / netPower));
       }
 
-      totalPowerConsumption = String.Format("▼ {0:F2} {1}", 
+      totalPowerConsumption = String.Format("▼ {0:F2} {1}",
         dataHost.ElectricalData.CurrentConsumption,
         powerFlowUnits);
-      totalPowerProduction = String.Format("▲ {0:F2} {1}", 
+      totalPowerProduction = String.Format("▲ {0:F2} {1}",
         dataHost.ElectricalData.GetSimulatedElectricalProdution(solarSimulationScalar),
         powerFlowUnits);
       availableBattery = String.Format("{0:F0} / {1:F0} ({2:F1}%)", EC, maxEC, EC/maxEC * 100d);
     }
-    
+
 
     /// <summary>
     /// Updates the detail panel data - this is mostly rebuilding the handler list
@@ -330,7 +341,7 @@ namespace DynamicBatteryStorage.UI
             else
               consumerCats[categoryEntry.Key].Add(handlers[i]);
             if (Settings.DebugUIMode)
-              Utils.Log(String.Format("[UI]: [ElectricalView]: Added {0} (Producer = {1}) to category {2}", 
+              Utils.Log(String.Format("[UI]: [ElectricalView]: Added {0} (Producer = {1}) to category {2}",
                 handlers[i].PartTitle(), handlers[i].IsProducer(), categoryEntry.Key));
           }
         }

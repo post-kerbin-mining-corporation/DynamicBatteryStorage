@@ -88,11 +88,12 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     protected override void InitUI()
     {
-      windowTitle = "Near Future Systems Manager"
-      modeStrings = new string[] { "ELECTRICAL", "THERMAL"};
+      windowTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_WindowName");
+      modeStrings = new string[] { "#LOC_DynamicBatteryStorage_UI_ElectricalModeName", "#LOC_DynamicBatteryStorage_UI_ThermalModeName"};
 
       thermalView = new UIThermalView(this);
       electricalView = new UIElectricalView(this);
+      HandlerCategories.LocalizeStrings();
       base.InitUI();
     }
 
