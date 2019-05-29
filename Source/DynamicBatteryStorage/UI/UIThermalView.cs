@@ -6,29 +6,138 @@ using KSP.Localization;
 
 namespace DynamicBatteryStorage.UI
 {
-  public class UIThermalView
+  public class UIThermalView: UIView
   {
 
-    protected DynamicBatteryStorageUI host;
-
+    bool overheating = false;
     #region GUI Strings
+
+    string netHeatFlux = "";
     #endregion
 
 
-
-    public UIThermalView(DynamicBatteryStorageUI uiHost)
+    public UIThermalView(DynamicBatteryStorageUI uiHost):base(uiHost)
     {
-      host = uiHost;
+      foreach (KeyValuePair<string, List<ModuleDataHandler>> entry in producerCats)
+      {
+        // Currently always generated with Show = false
+        producerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, col_width, heatFlowUnits));
+      }
+      foreach (KeyValuePair<string, List<ModuleDataHandler>> entry in consumerCats)
+      {
+        // Currently always generated with Show = false
+        consumerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, col_width, heatFlowUnits));
+      }
       if (Settings.DebugUIMode)
         Utils.Log("[UI]: [ThermalView]: New instance created");
     }
 
-    public void Draw()
+    /// <summary>
+    /// Triggers on creation, localizes relevant strings
+    /// </summary>
+    protected override void Localize()
     {
+      base.Localize();
+      totalConsumptionHeader = Localizer.Format("LOC_DynamicBatteryStorage_UI_TotalHeatConsumptionTitle");
+      totalProductionHeader = Localizer.Format("LOC_DynamicBatteryStorage_UI_TotalHeatGenerationTitle");
     }
 
-    public void Update()
+    /// <summary>
+    /// Draws the upper panel with flxues and battery states
+    /// </summary>
+    protected override void DrawUpperPanel()
     {
+      GUILayout.BeginHorizontal(GUILayout.Height(180f));
+
+      GUILayout.BeginVertical(GUILayout.MaxWidth(150f));
+      GUILayout.FlexibleSpace();
+      Rect flowRect = GUILayoutUtility.GetRect(80f, 48f);
+      UIUtils.IconDataField(flowRect, UIHost.GUIResources.GetIcon("fire"), netHeatFlux, UIHost.GUIResources.GetStyle("data_field_large"));
+      GUILayout.FlexibleSpace();
+      GUILayout.EndVertical();
+      GUILayout.EndHorizontal();
+    }
+
+    /// <summary>
+    /// Draws the Detail area with info about detailed production and consumption per module
+    /// </summary>
+    protected override void DrawDetailPanel()
+    {
+      base.DrawDetailPanel();
+    }
+
+    /// <summary>
+    /// Updates the data for drawing - strings and handler data caches
+    /// </summary>
+    protected override void Update()
+    {
+      base.Update();
+    }
+
+    /// <summary>
+    /// Updates the header string data
+    /// </summary>
+    protected override UpdateHeaderPanelData()
+    {
+
+      double netHeat = dataHost.ThermalData.CurrentConsumption + dataHost.ThermalData.CurrentProduction;
+
+      if (netHeat == 0d)
+      {
+        overheating = false;
+        netHeatFlux = String.Format("{0:F2} {1}", netHeat, heatFlowUnits);
+      }
+      else if (netHeat > 0d)
+      {
+
+        overheating = true;
+        netHeatFlux = String.Format("<color=red> ▲ {0:F2} {1}</color>", netHeat, heatFlowUnits);
+      }
+      else
+      {
+        overheating = false;
+        netHeatFlux = String.Format("▼ {0:F2} {1}", netHeat, heatFlowUnits);
+      }
+
+      totalConsumption = String.Format("▼ {0:F2} {1}",
+        dataHost.ThermalData.CurrentConsumption,
+        heatFlowUnits);
+      totalProduction = String.Format("▲ {0:F2} {1}",
+        dataHost.ThermalData.CurrentProduction,
+        heatFlowUnits);
+
+    }
+
+
+    /// <summary>
+    /// Updates the detail panel data - this is mostly rebuilding the handler list
+    /// </summary>
+    protected virtual void UpdateDetailPanelData()
+    {
+      // If no cached list, rebuild it from scratch
+      if (cachedHandlers == null)
+        RebuildCachedList(dataHost.ThermalData.AllHandlers);
+
+      // If the list changed, rebuild it from components
+      var firstNotSecond = dataHost.ThermalData.AllHandlers.Except(cachedHandlers).ToList();
+      var secondNotFirst = cachedHandlers.Except(dataHost.ThermalData.AllHandlers).ToList();
+      if ( firstNotSecond.Any() || secondNotFirst.Any())
+      {
+        if (Settings.DebugUIMode)
+        {
+          Utils.Log("[UI]: [ThermalView]: Cached handler list does not appear to match the current handler list");
+        }
+        RebuildCachedList(dataHost.ThermalData.AllHandlers);
+      }
+      else
+      {
+        // Just update if no changes
+        for (int i = 0 ; i < categoryNames.Count ; i++)
+        {
+          producerCategoryUIItems[categoryNames[i]].Update();
+          consumerCategoryUIItems[categoryNames[i]].Update();
+        }
+      }
     }
 
   }

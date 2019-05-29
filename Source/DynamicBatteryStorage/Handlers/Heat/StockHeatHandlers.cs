@@ -21,9 +21,13 @@ namespace DynamicBatteryStorage
 
     public override double GetValue()
     {
-      if (radiator == null || !radiator.IsCooling)
+      if (radiator == null)
         return 0d;
-      return radiator.maxEnergyTransfer / 50d;
+      if (HighLogic.LoadedSceneIsEditor)
+        return radiator.maxEnergyTransfer / 50d;
+      if (HighLogic.LoadedSceneIsFlight && radiator.IsCooling)
+        return radiator.maxEnergyTransfer / 50d;
+      return 0d;
     }
     public override bool IsProducer()
     {
@@ -47,20 +51,23 @@ namespace DynamicBatteryStorage
 
     public override double GetValue()
     {
-      if (harvester == null || !harvester.IsActivated)
+      if (harvester == null)
         return 0d;
+
+      visible = harvester.GeneratesHeat
+      
       if (HighLogic.LoadedSceneIsFlight)
       {
-        return harvester.lastHeatFlux;
+        if (harvester.IsActivated)
+          return harvester.lastHeatFlux;
       }
-      else
+      if (HighLogic.LoadedSceneIseditor)
       {
         // In editor, calculate predicted thermal draw by using goal core temperature
         if (core != null)
           return (double)harvester.TemperatureModifier.Evaluate((float)core.CoreTempGoal) / 50f;
-
-        return 0d;
       }
+      return 0d;
     }
   }
 
@@ -78,21 +85,23 @@ namespace DynamicBatteryStorage
 
     public override double GetValue()
     {
-      if (converter == null || !converter.IsActivated)
+      if (converter == null)
         return 0d;
+
+      visible = converter.GeneratesHeat
 
       if (HighLogic.LoadedSceneIsFlight)
       {
-        return converter.lastHeatFlux;
+        if (converter.IsActivated)
+          return converter.lastHeatFlux;
       }
-      else
+      if (HighLogic.LoadedSceneIseditor)
       {
         // In editor, calculate predicted thermal draw by using goal core temperature
         if (core != null)
           return (double)converter.TemperatureModifier.Evaluate((float)core.CoreTempGoal) / 50f;
-
-        return 0d;
       }
+      return 0d;
     }
 
   }
@@ -118,5 +127,5 @@ namespace DynamicBatteryStorage
 
   }
 
-  
+
 }
