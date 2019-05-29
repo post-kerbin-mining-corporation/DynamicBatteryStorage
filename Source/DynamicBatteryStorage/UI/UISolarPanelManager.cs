@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using UnityEngine; 
+using UnityEngine;
 
 namespace DynamicBatteryStorage.UI
 {
@@ -10,14 +10,12 @@ namespace DynamicBatteryStorage.UI
   {
     UIElectricalView electricalView;
 
+    // Variables for body simulation
     CelestialBody sunBody;
     CelestialBody homeBody;
-
     CelestialBody selectedBody;
     int selectedBodyIndex;
     string selectedBodyName;
-
-
     // height above sun in km
     double sunRefOrbitHeight = 0d;
     // height above selected body in km
@@ -28,9 +26,9 @@ namespace DynamicBatteryStorage.UI
     // Home body orbit altitude
     double refSunOrbitAlt = 0d;
 
+    // UI strings
     string panelName = "";
     string planetName = "";
-
     string planetNameTitle = "";
     string solarAltitudeTitle = "";
     string solarAltitude = "";
@@ -41,10 +39,15 @@ namespace DynamicBatteryStorage.UI
     string darkTimeTitle = "";
     string darkTime = "";
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="uiHost">The parent UI</param>
+    /// <param name="view">The parent ElectricalView panel</param>
     public UISolarPanelManager(DynamicBatteryStorageUI uiHost, UIElectricalView view): base (uiHost)
     {
       electricalView = view;
-      
+
       sunBody = FlightGlobals.Bodies[0];
       homeBody = FlightGlobals.GetHomeBody();
 
@@ -60,6 +63,9 @@ namespace DynamicBatteryStorage.UI
         Utils.Log(String.Format("[UI Solar Manager] Created"));
     }
 
+    /// <summary>
+    /// Do localization of UI strings
+    /// </summary>
     protected override void Localize()
     {
       base.Localize();
@@ -67,10 +73,13 @@ namespace DynamicBatteryStorage.UI
       solarAltitudeTitle = "Mean Distance from Sun";
       bodyAltitudeTitle = "Body Orbital Height";
       panelEfficiencyTitle = "Estimated Panel Efficiency";
-      darkTimeTitle = "Time in Darkness";
+      darkTimeTitle = "Time in Eclipse";
       planetNameTitle = "Reference Body";
     }
 
+    /// <summary>
+    /// Draw method
+    /// </summary>
     public void Draw()
     {
       GUILayout.BeginVertical(UIHost.GUIResources.GetStyle("block_background"));
@@ -108,12 +117,11 @@ namespace DynamicBatteryStorage.UI
       GUILayout.EndHorizontal();
 
       GUILayout.EndVertical();
-
-      // Select orbit height
-
     }
 
-
+    /// <summary>
+    /// Increment the selected CelestialBody
+    /// </summary>
     private void IncrementBody()
     {
       double prevOrbitalHeight = sunRefOrbitHeight;
@@ -127,10 +135,11 @@ namespace DynamicBatteryStorage.UI
 
     }
 
-
+    /// <summary>
+    /// Update UI fields and recalculate quantities
+    /// </summary>>
     public void Update()
     {
-
       solarAltitude = String.Format("{0}m", FormatUtils.ToSI(sunRefOrbitHeight * 1000, "F0"));
       bodyAltitude = String.Format("{0}m", FormatUtils.ToSI(bodyRefOrbitHeight * 1000, "F0"));
       panelEfficiency = String.Format("{0:F1}%", panelScalar*100f);
@@ -140,6 +149,11 @@ namespace DynamicBatteryStorage.UI
       occlusionTime = CalculateOcclusionTime();
       electricalView.SolarSimulationScalar = panelScalar;
     }
+
+    /// <summary>
+    /// Select a specific CelestialBody
+    /// </summary>
+    /// <param name="body">The CelestialBody to select</param>
     protected void SelectBody(CelestialBody body)
     {
       selectedBody = body;
@@ -156,20 +170,27 @@ namespace DynamicBatteryStorage.UI
       if (Settings.DebugUIMode)
         Utils.Log(String.Format("[UI Solar Manager] Selected {0}", selectedBody.name));
     }
+
+    /// <summary>
+    /// Calculates a simulated eclipse time for orbit around a specific body
+    /// </summary>
     protected double CalculateOcclusionTime()
     {
       if (selectedBodyIndex == 0)
         return 0d;
 
+        // This is a gemetric approximation assuming a circular equatorial orbit and a cylindrical solar occlusion
       // Note the scaling factors for KM here
-      double rad = selectedBody.Radius / 1000.0;
-      double xyrA = (rad + bodyRefOrbitHeight);
-      double xyH = Math.Sqrt(xyrA * selectedBody.gravParameter / 1000000000.0);
-      double occlusion_time_s = 2 * xyrA * xyrA / xyH * (Math.Asin(rad / xyrA));
-
-      return occlusion_time_s;
+      double scaling = 1000.0d;
+      double r = selectedBody.Radius / scaling;
+      double h = (r + bodyRefOrbitHeight);
+      double orb_vel = Math.Sqrt(selectedBody.gravParameter/Math.Pow(scaling, 3)/h);
+      return Math.Asin(r / h)* h ) / orb_vel;
     }
 
+    /// <summary>
+    /// Calculates the scaling factor for solar panel power at this solar altitude
+    /// </summary>
     protected float CalculatePanelScalar()
     {
       return (float)((1d / sunRefOrbitHeight) *(refSunOrbitAlt) ) ;

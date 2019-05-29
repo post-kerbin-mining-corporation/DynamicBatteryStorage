@@ -22,7 +22,7 @@ namespace DynamicBatteryStorage.UI
   {
 
     #region GUI Variables
-    private string windowTitle = "DynamicBatteryStorage";
+    private string windowTitle = "";
 
     int modeFlag = 0;
     string[] modeStrings = new string[] { "ELECTRICAL", "THERMAL"};
@@ -88,6 +88,9 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     protected override void InitUI()
     {
+      windowTitle = "Near Future Systems Manager"
+      modeStrings = new string[] { "ELECTRICAL", "THERMAL"};
+
       thermalView = new UIThermalView(this);
       electricalView = new UIElectricalView(this);
       base.InitUI();
@@ -134,7 +137,7 @@ namespace DynamicBatteryStorage.UI
       // Draw the header/tab controls
       DrawHeaderArea();
 
-      if ((HighLogic.LoadedSceneIsFlight && vesselData != null) || 
+      if ((HighLogic.LoadedSceneIsFlight && vesselData != null) ||
         (HighLogic.LoadedSceneIsEditor && editorVesselData != null))
       {
         GUILayout.Space(3f);
