@@ -8,27 +8,30 @@ using UnityEngine;
 namespace DynamicBatteryStorage
 {
 
-  // Special power handler for Kopernicus's replaced panels
-  public class KopernicusSolarPanelPowerHandler: ModuleDataHandler
-  {
-    ModuleDeployableSolarPanel panel;
-
-    public override void Initialize(PartModule pm)
+    // Special power handler for Kopernicus's replaced panels
+    public class KopernicusSolarPanelPowerHandler: ModuleDataHandler
     {
-        base.Initialize(pm);
-      panel = (ModuleDeployableSolarPanel)pm;
-    }
+      ModuleDeployableSolarPanel panel;
 
-    public override double GetValue()
-    {
-      if (panel != null)
+      public override void Initialize(PartModule pm)
       {
-        if (HighLogic.LoadedSceneIsEditor)
-          return (double)panel.chargeRate;
-        return (double)panel.flowRate;
+          base.Initialize(pm);
+        panel = (ModuleDeployableSolarPanel)pm;
       }
-    return 0d;
+
+      public override double GetValue()
+      {
+        if (panel != null)
+        {
+          if (HighLogic.LoadedSceneIsEditor)
+            return (double)panel.chargeRate;
+          return (double)panel.flowRate;
+        }
+      }
+      public override bool AffectedBySunDistance()
+      {
+        return true;
+      }
     }
-  }
 
 }

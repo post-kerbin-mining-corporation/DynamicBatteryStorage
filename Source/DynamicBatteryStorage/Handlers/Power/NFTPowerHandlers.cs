@@ -11,7 +11,7 @@ namespace DynamicBatteryStorage
     // Curved Solar Panel
     public class ModuleCurvedSolarPanelPowerHandler: ModuleDataHandler
     {
-       public override double GetValue()
+      public override double GetValue()
       {
 
         double results = 0d;
@@ -26,6 +26,15 @@ namespace DynamicBatteryStorage
         }
         return results;
       }
+      public override double GetValue(float scalar)
+      {
+        return GetValue() * scalar;
+      }
+      public override bool AffectedBySunDistance()
+      {
+        return true;
+      }
+
     }
 
     // Fission Reactor

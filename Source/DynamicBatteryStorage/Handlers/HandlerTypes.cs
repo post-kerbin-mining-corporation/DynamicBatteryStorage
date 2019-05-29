@@ -30,7 +30,13 @@ namespace DynamicBatteryStorage
     RealBattery,
 
     // Kopernicus
-    KopernicusSolarPanel
+    KopernicusSolarPanel,
+
+    // SSTU
+    SSTUResourceBoiloff,
+    SSTUSolarPanelStatic,
+    SSTUSolarPanelDeployable
+
   }
 
   // This enum consists of all handled types. They MUST match the module name

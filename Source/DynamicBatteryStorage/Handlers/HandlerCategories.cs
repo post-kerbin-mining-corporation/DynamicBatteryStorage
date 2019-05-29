@@ -12,7 +12,7 @@ namespace DynamicBatteryStorage
     // This dictionary maps code names of UI categories to module names
     public static Dictionary<string, List<string>> HandlerCategoryMap = new Dictionary<string, List<string>>()
     {
-      {"SolarPanels", new List<string>(new string[] {"ModuleDeployableSolarPanel", "ModuleCurvedSolarPanel", "KopernicusSolarPanel"})},
+      {"SolarPanels", new List<string>(new string[] {"ModuleDeployableSolarPanel", "ModuleCurvedSolarPanel", "KopernicusSolarPanel", "SSTUSolarPanelStatic", "SSTUSolarPanelDeployable"})},
       {"Radiators", new List<string>(new string[] {"ModuleActiveRadiator"})},
       {"Converters", new List<string>(new string[] {"ModuleResourceConverter"})},
       {"Harvesters", new List<string>(new string[] {"ModuleResourceHarvester"})},
@@ -20,7 +20,7 @@ namespace DynamicBatteryStorage
       {"FissionReactors", new List<string>(new string[] {"FissionGenerator"})},
       {"FusionReactors", new List<string>(new string[] {"ModuleFusionReactor"})},
       {"Batteries", new List<string>(new string[] {"RealBattery"})},
-      {"FuelTanks", new List<string>(new string[] {"ModuleCryoTank", "ModuleAntimatterTank"})},
+      {"FuelTanks", new List<string>(new string[] {"ModuleCryoTank", "ModuleAntimatterTank", "SSTUResourceBoiloff"})},
       {"Lights", new List<string>(new string[] {"ModuleLight"})},
       {"Command", new List<string>(new string[] {"ModuleCommand"}) },
       {"Communication", new List<string>(new string[] {"ModuleDataTransmitter"}) }

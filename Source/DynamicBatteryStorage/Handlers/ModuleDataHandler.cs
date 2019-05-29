@@ -32,6 +32,10 @@ namespace DynamicBatteryStorage
     {
       return visible;
     }
+    public virtual bool AffectedBySunDistance()
+    {
+      return false;
+    }
     public virtual double GetValue()
     {
       return 0d;
