@@ -19,6 +19,9 @@ namespace DynamicBatteryStorage.UI
       protected Dictionary<string, List<ModuleDataHandler>> consumerCats;
 
       protected bool showDetails = false;
+      protected Vector2 scrollPosition = Vector2.zero;
+      protected float scrollHeight = 0f;
+      protected float maxScrollHeight = 400f;
 
       protected float col_width = 280f;
       protected Dictionary<string, UIExpandableItem> producerCategoryUIItems;
@@ -108,7 +111,7 @@ namespace DynamicBatteryStorage.UI
 
       protected virtual void DrawFooterPanel()
       {
-        GUILayout.BeginHorizontal();
+        GUILayout.BeginHorizontal(GUILayout.MaxHeight(80f));
         GUILayout.BeginVertical();
         GUILayout.FlexibleSpace();
         GUILayout.Label(simulationHeader, UIHost.GUIResources.GetStyle("panel_header_centered"));
@@ -172,14 +175,19 @@ namespace DynamicBatteryStorage.UI
 
         if (showDetails)
         {
-          GUILayout.BeginHorizontal(GUILayout.Width(col_width*2f));
+          scrollPosition = GUILayout.BeginScrollView(scrollPosition, GUILayout.MinWidth(col_width), GUILayout.MinHeight(Mathf.Min(scrollHeight, maxScrollHeight)));
 
+          float producerScrollHeight = 0f;
+          float consumerScrollHeight = 0f;
+
+          GUILayout.BeginHorizontal(GUILayout.Width(col_width*2f));
           GUILayout.BeginVertical(GUILayout.Width(col_width));
           GUILayout.Space(1f);
+
           for (int i = 0 ; i < categoryNames.Count ; i++)
           {
             producerCategoryUIItems[categoryNames[i]].Draw();
-
+            producerScrollHeight += producerCategoryUIItems[categoryNames[i]].GetHeight();
           }
           GUILayout.EndVertical();
           GUILayout.BeginVertical(GUILayout.Width(col_width));
@@ -187,9 +195,12 @@ namespace DynamicBatteryStorage.UI
           for (int i = 0 ; i < categoryNames.Count ; i++)
           {
             consumerCategoryUIItems[categoryNames[i]].Draw();
+            consumerScrollHeight += consumerCategoryUIItems[categoryNames[i]].GetHeight();
           }
+          scrollHeight = Mathf.Max(consumerScrollHeight, producerScrollHeight);
           GUILayout.EndVertical();
           GUILayout.EndHorizontal();
+          GUILayout.EndScrollView();
         }
 
       }

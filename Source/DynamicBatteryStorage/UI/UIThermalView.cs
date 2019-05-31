@@ -13,11 +13,12 @@ namespace DynamicBatteryStorage.UI
     bool overheating = false;
     #region GUI Strings
 
+    string heatFlowHeader = "";
     string netHeatFlux = "";
     string vesselHeatStatus = "";
 
     string vesselHeatOk = "Vessel heat dissipation is sufficient";
-    string vesselHeatNotOK = "<color=#fd6868> Vessel heat dissipation is insufficient, cores may overheat</color>";
+    string vesselHeatNotOK = "";
     #endregion
 
 
@@ -45,6 +46,9 @@ namespace DynamicBatteryStorage.UI
       base.Localize();
       totalConsumptionHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_TotalHeatConsumptionTitle");
       totalProductionHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_TotalHeatGenerationTitle");
+      heatFlowHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_HeatFlowPanelTitle");
+      vesselHeatOk = Localizer.Format("#LOC_DynamicBatteryStorage_UI_HeatFlowPanelOk");
+      vesselHeatNotOK = Localizer.Format("#LOC_DynamicBatteryStorage_UI_HeatFlowPanelNotOk");
     }
 
     /// <summary>
@@ -52,19 +56,22 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     protected override void DrawUpperPanel()
     {
-      GUILayout.BeginHorizontal(GUILayout.Height(80f));
+      GUILayout.BeginHorizontal(UIHost.GUIResources.GetStyle("block_background"), GUILayout.Height(80f));
 
       GUILayout.BeginVertical(GUILayout.MaxWidth(150f));
+      GUILayout.Label(heatFlowHeader, UIHost.GUIResources.GetStyle("panel_header_centered"));
       GUILayout.FlexibleSpace();
       Rect flowRect = GUILayoutUtility.GetRect(80f, 48f);
       UIUtils.IconDataField(flowRect, UIHost.GUIResources.GetIcon("fire"), netHeatFlux, UIHost.GUIResources.GetStyle("data_field_large"));
       GUILayout.FlexibleSpace();
       GUILayout.EndVertical();
+
       GUILayout.BeginVertical();
       GUILayout.FlexibleSpace();
       GUILayout.Label(vesselHeatStatus, UIHost.GUIResources.GetStyle("data_field_large"));
       GUILayout.FlexibleSpace();
       GUILayout.EndVertical();
+
       GUILayout.EndHorizontal();
     }
 

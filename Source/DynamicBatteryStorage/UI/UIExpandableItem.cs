@@ -23,6 +23,8 @@ namespace DynamicBatteryStorage.UI
     private string categoryTotal = "0";
     private string uiUnits = "EC/s";
 
+    private Rect controlSize;
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -56,6 +58,7 @@ namespace DynamicBatteryStorage.UI
         if (expanded)
           DrawExpanded();
         GUILayout.EndVertical();
+        controlSize = GUILayoutUtility.GetLastRect();
       }
     }
 
@@ -149,6 +152,11 @@ namespace DynamicBatteryStorage.UI
       {
         visible = false;
       }
+    }
+
+    public float GetHeight()
+    {
+      return controlSize.height;
     }
   }
 
