@@ -14,9 +14,10 @@ namespace DynamicBatteryStorage
     protected bool simulated = true;
 
     // Must initialize the handler, eg cache things for better speed
-    public virtual void Initialize(PartModule module)
+    public virtual bool Initialize(PartModule module)
     {
       pm = module;
+      return true;
     }
     public bool Simulated
     {

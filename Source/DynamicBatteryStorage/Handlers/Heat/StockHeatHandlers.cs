@@ -13,10 +13,10 @@ namespace DynamicBatteryStorage
   {
     ModuleActiveRadiator radiator;
 
-    public override void Initialize(PartModule pm)
+    public override bool Initialize(PartModule pm)
     {
-      base.Initialize(pm);
       radiator = (ModuleActiveRadiator)pm;
+      return base.Initialize(pm);
     }
 
     public override double GetValue()
@@ -43,11 +43,12 @@ namespace DynamicBatteryStorage
     ModuleResourceHarvester harvester;
     ModuleCoreHeat core;
 
-    public override void Initialize(PartModule pm)
+    public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
       harvester = (ModuleResourceHarvester)pm;
       core = pm.GetComponent<ModuleCoreHeat>();
+      return harvester.GeneratesHeat;
     }
 
     public override double GetValue()
@@ -81,11 +82,12 @@ namespace DynamicBatteryStorage
   {
     ModuleResourceConverter converter;
     ModuleCoreHeat core;
-    public override void Initialize(PartModule pm)
+    public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
       converter = (ModuleResourceConverter)pm;
       core = pm.GetComponent<ModuleCoreHeat>();
+      return converter.GeneratesHeat;
     }
 
     public override double GetValue()
@@ -121,10 +123,11 @@ namespace DynamicBatteryStorage
   {
     ModuleCoreHeat core;
 
-    public override void Initialize(PartModule pm)
+    public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
       core = (ModuleCoreHeat)pm;
+      return true;
     }
 
     public override double GetValue()

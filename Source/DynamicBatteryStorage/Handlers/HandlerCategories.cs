@@ -24,7 +24,8 @@ namespace DynamicBatteryStorage
       {"Lights", new List<string>(new string[] {"ModuleLight"})},
       {"Command", new List<string>(new string[] {"ModuleCommand"}) },
       {"Communication", new List<string>(new string[] {"ModuleDataTransmitter"}) }, 
-      {"Habitation", new List<string>(new string[] {"ModuleDeployableCentrifuge"}) }  
+      {"Habitation", new List<string>(new string[] {"ModuleDeployableCentrifuge"}) },
+      {"Engines", new List<string>(new string[] {"ModuleEnginesFX"}) }
     };
 
 
@@ -47,8 +48,8 @@ namespace DynamicBatteryStorage
         {"Lights", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Lights") },
         {"Command", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Command") },
         {"Communication", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Communication") },
-        {"Habitation", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Habitation") }
-
+        {"Habitation", Localizer.Format("#LOC_DynamicBatteryStorage_UI_Category_Habitation") },
+        {"Engines", Localizer.Format("Engines") }
       };
     }
   }

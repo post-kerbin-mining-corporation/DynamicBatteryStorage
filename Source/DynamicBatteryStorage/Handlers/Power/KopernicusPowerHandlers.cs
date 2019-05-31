@@ -13,10 +13,11 @@ namespace DynamicBatteryStorage
   {
     ModuleDeployableSolarPanel panel;
 
-    public override void Initialize(PartModule pm)
+    public override bool Initialize(PartModule pm)
     {
-        base.Initialize(pm);
+      base.Initialize(pm);
       panel = (ModuleDeployableSolarPanel)pm;
+      return true;
     }
 
     public override double GetValue()

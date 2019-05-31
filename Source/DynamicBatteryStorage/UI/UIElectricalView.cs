@@ -30,6 +30,7 @@ namespace DynamicBatteryStorage.UI
     string batteryChargeFullCharge = "";
     string batteryChargeCharging = "";
 
+    string flowHeader = "";
     string netPowerFlux = "0";
     string availableBattery = "100";
     string chargeTime = "";
@@ -67,6 +68,7 @@ namespace DynamicBatteryStorage.UI
     protected override void Localize()
     {
       base.Localize();
+      flowHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_FlowPanelTitle");
       totalConsumptionHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_TotalPowerConsumptionTitle");
       totalProductionHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_TotalPowerGenerationTitle");
       batteryStatusHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_BatteryManagerTitle");
@@ -85,8 +87,11 @@ namespace DynamicBatteryStorage.UI
 
       GUILayout.BeginVertical(GUILayout.MaxWidth(150f));
       GUILayout.FlexibleSpace();
+      GUILayout.BeginVertical(UIHost.GUIResources.GetStyle("block_background"));
+      GUILayout.Label(flowHeader, UIHost.GUIResources.GetStyle("panel_header_centered"));
       Rect flowRect = GUILayoutUtility.GetRect(80f, 48f);
       UIUtils.IconDataField(flowRect, UIHost.GUIResources.GetIcon("lightning"), netPowerFlux, UIHost.GUIResources.GetStyle("data_field_large"));
+      GUILayout.EndVertical();
       GUILayout.FlexibleSpace();
       GUILayout.EndVertical();
 

@@ -29,11 +29,11 @@ namespace DynamicBatteryStorage
         string typeName =  "DynamicBatteryStorage."+ pm.moduleName + "PowerHandler";
         if (Settings.DebugMode)
         {
-          Utils.Log(String.Format("[{0}]: Detected supported power handler of type: {1}",  this.GetType().Name, Type.GetType(pm.moduleName + "PowerHandler"+",DynamicBatteryStorage")));
+          Utils.Log(String.Format("[{0}]: Detected supported power handler of type: {1}",  this.GetType().Name, typeName));
         }
         ModuleDataHandler handler = (ModuleDataHandler) System.Activator.CreateInstance("DynamicBatteryStorage", typeName).Unwrap();
-        handler.Initialize(pm);
-        handlers.Add(handler);
+        if( handler.Initialize(pm))
+          handlers.Add(handler);
       }
     }
 

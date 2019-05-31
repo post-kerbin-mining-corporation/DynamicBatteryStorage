@@ -41,7 +41,7 @@ namespace DynamicBatteryStorage
   public class FissionGeneratorPowerHandler: ModuleDataHandler
   {
     PartModule core;
-    public override void Initialize(PartModule pm)
+    public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
       for (int i = 0;i<pm.part.Modules.Count;  i++)
@@ -51,6 +51,7 @@ namespace DynamicBatteryStorage
           core = pm.part.Modules[i];
         }
       }
+      return true;
     }
 
     public override double GetValue()
@@ -153,6 +154,14 @@ namespace DynamicBatteryStorage
   // Centrifuge
   public class ModuleDeployableCentrifugePowerHandler : ModuleDataHandler
   {
+    public override bool Initialize(PartModule pm)
+    {
+      base.Initialize(pm);
+      double results= 0d;
+      double.TryParse(pm.Fields.GetValue("SpinResourceRate").ToString(), out results);
+      return results != 0d;
+    }
+
     public override double GetValue()
     {
 
