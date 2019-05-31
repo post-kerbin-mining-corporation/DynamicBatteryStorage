@@ -23,7 +23,6 @@ namespace DynamicBatteryStorage.UI
     UISolarPanelManager solarManager;
 
     #region GUI Strings
-
     string batteryStatusHeader = "";
     string batteryChargeDepleted = "";
     string batteryChargeStable = "";
@@ -225,5 +224,6 @@ namespace DynamicBatteryStorage.UI
         }
       }
     }
+
   }
 }

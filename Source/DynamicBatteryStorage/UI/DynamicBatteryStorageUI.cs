@@ -206,7 +206,7 @@ namespace DynamicBatteryStorage.UI
               break;
           }
         }
-        ticker +=1;
+        ticker += 1;
       }
 
       if (HighLogic.LoadedSceneIsFlight)

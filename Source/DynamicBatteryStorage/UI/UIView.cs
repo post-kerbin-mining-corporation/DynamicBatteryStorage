@@ -25,6 +25,12 @@ namespace DynamicBatteryStorage.UI
       protected Dictionary<string, UIExpandableItem> consumerCategoryUIItems;
 
       #region GUI Strings
+      protected string constantHeader = "";
+      protected string simulationHeader = "";
+      protected string intermittentHeader = "";
+      protected string intermittentToggle = "";
+      protected string intermittentOn = "";
+      protected string intermittentOff = "";
 
       protected string totalConsumptionHeader = "";
       protected string totalProductionHeader = "";
@@ -74,6 +80,12 @@ namespace DynamicBatteryStorage.UI
         heatFlowUnits = Localizer.Format("#LOC_DynamicBatteryStorage_UI_ThermalFlowUnits");
         timeUnits = Localizer.Format("#LOC_DynamicBatteryStorage_UI_TimeUnits");
 
+        simulationHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_SimulationPanelTitle");
+        constantHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_ConstantPanelTitle");
+        intermittentHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_IntermittentPanelTitle");
+        intermittentToggle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_IntermittentToggle");
+        intermittentOn = Localizer.Format("#LOC_DynamicBatteryStorage_UI_IntermittentOn");
+        intermittentOff  = Localizer.Format("#LOC_DynamicBatteryStorage_UI_IntermittentOff");
       }
 
       /// <summary>
@@ -83,6 +95,7 @@ namespace DynamicBatteryStorage.UI
       {
         DrawUpperPanel();
         DrawDetailPanel();
+        DrawFooterPanel();
       }
 
       /// <summary>
@@ -90,6 +103,44 @@ namespace DynamicBatteryStorage.UI
       /// </summary>
       protected virtual void DrawUpperPanel()
       {
+
+      }
+
+      protected virtual void DrawFooterPanel()
+      {
+        GUILayout.BeginHorizontal();
+        GUILayout.BeginVertical();
+        GUILayout.FlexibleSpace();
+        GUILayout.Label(simulationHeader, UIHost.GUIResources.GetStyle("panel_header_centered"));
+        GUILayout.FlexibleSpace();
+        GUILayout.EndVertical();
+
+        GUILayout.BeginVertical(UIHost.GUIResources.GetStyle("block_background"));
+        GUILayout.Label(constantHeader, UIHost.GUIResources.GetStyle("panel_header_centered"));
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button(intermittentToggle, UIHost.GUIResources.GetStyle("positive_button")))
+          ToggleHandlerSimulationStates(true);
+        if (GUILayout.Button(intermittentOn, UIHost.GUIResources.GetStyle("positive_button")))
+          SetHandlerSimulationStates(true, true);
+        if (GUILayout.Button(intermittentOff, UIHost.GUIResources.GetStyle("positive_button")))
+          SetHandlerSimulationStates(true, false);
+        GUILayout.EndHorizontal();
+        GUILayout.EndVertical();
+
+        GUILayout.BeginVertical(UIHost.GUIResources.GetStyle("block_background"));
+        GUILayout.Label(intermittentHeader, UIHost.GUIResources.GetStyle("panel_header_centered"));
+        GUILayout.BeginHorizontal();
+        if (GUILayout.Button(intermittentToggle, UIHost.GUIResources.GetStyle("positive_button")))
+          ToggleHandlerSimulationStates(true);
+        if (GUILayout.Button(intermittentOn, UIHost.GUIResources.GetStyle("positive_button")))
+          SetHandlerSimulationStates(true, true);
+        if (GUILayout.Button(intermittentOff, UIHost.GUIResources.GetStyle("positive_button")))
+          SetHandlerSimulationStates(true, false);
+        GUILayout.EndHorizontal();
+        GUILayout.EndVertical();
+
+
+        GUILayout.EndHorizontal();
 
       }
 
@@ -207,6 +258,22 @@ namespace DynamicBatteryStorage.UI
 
         // cache the list of handlers to detect changes
         cachedHandlers = new List<ModuleDataHandler>(handlers);
+      }
+      protected void ToggleHandlerSimulationStates(bool intermittentOnly)
+      {
+        for (int i = 0 ; i < cachedHandlers.Count() ; i++)
+        {
+          if (intermittentOnly && !cachedHandlers[i].TimewarpFunctional)
+            cachedHandlers[i].Simulated = !cachedHandlers[i].Simulated;
+        }
+      }
+      protected void SetHandlerSimulationStates(bool state, bool intermittentOnly))
+      {
+        for (int i = 0 ; i < cachedHandlers.Count() ; i++)
+        {
+          if (intermittentOnly && !cachedHandlers[i].TimewarpFunctional)
+            cachedHandlers[i].Simulated = state;
+        }
       }
 
     }
