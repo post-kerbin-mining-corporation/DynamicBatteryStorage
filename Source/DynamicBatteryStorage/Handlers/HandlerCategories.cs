@@ -23,15 +23,15 @@ namespace DynamicBatteryStorage
       {"FuelTanks", new List<string>(new string[] {"ModuleCryoTank", "ModuleAntimatterTank", "SSTUResourceBoiloff"})},
       {"Lights", new List<string>(new string[] {"ModuleLight"})},
       {"Command", new List<string>(new string[] {"ModuleCommand"}) },
-      {"Communication", new List<string>(new string[] {"ModuleDataTransmitter"}) }, 
+      {"Communication", new List<string>(new string[] {"ModuleDataTransmitter"}) },
       {"Habitation", new List<string>(new string[] {"ModuleDeployableCentrifuge"}) },
-      {"Engines", new List<string>(new string[] {"ModuleEnginesFX"}) }
+      {"Engines", new List<string>(new string[] {"ModuleEnginesFX", "ModuleAlternator"}) }
     };
 
 
     // This enum maps code neames of all UI categories to localized version
-    public static Dictionary<string, string> HandlerLocalizedNames; 
-    
+    public static Dictionary<string, string> HandlerLocalizedNames;
+
     public static void LocalizeStrings()
     {
       HandlerLocalizedNames = new Dictionary<string, string>()

@@ -13,26 +13,38 @@ namespace DynamicBatteryStorage
   {
     ModuleActiveRadiator radiator;
 
+    public ModuleActiveRadiatorHeatHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = false;
+      consumer = true;
+    }
     public override bool Initialize(PartModule pm)
     {
       radiator = (ModuleActiveRadiator)pm;
-      return base.Initialize(pm);
+      base.Initialize(pm);
+      return true;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
-      if (radiator == null)
-        return 0d;
-      if (HighLogic.LoadedSceneIsEditor)
-
+      if (radiator != null)
+      {
         return -radiator.maxEnergyTransfer / 50d;
-      if (HighLogic.LoadedSceneIsFlight && radiator.IsCooling)
-        return -radiator.maxEnergyTransfer / 50d;
+      }
       return 0d;
     }
-    public override bool IsProducer()
+    protected override double GetValueFlight()
     {
-      return false;
+      if (radiator != null)
+      {
+        if (radiator.IsCooling)
+          return -radiator.maxEnergyTransfer / 50d;)
+      }
+      return 0d;
     }
   }
 
@@ -43,6 +55,15 @@ namespace DynamicBatteryStorage
     ModuleResourceHarvester harvester;
     ModuleCoreHeat core;
 
+    public ModuleResourceHarvesterHeatHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = true;
+      consumer = false;
+    }
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -51,26 +72,26 @@ namespace DynamicBatteryStorage
       return harvester.GeneratesHeat;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
-      if (harvester == null)
-        return 0d;
-
-      visible = harvester.GeneratesHeat;
-      
-      if (HighLogic.LoadedSceneIsFlight)
+      if (harvester != null)
       {
-        if (harvester.IsActivated)
-          return harvester.lastHeatFlux;
-      }
-      if (HighLogic.LoadedSceneIsEditor)
-      {
-        // In editor, calculate predicted thermal draw by using goal core temperature
+        // In editor, calculate predicted thermal production by using goal core temperature
         if (core != null)
           return (double)harvester.TemperatureModifier.Evaluate((float)core.CoreTempGoal) / 50d;
       }
       return 0d;
     }
+    protected override double GetValueFlight()
+    {
+      if (harvester != null)
+      {
+        if (harvester.IsActivated)
+          return harvester.lastHeatFlux;
+      }
+      return 0d;
+    }
+
     public override string PartTitle()
     {
       return String.Format("{0} ({1})", base.PartTitle(), harvester.ConverterName);
@@ -82,6 +103,17 @@ namespace DynamicBatteryStorage
   {
     ModuleResourceConverter converter;
     ModuleCoreHeat core;
+
+    public ModuleResourceConverterHeatHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = true;
+      consumer = false;
+    }
+
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -90,38 +122,44 @@ namespace DynamicBatteryStorage
       return converter.GeneratesHeat;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
-      if (converter == null)
-        return 0d;
-
-      visible = converter.GeneratesHeat;
-
-      if (HighLogic.LoadedSceneIsFlight)
+      if (converter != null)
       {
-        if (converter.IsActivated)
-          return converter.lastHeatFlux;
-      }
-      if (HighLogic.LoadedSceneIsEditor)
-      {
-        // In editor, calculate predicted thermal draw by using goal core temperature
+        // In editor, calculate predicted thermal production by using goal core temperature
         if (core != null)
           return (double)converter.TemperatureModifier.Evaluate((float)core.CoreTempGoal) / 50f;
       }
       return 0d;
     }
-    public override bool IsProducer()
+    protected override double GetValueFlight()
     {
-      return true;
+      if (converter != null)
+      {
+        if (converter.IsActivated)
+          return converter.lastHeatFlux;
+      }
+      return 0d;
     }
     public override string PartTitle()
     {
       return String.Format("{0} ({1})", base.PartTitle(), converter.ConverterName);
     }
   }
+
   public class ModuleCoreHeatHeatHandler : ModuleDataHandler
   {
     ModuleCoreHeat core;
+
+    public ModuleCoreHeatHeatHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = true;
+      consumer = false;
+    }
 
     public override bool Initialize(PartModule pm)
     {
@@ -130,20 +168,23 @@ namespace DynamicBatteryStorage
       return true;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
-      if (core == null)
-        return 0d;
-      if (HighLogic.LoadedSceneIsEditor)
+      if (core != null)
+      {
+        // This is hard coded for now
         return (double)core.PassiveEnergy.Evaluate(300f) / 50f;
-      else
-        return (double)core.PassiveEnergy.Evaluate((float)core.CoreTemperature) / 50f;
+      }
+      return 0d;
     }
-    public override bool IsProducer()
+    protected override double GetValueFlight()
     {
-      return true;
+      if (core != null)
+      {
+        return (double)core.PassiveEnergy.Evaluate((float)core.CoreTemperature) / 50f;
+      }
+      return 0d;
     }
-
   }
 
 

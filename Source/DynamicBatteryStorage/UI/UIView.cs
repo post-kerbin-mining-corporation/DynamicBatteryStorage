@@ -98,7 +98,7 @@ namespace DynamicBatteryStorage.UI
       /// </summary>
       protected virtual void DrawDetailPanel()
       {
-        
+
         GUILayout.BeginHorizontal();
 
         if (GUILayout.Button(" ", UIHost.GUIResources.GetStyle("positive_button"), GUILayout.Width(col_width)))
@@ -148,7 +148,7 @@ namespace DynamicBatteryStorage.UI
       /// </summary>
       public virtual void Update()
       {
-      
+
       }
 
       /// <summary>
@@ -187,14 +187,14 @@ namespace DynamicBatteryStorage.UI
           {
             if (categoryEntry.Value.FindAll(module => module == handlers[i].ModuleName()).Count > 0)
             {
-              if (handlers[i].IsProducer())
+              if (handlers[i].Producer)
                 producerCats[categoryEntry.Key].Add(handlers[i]);
-              else
+              if (handlers[i].Consumer)
                 consumerCats[categoryEntry.Key].Add(handlers[i]);
 
               if (Settings.DebugUIMode)
-                Utils.Log(String.Format("[UI]: [UIView]: Added {0} (Producer = {1}) to category {2}",
-                  handlers[i].PartTitle(), handlers[i].IsProducer(), categoryEntry.Key));
+                Utils.Log(String.Format("[UI]: [UIView]: Added {0} (Producer = {1}, Consumer = {2} ) to category {3}",
+                  handlers[i].PartTitle(), handlers[i].Producer, handlers[i].Consumer, categoryEntry.Key));
             }
           }
         }

@@ -7,71 +7,79 @@ using UnityEngine;
 
 public class SSTUSolarPanelDeployablePowerHandler: ModuleDataHandler
 {
-  public override void Initialize(PartModule pm)
+  public SSTUSolarPanelDeployablePowerHandler()
+  {
+    solarEfficiencyEffects = true;
+    visible = true;
+    simulated = true;
+    timewarpFunctional = true;
+    producer = true;
+    consumer = false;
+  }
+
+  public override bool Initialize(PartModule pm)
   {
     base.Initialize(pm);
   }
 
-  public override double GetValue()
+  protected override double GetValueEditor()
   {
-    double results = 0d;
-    double.TryParse(pm.Fields.GetValue("ECOutput").ToString(), out results);
-    return results;
+        return 0d;
   }
-
-  public override double GetValue(float scalar)
+  protected override double GetValueFlight()
   {
-    return GetValue() * scalar;
-  }
-  public override bool AffectedBySunDistance()
-  {
-    return true;
+    return 0d;
   }
 }
 public class SSTUSolarPanelStaticPowerHandler: ModuleDataHandler
 {
-  public override void Initialize(PartModule pm)
+  public SSTUSolarPanelStaticPowerHandler()
+  {
+    solarEfficiencyEffects = true;
+    visible = true;
+    simulated = true;
+    timewarpFunctional = true;
+    producer = true;
+    consumer = false;
+  }
+
+  public override bool Initialize(PartModule pm)
   {
     base.Initialize(pm);
   }
 
-  public override double GetValue()
+  protected override double GetValueEditor()
   {
-    double results = 0d;
-    if (HighLogic.LoadedSceneIsEditor)
-      double.TryParse(pm.Fields.GetValue("resourceAmount").ToString(), out results);
-    if (HighLogic.LoadedSceneIsFlight)
-      double.TryParse(pm.Fields.GetValue("energyFlow").ToString(), out results);
-    return results;
+        return 0d;
   }
-
-  public override double GetValue(float scalar)
+  protected override double GetValueFlight()
   {
-    return GetValue() * scalar;
-  }
-  public override bool AffectedBySunDistance()
-  {
-    return true;
+    return 0d;
   }
 }
 public class SSTUResourceBoiloffPowerHandler: ModuleDataHandler
 {
-  public override void Initialize(PartModule pm)
+  public SSTUResourceBoiloffPowerHandler()
+  {
+    solarEfficiencyEffects = false;
+    visible = true;
+    simulated = true;
+    timewarpFunctional = true;
+    producer = false;
+    consumer = true;
+  }
+
+  public override bool Initialize(PartModule pm)
   {
     base.Initialize(pm);
   }
 
-  public override double GetValue()
+  protected override double GetValueEditor()
   {
-    double results = 0d;
-    if (HighLogic.LoadedSceneIsEditor)
-      double.TryParse(pm.Fields.GetValue("guiECCost").ToString(), out results);
-    if (HighLogic.LoadedSceneIsFlight)
-      double.TryParse(pm.Fields.GetValue("guiECCost").ToString(), out results);
-    return results;
+        return 0d;
   }
-  public override bool IsProducer()
+  protected override double GetValueFlight()
   {
-    return false;
+    return 0d;
   }
 }

@@ -91,10 +91,10 @@ namespace DynamicBatteryStorage.UI
       HandlerCategories.LocalizeStrings();
       windowTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_WindowName");
       modeStrings = new string[] { Localizer.Format("#LOC_DynamicBatteryStorage_UI_ElectricalModeName"), Localizer.Format("#LOC_DynamicBatteryStorage_UI_ThermalModeName")};
-      
+
       thermalView = new UIThermalView(this);
       electricalView = new UIElectricalView(this);
-      
+
       base.InitUI();
     }
 
@@ -185,22 +185,28 @@ namespace DynamicBatteryStorage.UI
       GUILayout.EndHorizontal();
     }
 
+    int ticker = 0;
     void Update()
     {
       // Perform updates of the two views
       if (showWindow && (vesselData != null && activeVessel != null) || editorVesselData != null )
       {
-        switch (modeFlag)
+        if (ticker >= Settings.UIUpdateInterval)
         {
-          case 0:
-            if (electricalView != null)
-              electricalView.Update();
-            break;
-          case 1:
-            if (thermalView != null)
-              thermalView.Update();
-            break;
+          ticker = 0;
+          switch (modeFlag)
+          {
+            case 0:
+              if (electricalView != null)
+                electricalView.Update();
+              break;
+            case 1:
+              if (thermalView != null)
+                thermalView.Update();
+              break;
+          }
         }
+        ticker +=1;
       }
 
       if (HighLogic.LoadedSceneIsFlight)

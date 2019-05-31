@@ -76,7 +76,7 @@ namespace DynamicBatteryStorage.UI
     /// <param name="handler">The UICategoryItem to draw</param>
     private void DrawExpandedEntry(UICategoryItem handler)
     {
-      if (handler.PartHandler.IsVisible())
+      if (handler.PartHandler.Visible)
       {
         GUILayout.BeginHorizontal();
         handler.PartHandler.Simulated = GUILayout.Toggle(handler.PartHandler.Simulated, "", UIHost.GUIResources.GetStyle("button_toggle"));
@@ -110,14 +110,17 @@ namespace DynamicBatteryStorage.UI
       double categoryFlow = 0d;
       for (int i = 0; i < cachedHandlers.Count ; i++)
       {
+        cachedHandlers[i].SolarEfficiency = scalar;
         if (cachedHandlers[i].Simulated)
-          categoryFlow += cachedHandlers[i].GetValue(scalar);
+        {
+          categoryFlow += cachedHandlers[i].GetValue();
+        }
       }
       categoryTotal = String.Format("{0:F2} {1}", Math.Abs(categoryFlow), uiUnits);
       // Update each of the subcategories
       for (int i=0; i < uiItems.Count; i++)
       {
-        uiItems[i].Update(scalar);
+        uiItems[i].Update();
       }
     }
 
@@ -133,7 +136,7 @@ namespace DynamicBatteryStorage.UI
       for (int i=0; i < cachedHandlers.Count; i++)
       {
         uiItems.Add(new UICategoryItem(catHandlers[i], uiUnits));
-        if (catHandlers[i].IsVisible())
+        if (catHandlers[i].Visible)
         {
           visItems++;
         }
@@ -176,7 +179,7 @@ namespace DynamicBatteryStorage.UI
 
       uiUnit = unit;
       partName = cachedHandler.PartTitle();
-      partFlow = String.Format("{0:F2} {1}", Math.Abs(cachedHandler.GetValue(1.0f)), uiUnit);
+      partFlow = String.Format("{0:F2} {1}", Math.Abs(cachedHandler.GetValue()), uiUnit);
     }
 
     /// <summary>
@@ -189,9 +192,9 @@ namespace DynamicBatteryStorage.UI
     /// <summary>
     /// Update the assoicated flow string
     /// </summary>
-    public void Update(float scalar)
+    public void Update()
     {
-      partFlow = String.Format("{0:F2} {1}", Math.Abs(cachedHandler.GetValue(scalar)), uiUnit);
+      partFlow = String.Format("{0:F2} {1}", Math.Abs(cachedHandler.GetValue()), uiUnit);
     }
   }
 

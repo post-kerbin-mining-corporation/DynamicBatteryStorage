@@ -19,6 +19,7 @@ namespace DynamicBatteryStorage
     ModuleLight,
     ModuleDataTransmitter,
     ModuleEnginesFX,
+    ModuleAlternator,
 
     // NFT
     ModuleCurvedSolarPanel,

@@ -14,6 +14,14 @@ namespace DynamicBatteryStorage
   public class ModuleDeployableSolarPanelPowerHandler: ModuleDataHandler
   {
     ModuleDeployableSolarPanel panel;
+    public ModuleDeployableSolarPanelPowerHandler()
+    {
+      solarEfficiencyEffects = true;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = true;
+    }
 
     public override bool Initialize(PartModule pm)
     {
@@ -22,24 +30,17 @@ namespace DynamicBatteryStorage
       return true;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
-
       if (panel != null)
-      {
-        if (HighLogic.LoadedSceneIsEditor)
-          return (double)panel.chargeRate;
-        return (double)panel.flowRate;
-      }
+        return (double)panel.chargeRate * solarEfficiency;
       return 0d;
     }
-    public override double GetValue(float scalar)
+    protected override double GetValueFlight()
     {
-      return GetValue() * scalar;
-    }
-    public override bool AffectedBySunDistance()
-    {
-      return true;
+      if (panel != null)
+        return (double)panel.flowRate;
+      return 0d;
     }
   }
 
@@ -50,12 +51,21 @@ namespace DynamicBatteryStorage
   {
     ModuleCommand pod;
 
-    bool producer = false;
+    public ModuleCommandPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = false;
+      consumer = true;
+    }
 
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
       pod = (ModuleCommand)pm;
+      // Test to see if the ModuleCommand actually uses power
       for (int i = 0; i < pod.resHandler.inputResources.Count; i++)
       {
         if (pod.resHandler.inputResources[i].name == "ElectricCharge")
@@ -69,32 +79,33 @@ namespace DynamicBatteryStorage
       return false;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
-      visible = false;
       if (pod != null)
       {
         for (int i = 0; i < pod.resHandler.inputResources.Count; i++)
         {
           if (pod.resHandler.inputResources[i].name == "ElectricCharge")
           {
-            if (pod.resHandler.inputResources[i].rate > 0.0d)
-            {
-              visible = true;
-            } else
-            {
-              visible = false;
-            }
             return -pod.resHandler.inputResources[i].rate;
           }
         }
-
       }
       return 0d;
     }
-    public override bool IsProducer()
+    protected override double GetValueFlight()
     {
-      return false;
+      if (pod != null)
+      {
+        for (int i = 0; i < pod.resHandler.inputResources.Count; i++)
+        {
+          if (pod.resHandler.inputResources[i].name == "ElectricCharge")
+          {
+            return -pod.resHandler.inputResources[i].rate;
+          }
+        }
+      }
+      return 0d;
     }
   }
 
@@ -104,26 +115,33 @@ namespace DynamicBatteryStorage
   public class ModuleLightPowerHandler : ModuleDataHandler
   {
     ModuleLight light;
-    bool producer = false;
 
+    public ModuleLightPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = false;
+      consumer = true;
+    }
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
       light = (ModuleLight)pm;
       return true;
     }
-    public override bool IsProducer()
-    {
-      return false;
-    }
-    public override double GetValue()
-    {
 
+    protected override double GetValueFlight()
+    {
       if (light != null)
-      {
         return light.resourceAmount;
-
-      }
+      return 0d;
+    }
+    protected override double GetValueEditor()
+    {
+      if (light != null)
+        return light.resourceAmount;
       return 0d;
     }
   }
@@ -134,27 +152,34 @@ namespace DynamicBatteryStorage
   public class ModuleDataTransmitterPowerHandler : ModuleDataHandler
   {
     ModuleDataTransmitter antenna;
-    bool producer = false;
+
+    public ModuleDataTransmitterPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = false;
+      timewarpFunctional = false;
+      producer = false;
+      consumer = true;
+    }
 
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
-      simulated = false;
       antenna = (ModuleDataTransmitter)pm;
       return true;
     }
-    public override bool IsProducer()
-    {
-      return false;
-    }
-    public override double GetValue()
-    {
 
+    protected override double GetValueEditor()
+    {
       if (antenna != null)
-      {
         return -antenna.DataResourceCost * (1.0d / antenna.packetInterval);
-
-      }
+      return 0d;
+    }
+    protected override double GetValueFlight()
+    {
+      if (antenna != null)
+        return -antenna.DataResourceCost * (1.0d / antenna.packetInterval);
       return 0d;
     }
   }
@@ -165,59 +190,63 @@ namespace DynamicBatteryStorage
   public class ModuleGeneratorPowerHandler: ModuleDataHandler
   {
     ModuleGenerator gen;
-    bool producer = false;
     double savedRate = 0.0;
+
+    public ModuleGeneratorPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+    }
+
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
       gen = (ModuleGenerator)pm;
       bool toMonitor = false;
       for (int i = 0; i < gen.resHandler.inputResources.Count; i++)
-      if (gen.resHandler.inputResources[i].name == "ElectricCharge")
-      {
-        producer = false;
-        savedRate = gen.resHandler.inputResources[i].rate;
-        toMonitor = true;
-      }
+        if (gen.resHandler.inputResources[i].name == "ElectricCharge")
+        {
+          producer = false;
+          savedRate = gen.resHandler.inputResources[i].rate;
+          toMonitor = true;
+        }
 
       for (int i = 0; i < gen.resHandler.outputResources.Count; i++)
-      if (gen.resHandler.outputResources[i].name == "ElectricCharge")
-      {
-        producer = true;
-        savedRate = gen.resHandler.outputResources[i].rate;
-        toMonitor = true;
-       }
+        if (gen.resHandler.outputResources[i].name == "ElectricCharge")
+        {
+          producer = true;
+          savedRate = gen.resHandler.outputResources[i].rate;
+          toMonitor = true;
+         }
       return toMonitor;
 
     }
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
-      
-      if (gen == null)
-          return 0d;
-      if (HighLogic.LoadedSceneIsEditor)
+      if (gen != null)
       {
-        if (producer)
-          return (double)savedRate;
+        if (Producer)
+          return savedRate;
         else
-          return (double)savedRate * -1.0d;
+          return savedRate * -1.0d;
       }
-      if (HighLogic.LoadedSceneIsFlight)
+      return 0d;
+    }
+    protected override double GetValueFlight()
+    {
+      if (gen != null)
       {
-        if (!gen.generatorIsActive)
+        if (gen.generatorIsActive)
         {
           if (producer)
-            return (double)gen.efficiency * savedRate;
+            return gen.efficiency * savedRate;
           else
-            return (double)gen.efficiency * savedRate * -1.0d;
+            return gen.efficiency * savedRate * -1.0d;
         }
       }
       return 0d;
-
-    }
-    public override bool IsProducer()
-    {
-        return producer;
     }
   }
 
@@ -228,38 +257,49 @@ namespace DynamicBatteryStorage
   {
     ModuleActiveRadiator radiator;
 
+    public ModuleActiveRadiatorPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = false;
+      consumer = true;
+    }
     public override bool Initialize(PartModule pm)
     {
-        base.Initialize(pm);
+      base.Initialize(pm);
       radiator = (ModuleActiveRadiator)pm;
-    return true;
+      return true;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
-      if (radiator == null)
-          return 0d;
-      if (HighLogic.LoadedSceneIsFlight && !radiator.IsCooling)
-    {
-      for (int i = 0; i < radiator.resHandler.inputResources.Count; i++)
+      if (radiator != null)
       {
-        if (radiator.resHandler.inputResources[i].name == "ElectricCharge")
-          return radiator.resHandler.inputResources[i].rate * -1.0d;
+        for (int i = 0; i < radiator.resHandler.inputResources.Count; i++)
+        {
+          if (radiator.resHandler.inputResources[i].name == "ElectricCharge")
+            return radiator.resHandler.inputResources[i].rate * -1.0d;
+        }
       }
-    }
-    if (HighLogic.LoadedSceneIsEditor)
-    {
-      for (int i = 0; i < radiator.resHandler.inputResources.Count; i++)
-      {
-        if (radiator.resHandler.inputResources[i].name == "ElectricCharge")
-          return radiator.resHandler.inputResources[i].rate * -1.0d;
-      }
-    }
       return 0d;
     }
-    public override bool IsProducer()
+
+    protected override double GetValueFlight()
     {
-        return false;
+      if (radiator != null)
+      {
+        if (radiator.IsCooling)
+        {
+          for (int i = 0; i < radiator.resHandler.inputResources.Count; i++)
+          {
+            if (radiator.resHandler.inputResources[i].name == "ElectricCharge")
+              return radiator.resHandler.inputResources[i].rate * -1.0d;
+          }
+        }
+      }
+      return 0d;
     }
   }
 
@@ -271,6 +311,16 @@ namespace DynamicBatteryStorage
 
     ModuleResourceHarvester harvester;
     double converterEcRate = 0.0d;
+
+    public ModuleResourceHarvesterPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = false;
+      consumer = false;
+    }
 
     public override bool Initialize(PartModule pm)
     {
@@ -288,25 +338,24 @@ namespace DynamicBatteryStorage
       return toMonitor;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
-      if (harvester == null)
-          return 0d;
-      if (HighLogic.LoadedSceneIsEditor)
+      if (harvester != null)
       {
         return -converterEcRate;
-      } else
+      }
+      return 0d;
+    }
+    protected override double GetValueEditor()
+    {
+      if (harvester != null)
       {
         if (harvester.IsActivated)
           return converterEcRate * harvester.lastTimeFactor * -1.0d;
-        else
-          return 0d;
       }
+      return 0d;
     }
-    public override bool IsProducer()
-    {
-        return false;
-    }
+
     public override string PartTitle()
     {
         return String.Format("{0} ({1})", base.PartTitle() , harvester.ConverterName);
@@ -319,9 +368,17 @@ namespace DynamicBatteryStorage
   public class ModuleResourceConverterPowerHandler: ModuleDataHandler
   {
     ModuleResourceConverter converter;
-    bool producer = false;
-    double converterEcRate;
+    double converterEcRate = 0d;
 
+    public ModuleResourceConverterPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = false;
+      producer = false;
+      consumer = true;
+    }
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -345,68 +402,62 @@ namespace DynamicBatteryStorage
           toMonitor = true;
         }
       }
-      simulated = false;
-     
       return toMonitor;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
-      if (converter == null)
-        return 0d;
-
-      if (HighLogic.LoadedSceneIsEditor)
+      if (converter != null)
       {
-        if (producer)
-          return converterEcRate;
-        else
-          return -converterEcRate;
-      } else
+        return -converterEcRate;
+      }
+      return 0d;
+    }
+    protected override double GetValueEditor()
+    {
+      if (converter != null)
       {
         if (converter.IsActivated)
-        {
-          if (producer)
-            return converterEcRate * converter.lastTimeFactor;
-          else
-            return converterEcRate * converter.lastTimeFactor * -1.0d;
-        }
-        return 0d;
+          return converterEcRate * converter.lastTimeFactor * -1.0d;
       }
-
+      return 0d;
     }
 
     public override string PartTitle()
     {
         return String.Format("{0} ({1})", base.PartTitle(), converter.ConverterName);
     }
-
-    public override bool IsProducer()
-    {
-        return producer;
-    }
   }
 
   /// <summary>
-  /// ModuleResourceConverter
+  /// ModuleEnginesFX
   /// </summary>
   public class ModuleEnginesFXPowerHandler : ModuleDataHandler
   {
     ModuleEnginesFX engine;
-    double engineBaseECRate =0d;
+    double engineBaseECRate  =0d;
 
+    public ModuleEnginesFXPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = false;
+      timewarpFunctional = false;
+      producer = false;
+      consumer = true;
+    }
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
       engine = (ModuleEnginesFX)pm;
+
       bool toMonitor = false;
       double ecRatio = 1.0;
-
       double massFlowSum = 0d;
       double ratioSum = 0d;
       double totalRate = 0d;
-
       double massFlowTotal = engine.maxThrust / (9.81 * engine.atmosphereCurve.Evaluate(0f));
-
+      // Computes the base electrical rate in seconds from the propellant ratios
       for (int i = 0; i < engine.propellants.Count; i++)
       {
         if (engine.propellants[i].name == "ElectricCharge")
@@ -423,30 +474,26 @@ namespace DynamicBatteryStorage
 
       for (int i = 0; i < engine.propellants.Count; i++)
       {
-        if (engine.propellants[i].name == "ElectricCharge")
-        {}
-        else
-        {
+        if (engine.propellants[i].name != "ElectricCharge")
           totalRate += (massFlowTotal/mixtureRatio) * engine.propellants[i].ratio/ratioSum;
-        }
       }
-     
       engineBaseECRate = ecRatio / ratioSum * totalRate;
-      
       return toMonitor;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
-      if (engine == null)
-        return 0d;
-
-      if (HighLogic.LoadedSceneIsEditor)
+      if (engine != null)
       {
         float throttle = engine.thrustPercentage / 100f;
         return -engineBaseECRate * throttle;
       }
-      else
+      return 0d;
+    }
+
+    protected override double GetValueFlight()
+    {
+      if (engine != null)
       {
         if (!engine.engineShutdown)
         {
@@ -455,16 +502,54 @@ namespace DynamicBatteryStorage
       }
       return 0d;
     }
-
     public override string PartTitle()
     {
       return String.Format("{0} ({1})", base.PartTitle(), engine.engineID);
     }
+  }
+  /// <summary>
+  /// ModuleAlternator
+  /// </summary>
+  public class ModuleAlternatorPowerHandler : ModuleDataHandler
+  {
+    ModuleAlternator alternator;
 
-    public override bool IsProducer()
+    public ModuleAlternatorPowerHandler()
     {
-      return false;
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = false;
+      timewarpFunctional = false;
+      producer = true;
+      consumer = false;
+    }
+    public override bool Initialize(PartModule pm)
+    {
+      base.Initialize(pm);
+      alternator = (ModuleAlternator)pm;
+      return true;
+    }
+
+    protected override double GetValueEditor()
+    {
+      if (alternator != null)
+      {
+        return alternator.outputRate;
+      }
+      return 0d;
+    }
+
+    protected override double GetValueFlight()
+    {
+      if (alternator != null)
+      {
+        return alternator.outputRate;
+      }
+      return 0d;
+    }
+    public override string PartTitle()
+    {
+      return String.Format("{0} (Alternator)", base.PartTitle());
     }
   }
-
 }

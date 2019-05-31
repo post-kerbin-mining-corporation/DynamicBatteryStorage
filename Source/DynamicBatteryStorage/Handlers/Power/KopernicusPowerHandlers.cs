@@ -13,6 +13,15 @@ namespace DynamicBatteryStorage
   {
     ModuleDeployableSolarPanel panel;
 
+    public KopernicusSolarPanelPowerHandler()
+    {
+      solarEfficiencyEffects = true;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = true;
+    }
+
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -20,19 +29,17 @@ namespace DynamicBatteryStorage
       return true;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
       if (panel != null)
-      {
-        if (HighLogic.LoadedSceneIsEditor)
-          return (double)panel.chargeRate;
-        return (double)panel.flowRate;
-      }
+        return (double)panel.chargeRate * solarEfficiency;
       return 0d;
     }
-    public override bool AffectedBySunDistance()
+    protected override double GetValueFlight()
     {
-      return true;
+      if (panel != null)
+        return (double)panel.flowRate;
+      return 0d;
     }
   }
 

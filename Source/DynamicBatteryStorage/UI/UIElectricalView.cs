@@ -132,7 +132,7 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     public override void Update()
     {
-    
+
       if (dataHost.ElectricalData != null)
       {
         UpdateHeaderPanelData();
@@ -149,7 +149,7 @@ namespace DynamicBatteryStorage.UI
     {
       double EC = 0d;
       double maxEC = 0d;
-      double netPower = dataHost.ElectricalData.CurrentConsumption + dataHost.ElectricalData.GetSimulatedElectricalProdution(solarSimulationScalar);
+      double netPower = dataHost.ElectricalData.CurrentConsumption + dataHost.ElectricalData.GetSimulatedElectricalProdution();
 
       dataHost.ElectricalData.GetElectricalChargeLevels(out EC, out maxEC);
 

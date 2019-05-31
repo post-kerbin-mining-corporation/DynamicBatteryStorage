@@ -67,7 +67,7 @@ namespace DynamicBatteryStorage
       }
     }
 
-    public double GetSimulatedElectricalProdution(float solarScalar)
+    public double GetSimulatedElectricalProdution()
     {
 
       if (HighLogic.LoadedSceneIsEditor)
@@ -79,10 +79,6 @@ namespace DynamicBatteryStorage
           if (handlers[i].Simulated)
           {
             double pwr = handlers[i].GetValue();
-            if (handlers[i].AffectedBySunDistance())
-            {
-              pwr *= solarScalar;
-            }
             if (pwr > 0d)
               production += pwr;
           }

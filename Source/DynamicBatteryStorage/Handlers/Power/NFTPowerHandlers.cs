@@ -8,39 +8,45 @@ using UnityEngine;
 namespace DynamicBatteryStorage
 {
 
-    // Curved Solar Panel
-    public class ModuleCurvedSolarPanelPowerHandler: ModuleDataHandler
+  // Curved Solar Panel
+  public class ModuleCurvedSolarPanelPowerHandler: ModuleDataHandler
+  {
+    public ModuleCurvedSolarPanelPowerHandler()
     {
-      public override double GetValue()
-      {
-
-        double results = 0d;
-
-        if (HighLogic.LoadedSceneIsEditor)
-        {
-          double.TryParse(pm.Fields.GetValue("TotalEnergyRate").ToString(), out results);
-        }
-        else
-        {
-          double.TryParse(pm.Fields.GetValue("energyFlow").ToString(), out results);
-        }
-        return results;
-      }
-      public override double GetValue(float scalar)
-      {
-        return GetValue() * scalar;
-      }
-      public override bool AffectedBySunDistance()
-      {
-        return true;
-      }
-
+      solarEfficiencyEffects = true;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = true;
     }
+    protected override double GetValueEditor()
+    {
+      double results = 0d;
+      double.TryParse(pm.Fields.GetValue("TotalEnergyRate").ToString(), out results);
+      return results * solarEfficiency;
+    }
+    protected override double GetValueFlight()
+    {
+      double results = 0d;
+      double.TryParse(pm.Fields.GetValue("energyFlow").ToString(), out results);
+      return results;
+    }
+  }
 
-    // Fission Reactor
+  // Fission Reactor
   public class FissionGeneratorPowerHandler: ModuleDataHandler
   {
+    public FissionGeneratorPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = true;
+    }
+
     PartModule core;
+
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -54,20 +60,21 @@ namespace DynamicBatteryStorage
       return true;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
       double results = 0d;
-      if (HighLogic.LoadedSceneIsEditor)
-      {
-        float throttle = 100f;
-        float.TryParse(core.Fields.GetValue("CurrentPowerPercent").ToString(), out throttle);
-        double.TryParse(pm.Fields.GetValue("PowerGeneration").ToString(), out results);
-        results = throttle / 100f * results;
-      }
-      else if (HighLogic.LoadedSceneIsFlight)
-      {
-        double.TryParse(pm.Fields.GetValue("CurrentGeneration").ToString(), out results);
-      }
+      float throttle = 100f;
+      // Ensure we respect reactor throttle
+      float.TryParse(core.Fields.GetValue("CurrentPowerPercent").ToString(), out throttle);
+      double.TryParse(pm.Fields.GetValue("PowerGeneration").ToString(), out results);
+      results = throttle / 100f * results;
+
+      return results;
+    }
+    protected override double GetValueFlight()
+    {
+      double results = 0d;
+      double.TryParse(pm.Fields.GetValue("CurrentGeneration").ToString(), out results);
       return results;
     }
   }
@@ -75,7 +82,21 @@ namespace DynamicBatteryStorage
   // RTG
   public class ModuleRadioisotopeGeneratorPowerHandler: ModuleDataHandler
   {
-    public override double GetValue()
+    public ModuleRadioisotopeGeneratorPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = true;
+    }
+    protected override double GetValueEditor()
+    {
+      double results = 0d;
+      double.TryParse(pm.Fields.GetValue("BasePower").ToString(), out results);
+      return results;
+    }
+    protected override double GetValueFlight()
     {
       double results = 0d;
       double.TryParse(pm.Fields.GetValue("ActualPower").ToString(), out results);
@@ -86,24 +107,33 @@ namespace DynamicBatteryStorage
   // CryoTank
   public class ModuleCryoTankPowerHandler: ModuleDataHandler
   {
-    public override double GetValue()
+    public ModuleCryoTankPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = false;
+      consumer = true;
+    }
+    protected override double GetValueEditor()
     {
       double resAmt = GetMaxFuelAmt();
       double results = 0d;
       if (resAmt > 0d)
       {
-
-        if (HighLogic.LoadedSceneIsEditor)
-        {
-          double.TryParse(pm.Fields.GetValue("CoolingCost").ToString(), out results);
-
-          return results * (resAmt / 1000d) * -1d;
-        }
-        double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
+        double.TryParse(pm.Fields.GetValue("CoolingCost").ToString(), out results);
+        return results * (resAmt / 1000d) * -1d;
       } else
       {
         visible = false;
       }
+      return results;
+    }
+    protected override double GetValueFlight()
+    {
+      double results = 0d;
+      double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
       return results * -1.0d;
     }
     protected double GetMaxFuelAmt()
@@ -115,80 +145,136 @@ namespace DynamicBatteryStorage
         max += res.maxAmount;
       return max;
     }
-      public override bool IsProducer()
+  }
+
+  // Antimatter Tank
+  public class ModuleAntimatterTankPowerHandler: ModuleDataHandler
+  {
+    public ModuleAntimatterTankPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = false;
+      consumer = true;
+    }
+    protected override double GetValueEditor()
+    {
+      double results = 0d;
+      double.TryParse(pm.Fields.GetValue("ContainmentCost").ToString(), out results);
+      return results* -1.0d;
+    }
+    protected override double GetValueFlight()
+    {
+      double results = 0d;
+      double.TryParse(pm.Fields.GetValue("ContainmentCostCurrent").ToString(), out results);
+      return results* -1.0d;
+    }
+  }
+
+  // Chargeable Engine
+  public class ModuleChargeableEnginePowerHandler: ModuleDataHandler
+  {
+
+    bool hasOfflineGenerator = false;
+    double offlineBaseRate = 0d;
+    public ModuleChargeableEnginePowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = false;
+      consumer = true;
+    }
+    public override bool Initialize(PartModule pm)
+    {
+      bool.TryParse(pm.Fields.GetValue("PowerGeneratedOffline").ToString(), out hasOfflineGenerator);
+      if (hasOfflineGenerator)
       {
-          return false;
+        // NOTE: NEEDS FFT UPDATE
+        double.TryParse(pm.Fields.GetValue("PowerGenerationTotal").ToString(), out offlineBaseRate);
+        producer = true;
       }
+      base.Initialize(pm);
+      return true;
     }
 
-    // Antimatter Tank
-    public class ModuleAntimatterTankPowerHandler: ModuleDataHandler
+    protected override double GetValueEditor()
     {
-      public override double GetValue()
-      {
-        double results = 0d;
-        double.TryParse(pm.Fields.GetValue("ContainmentCostCurrent").ToString(), out results);
-        return results* -1.0d;
-      }
-      public override bool IsProducer()
-      {
-          return false;
-      }
-    }
+      double results = 0d;
+      bool charging = false;
 
-    // Chargeable Engine
-    public class ModuleChargeableEnginePowerHandler: ModuleDataHandler
-    {
-      public override double GetValue()
+      bool.TryParse(pm.Fields.GetValue("Charging").ToString(), out charging);
+
+      if (charging)
       {
-        double results = 0d;
         double.TryParse(pm.Fields.GetValue("ChargeRate").ToString(), out results);
-        return results* -1.0d;
+        results *= -1d;
       }
-      public override bool IsProducer()
+      if (!charging && hasOfflineGenerator)
       {
-          return false;
+        float genRate = 100f;
+        float.TryParse(pm.Fields.GetValue("GeneratorRate").ToString(), out genRate);
+        results = offlineBaseRate * genRate/100f;
+      }
+      return results;
+    }
+    protected override double GetValueFlight()
+    {
+      double results = 0d;
+      bool charging = false;
+
+      bool.TryParse(pm.Fields.GetValue("Charging").ToString(), out charging);
+
+      if (charging)
+      {
+          double.TryParse(pm.Fields.GetValue("ChargeRate").ToString(), out results);
+          results *= -1d;
+      }  else
+      {
+        double.TryParse(pm.Fields.GetValue("PowerGenerationTotal").ToString(), out results);
+        return results;
       }
     }
+  }
 
   // Centrifuge
   public class ModuleDeployableCentrifugePowerHandler : ModuleDataHandler
   {
+    public ModuleDeployableCentrifugePowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = false;
+      consumer = true;
+    }
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
-      double results= 0d;
+      double results = 0d;
       double.TryParse(pm.Fields.GetValue("SpinResourceRate").ToString(), out results);
       return results != 0d;
     }
 
-    public override double GetValue()
+    protected override double GetValueEditor()
     {
-
       double results = 0d;
-      bool on = false;
-      if (HighLogic.LoadedSceneIsEditor)
-      {
-        double.TryParse(pm.Fields.GetValue("SpinResourceRate").ToString(), out results);
-        if (results == 0d)
-        {
-          visible = false;
-        }
-      }
-      else
-      {
-        bool.TryParse(pm.Fields.GetValue("Rotating").ToString(), out on);
-        if (on)
-          double.TryParse(pm.Fields.GetValue("SpinResourceRate").ToString(), out results);
-        
-      }
+      double.TryParse(pm.Fields.GetValue("SpinResourceRate").ToString(), out results);
       return -results;
     }
-   
-    public override bool IsProducer()
+    protected override double GetValueFlight()
     {
-      return false;
-    }
+      double results = 0d;
+      bool on = false;
 
+      bool.TryParse(pm.Fields.GetValue("Rotating").ToString(), out on);
+      if (on)
+        double.TryParse(pm.Fields.GetValue("SpinResourceRate").ToString(), out results);
+      return -results;
+    }
   }
 }

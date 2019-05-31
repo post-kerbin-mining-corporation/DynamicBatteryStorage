@@ -11,49 +11,72 @@ namespace DynamicBatteryStorage
   // Fission Reactor
   public class FissionReactorHeatHandler: ModuleDataHandler
   {
-    public override double GetValue()
+    public FissionReactorHeatHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = true;
+      consumer = false;
+    }
+
+    protected override double GetValueEditor()
     {
       double results = 0d;
-      if (HighLogic.LoadedSceneIsFlight)
-      {
-        double.TryParse(pm.Fields.GetValue("AvailablePower").ToString(), out results);
-        
-      }
-      else
-      {
-        float throttle = 100f;
-        float.TryParse(pm.Fields.GetValue("CurrentPowerPercent").ToString(), out throttle);
-        double.TryParse(pm.Fields.GetValue("HeatGeneration").ToString(), out results);
-        results = results * throttle/100f / 50f;
-      }
+      float throttle = 100f;
+      // Ensure we object the reactor slider
+      float.TryParse(pm.Fields.GetValue("CurrentPowerPercent").ToString(), out throttle);
+      double.TryParse(pm.Fields.GetValue("HeatGeneration").ToString(), out results);
+      results = results * throttle/100f / 50f;
+
       return results;
     }
+    protected override double GetValueFlight()
+    {
+      double results = 0d;
+      double.TryParse(pm.Fields.GetValue("AvailablePower").ToString(), out results);
+      return results;
+    }
+
   }
 
   // Flow radiator
   public class FissionFlowRadiatorHeatHandler: ModuleDataHandler
   {
-    public override double GetValue()
+    ModuleEnginesFX engine;
+
+    public FissionFlowRadiatorHeatHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = false;
+      timewarpFunctional = false;
+      producer = false;
+      consumer = true;
+    }
+
+    public override bool Initialize(PartModule pm)
+    {
+      base.Initialize(pm);
+      engine = (ModuleEnginesFX)pm;
+    }
+
+    protected override double GetValueEditor()
     {
       double results = 0d;
-      if (HighLogic.LoadedSceneIsFlight)
+      if (engine != null)
       {
-        double.TryParse(pm.Fields.GetValue("currentCooling").ToString(), out results);
-
-      }
-      else
-      {
-        // This currently does not respect the thrust tweakable
-        // TODO: Make that happen
         double.TryParse(pm.Fields.GetValue("exhaustCooling").ToString(), out results);
-        results /= 50.0d;
+        results = results/50.0d * engine.thrustPercentage / 100f;;
       }
       return results;
     }
-
-    public override bool IsProducer()
+    protected override double GetValueFlight()
     {
-      return false;
+      double results = 0d;
+      double.TryParse(pm.Fields.GetValue("currentCooling").ToString(), out results);
+      return results;
     }
   }
 }
