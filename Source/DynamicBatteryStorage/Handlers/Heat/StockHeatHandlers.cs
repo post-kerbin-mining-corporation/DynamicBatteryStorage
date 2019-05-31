@@ -24,9 +24,10 @@ namespace DynamicBatteryStorage
       if (radiator == null)
         return 0d;
       if (HighLogic.LoadedSceneIsEditor)
-        return radiator.maxEnergyTransfer / 50d;
+
+        return -radiator.maxEnergyTransfer / 50d;
       if (HighLogic.LoadedSceneIsFlight && radiator.IsCooling)
-        return radiator.maxEnergyTransfer / 50d;
+        return -radiator.maxEnergyTransfer / 50d;
       return 0d;
     }
     public override bool IsProducer()
@@ -54,20 +55,24 @@ namespace DynamicBatteryStorage
       if (harvester == null)
         return 0d;
 
-      visible = harvester.GeneratesHeat
+      visible = harvester.GeneratesHeat;
       
       if (HighLogic.LoadedSceneIsFlight)
       {
         if (harvester.IsActivated)
           return harvester.lastHeatFlux;
       }
-      if (HighLogic.LoadedSceneIseditor)
+      if (HighLogic.LoadedSceneIsEditor)
       {
         // In editor, calculate predicted thermal draw by using goal core temperature
         if (core != null)
-          return (double)harvester.TemperatureModifier.Evaluate((float)core.CoreTempGoal) / 50f;
+          return (double)harvester.TemperatureModifier.Evaluate((float)core.CoreTempGoal) / 50d;
       }
       return 0d;
+    }
+    public override string PartTitle()
+    {
+      return String.Format("{0} ({1})", base.PartTitle(), harvester.ConverterName);
     }
   }
 
@@ -88,14 +93,14 @@ namespace DynamicBatteryStorage
       if (converter == null)
         return 0d;
 
-      visible = converter.GeneratesHeat
+      visible = converter.GeneratesHeat;
 
       if (HighLogic.LoadedSceneIsFlight)
       {
         if (converter.IsActivated)
           return converter.lastHeatFlux;
       }
-      if (HighLogic.LoadedSceneIseditor)
+      if (HighLogic.LoadedSceneIsEditor)
       {
         // In editor, calculate predicted thermal draw by using goal core temperature
         if (core != null)
@@ -103,7 +108,14 @@ namespace DynamicBatteryStorage
       }
       return 0d;
     }
-
+    public override bool IsProducer()
+    {
+      return true;
+    }
+    public override string PartTitle()
+    {
+      return String.Format("{0} ({1})", base.PartTitle(), converter.ConverterName);
+    }
   }
   public class ModuleCoreHeatHeatHandler : ModuleDataHandler
   {
@@ -123,6 +135,10 @@ namespace DynamicBatteryStorage
         return (double)core.PassiveEnergy.Evaluate(300f) / 50f;
       else
         return (double)core.PassiveEnergy.Evaluate((float)core.CoreTemperature) / 50f;
+    }
+    public override bool IsProducer()
+    {
+      return true;
     }
 
   }

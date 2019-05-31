@@ -38,26 +38,49 @@ namespace DynamicBatteryStorage
     }
 
     // Fission Reactor
-    public class FissionGeneratorPowerHandler: ModuleDataHandler
+  public class FissionGeneratorPowerHandler: ModuleDataHandler
+  {
+    PartModule core;
+    public override void Initialize(PartModule pm)
     {
-      public override double GetValue()
+      base.Initialize(pm);
+      for (int i = 0;i<pm.part.Modules.Count;  i++)
       {
-        double results = 0d;
-        double.TryParse(pm.Fields.GetValue("CurrentGeneration").ToString(), out results);
-        return results;
+        if (pm.part.Modules[i].moduleName == "FissionReactor")
+        {
+          core = pm.part.Modules[i];
+        }
       }
     }
 
-    // RTG
-    public class ModuleRadioisotopeGeneratorPowerHandler: ModuleDataHandler
+    public override double GetValue()
     {
-      public override double GetValue()
+      double results = 0d;
+      if (HighLogic.LoadedSceneIsEditor)
       {
-        double results = 0d;
-        double.TryParse(pm.Fields.GetValue("ActualPower").ToString(), out results);
-        return results;
+        float throttle = 100f;
+        float.TryParse(core.Fields.GetValue("CurrentPowerPercent").ToString(), out throttle);
+        double.TryParse(pm.Fields.GetValue("PowerGeneration").ToString(), out results);
+        results = throttle / 100f * results;
       }
+      else if (HighLogic.LoadedSceneIsFlight)
+      {
+        double.TryParse(pm.Fields.GetValue("CurrentGeneration").ToString(), out results);
+      }
+      return results;
     }
+  }
+
+  // RTG
+  public class ModuleRadioisotopeGeneratorPowerHandler: ModuleDataHandler
+  {
+    public override double GetValue()
+    {
+      double results = 0d;
+      double.TryParse(pm.Fields.GetValue("ActualPower").ToString(), out results);
+      return results;
+    }
+  }
 
   // CryoTank
   public class ModuleCryoTankPowerHandler: ModuleDataHandler
@@ -126,4 +149,37 @@ namespace DynamicBatteryStorage
           return false;
       }
     }
+
+  // Centrifuge
+  public class ModuleDeployableCentrifugePowerHandler : ModuleDataHandler
+  {
+    public override double GetValue()
+    {
+
+      double results = 0d;
+      bool on = false;
+      if (HighLogic.LoadedSceneIsEditor)
+      {
+        double.TryParse(pm.Fields.GetValue("SpinResourceRate").ToString(), out results);
+        if (results == 0d)
+        {
+          visible = false;
+        }
+      }
+      else
+      {
+        bool.TryParse(pm.Fields.GetValue("Rotating").ToString(), out on);
+        if (on)
+          double.TryParse(pm.Fields.GetValue("SpinResourceRate").ToString(), out results);
+        
+      }
+      return -results;
+    }
+   
+    public override bool IsProducer()
+    {
+      return false;
+    }
+
+  }
 }

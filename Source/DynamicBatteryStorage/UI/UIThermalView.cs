@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using DynamicBatteryStorage;
 using KSP.Localization;
 
@@ -13,6 +14,10 @@ namespace DynamicBatteryStorage.UI
     #region GUI Strings
 
     string netHeatFlux = "";
+    string vesselHeatStatus = "";
+
+    string vesselHeatOk = "Vessel heat dissipation is sufficient";
+    string vesselHeatNotOK = "<color=#fd6868> Vessel heat dissipation is insufficient, cores may overheat</color>";
     #endregion
 
 
@@ -38,8 +43,8 @@ namespace DynamicBatteryStorage.UI
     protected override void Localize()
     {
       base.Localize();
-      totalConsumptionHeader = Localizer.Format("LOC_DynamicBatteryStorage_UI_TotalHeatConsumptionTitle");
-      totalProductionHeader = Localizer.Format("LOC_DynamicBatteryStorage_UI_TotalHeatGenerationTitle");
+      totalConsumptionHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_TotalHeatConsumptionTitle");
+      totalProductionHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_TotalHeatGenerationTitle");
     }
 
     /// <summary>
@@ -47,12 +52,17 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     protected override void DrawUpperPanel()
     {
-      GUILayout.BeginHorizontal(GUILayout.Height(180f));
+      GUILayout.BeginHorizontal(GUILayout.Height(80f));
 
       GUILayout.BeginVertical(GUILayout.MaxWidth(150f));
       GUILayout.FlexibleSpace();
       Rect flowRect = GUILayoutUtility.GetRect(80f, 48f);
       UIUtils.IconDataField(flowRect, UIHost.GUIResources.GetIcon("fire"), netHeatFlux, UIHost.GUIResources.GetStyle("data_field_large"));
+      GUILayout.FlexibleSpace();
+      GUILayout.EndVertical();
+      GUILayout.BeginVertical();
+      GUILayout.FlexibleSpace();
+      GUILayout.Label(vesselHeatStatus, UIHost.GUIResources.GetStyle("data_field_large"));
       GUILayout.FlexibleSpace();
       GUILayout.EndVertical();
       GUILayout.EndHorizontal();
@@ -63,21 +73,29 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     protected override void DrawDetailPanel()
     {
+      if (showDetails)
+        UIHost.windowPos.height = 300f;
+      else
+        UIHost.windowPos.height = 200f;
       base.DrawDetailPanel();
     }
 
     /// <summary>
     /// Updates the data for drawing - strings and handler data caches
     /// </summary>
-    protected override void Update()
+    public override void Update()
     {
-      base.Update();
+      if (dataHost.ThermalData != null)
+      {
+        UpdateHeaderPanelData();
+        UpdateDetailPanelData();
+      }
     }
 
     /// <summary>
     /// Updates the header string data
     /// </summary>
-    protected override UpdateHeaderPanelData()
+    protected override void UpdateHeaderPanelData()
     {
 
       double netHeat = dataHost.ThermalData.CurrentConsumption + dataHost.ThermalData.CurrentProduction;
@@ -85,25 +103,28 @@ namespace DynamicBatteryStorage.UI
       if (netHeat == 0d)
       {
         overheating = false;
-        netHeatFlux = String.Format("{0:F2} {1}", netHeat, heatFlowUnits);
+        netHeatFlux = String.Format("{0:F2} {1}", Math.Abs(netHeat), heatFlowUnits);
+        vesselHeatStatus = vesselHeatOk;
       }
       else if (netHeat > 0d)
       {
 
         overheating = true;
-        netHeatFlux = String.Format("<color=red> ▲ {0:F2} {1}</color>", netHeat, heatFlowUnits);
+        netHeatFlux = String.Format("<color=#fd6868> ▲ {0:F2} {1}</color>", Math.Abs(netHeat), heatFlowUnits);
+        vesselHeatStatus = vesselHeatNotOK;
       }
       else
       {
         overheating = false;
-        netHeatFlux = String.Format("▼ {0:F2} {1}", netHeat, heatFlowUnits);
+        netHeatFlux = String.Format("▼ {0:F2} {1}", Math.Abs(netHeat), heatFlowUnits);
+        vesselHeatStatus = vesselHeatOk;
       }
 
       totalConsumption = String.Format("▼ {0:F2} {1}",
-        dataHost.ThermalData.CurrentConsumption,
+        Math.Abs(dataHost.ThermalData.CurrentConsumption),
         heatFlowUnits);
       totalProduction = String.Format("▲ {0:F2} {1}",
-        dataHost.ThermalData.CurrentProduction,
+        Math.Abs(dataHost.ThermalData.CurrentProduction),
         heatFlowUnits);
 
     }
@@ -134,8 +155,8 @@ namespace DynamicBatteryStorage.UI
         // Just update if no changes
         for (int i = 0 ; i < categoryNames.Count ; i++)
         {
-          producerCategoryUIItems[categoryNames[i]].Update();
-          consumerCategoryUIItems[categoryNames[i]].Update();
+          producerCategoryUIItems[categoryNames[i]].Update(1.0f);
+          consumerCategoryUIItems[categoryNames[i]].Update(1.0f);
         }
       }
     }

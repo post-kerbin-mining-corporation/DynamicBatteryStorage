@@ -58,7 +58,7 @@ namespace DynamicBatteryStorage
 
     public override double GetValue()
     {
-
+      visible = false;
       if (pod != null)
       {
         for (int i = 0; i < pod.resHandler.inputResources.Count; i++)
@@ -72,7 +72,7 @@ namespace DynamicBatteryStorage
             {
               visible = false;
             }
-            return pod.resHandler.inputResources[i].rate;
+            return -pod.resHandler.inputResources[i].rate;
           }
         }
 
@@ -125,6 +125,7 @@ namespace DynamicBatteryStorage
     public override void Initialize(PartModule pm)
     {
       base.Initialize(pm);
+      simulated = false;
       antenna = (ModuleDataTransmitter)pm;
     }
     public override bool IsProducer()
@@ -136,7 +137,7 @@ namespace DynamicBatteryStorage
 
       if (antenna != null)
       {
-        return antenna.DataResourceCost * (1.0d / antenna.packetInterval);
+        return -antenna.DataResourceCost * (1.0d / antenna.packetInterval);
 
       }
       return 0d;
@@ -147,45 +148,59 @@ namespace DynamicBatteryStorage
   /// ModuleGenerator
   /// </summary>
   public class ModuleGeneratorPowerHandler: ModuleDataHandler
+  {
+    ModuleGenerator gen;
+    bool producer = false;
+    double savedRate = 0.0;
+    public override void Initialize(PartModule pm)
     {
-      ModuleGenerator gen;
-      bool producer = false;
-      double savedRate = 0.0;
-      public override void Initialize(PartModule pm)
+      base.Initialize(pm);
+      gen = (ModuleGenerator)pm;
+
+      for (int i = 0; i < gen.resHandler.inputResources.Count; i++)
+      if (gen.resHandler.inputResources[i].name == "ElectricCharge")
       {
-         base.Initialize(pm);
-        gen = (ModuleGenerator)pm;
-
-        for (int i = 0; i < gen.resHandler.inputResources.Count; i++)
-            if (gen.resHandler.inputResources[i].name == "ElectricCharge")
-            {
-              producer = false;
-              savedRate = gen.resHandler.inputResources[i].rate;
-            }
-
-        for (int i = 0; i < gen.resHandler.outputResources.Count; i++)
-            if (gen.resHandler.outputResources[i].name == "ElectricCharge")
-            {
-              producer = true;
-              savedRate = gen.resHandler.outputResources[i].rate;
-            }
-
+        producer = false;
+        savedRate = gen.resHandler.inputResources[i].rate;
       }
-      public override double GetValue()
-      {
-        if (gen == null || !gen.generatorIsActive)
-            return 0d;
 
+      for (int i = 0; i < gen.resHandler.outputResources.Count; i++)
+      if (gen.resHandler.outputResources[i].name == "ElectricCharge")
+      {
+        producer = true;
+        savedRate = gen.resHandler.outputResources[i].rate;
+      }
+
+    }
+    public override double GetValue()
+    {
+      
+      if (gen == null)
+          return 0d;
+      if (HighLogic.LoadedSceneIsEditor)
+      {
         if (producer)
-            return (double)gen.efficiency * savedRate;
+          return (double)savedRate;
         else
-            return (double)gen.efficiency * savedRate * -1.0d;
-
+          return (double)savedRate * -1.0d;
       }
-      public override bool IsProducer()
+      if (HighLogic.LoadedSceneIsFlight)
       {
-          return producer;
+        if (!gen.generatorIsActive)
+        {
+          if (producer)
+            return (double)gen.efficiency * savedRate;
+          else
+            return (double)gen.efficiency * savedRate * -1.0d;
+        }
       }
+    return 0d;
+
+    }
+    public override bool IsProducer()
+    {
+        return producer;
+    }
     }
 
     /// <summary>
@@ -203,13 +218,24 @@ namespace DynamicBatteryStorage
 
       public override double GetValue()
       {
-        if (radiator == null || !radiator.IsCooling)
+        if (radiator == null)
             return 0d;
+        if (HighLogic.LoadedSceneIsFlight && !radiator.IsCooling)
+      {
         for (int i = 0; i < radiator.resHandler.inputResources.Count; i++)
         {
-            if (radiator.resHandler.inputResources[i].name == "ElectricCharge")
-                return radiator.resHandler.inputResources[i].rate * -1.0d;
+          if (radiator.resHandler.inputResources[i].name == "ElectricCharge")
+            return radiator.resHandler.inputResources[i].rate * -1.0d;
         }
+      }
+      if (HighLogic.LoadedSceneIsEditor)
+      {
+        for (int i = 0; i < radiator.resHandler.inputResources.Count; i++)
+        {
+          if (radiator.resHandler.inputResources[i].name == "ElectricCharge")
+            return radiator.resHandler.inputResources[i].rate * -1.0d;
+        }
+      }
         return 0d;
       }
       public override bool IsProducer()
@@ -261,7 +287,7 @@ namespace DynamicBatteryStorage
       }
       public override string PartTitle()
       {
-          return String.Format("{0} ({1})", base.PartTitle + harvester.ConverterName);
+          return String.Format("{0} ({1})", base.PartTitle() , harvester.ConverterName);
       }
     }
 
@@ -324,7 +350,7 @@ namespace DynamicBatteryStorage
 
       public override string PartTitle()
       {
-          return String.Format("{0} ({1})", base.PartTitle + converter.ConverterName);
+          return String.Format("{0} ({1})", base.PartTitle(), converter.ConverterName);
       }
 
       public override bool IsProducer()

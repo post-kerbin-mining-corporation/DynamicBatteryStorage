@@ -88,12 +88,13 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     protected override void InitUI()
     {
+      HandlerCategories.LocalizeStrings();
       windowTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_WindowName");
-      modeStrings = new string[] { "#LOC_DynamicBatteryStorage_UI_ElectricalModeName", "#LOC_DynamicBatteryStorage_UI_ThermalModeName"};
-
+      modeStrings = new string[] { Localizer.Format("#LOC_DynamicBatteryStorage_UI_ElectricalModeName"), Localizer.Format("#LOC_DynamicBatteryStorage_UI_ThermalModeName")};
+      
       thermalView = new UIThermalView(this);
       electricalView = new UIElectricalView(this);
-      HandlerCategories.LocalizeStrings();
+      
       base.InitUI();
     }
 

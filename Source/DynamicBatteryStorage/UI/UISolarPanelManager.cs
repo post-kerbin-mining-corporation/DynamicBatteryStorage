@@ -71,13 +71,13 @@ namespace DynamicBatteryStorage.UI
     protected override void Localize()
     {
       base.Localize();
-      panelName = Localizer.Format("LOC_DynamicBatteryStorage_UI_SolarManagerTitle");
-      solarAltitudeTitle = Localizer.Format("LOC_DynamicBatteryStorage_UI_SolarAltitudeTitle");
-      bodyAltitudeTitle = Localizer.Format("LOC_DynamicBatteryStorage_UI_OrbitAltitudeTitle");
-      panelEfficiencyTitle = Localizer.Format("LOC_DynamicBatteryStorage_UI_SolarEfficiencyTitle");
-      darkTimeTitle = Localizer.Format("LOC_DynamicBatteryStorage_UI_EclipseTimeTitle");
-      planetNameTitle = Localizer.Format("LOC_DynamicBatteryStorage_UI_BodySelectionTitle");
-      distanceUnits = Localizer.Format("LOC_DynamicBatteryStorage_UI_DistanceUnits");
+      panelName = Localizer.Format("#LOC_DynamicBatteryStorage_UI_SolarManagerTitle");
+      solarAltitudeTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_SolarAltitudeTitle");
+      bodyAltitudeTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_OrbitAltitudeTitle");
+      panelEfficiencyTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_SolarEfficiencyTitle");
+      darkTimeTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_EclipseTimeTitle");
+      planetNameTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_BodySelectionTitle");
+      distanceUnits = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DistanceUnits");
     }
 
     /// <summary>
@@ -188,7 +188,7 @@ namespace DynamicBatteryStorage.UI
       double r = selectedBody.Radius / scaling;
       double h = (r + bodyRefOrbitHeight);
       double orb_vel = Math.Sqrt(selectedBody.gravParameter/Math.Pow(scaling, 3)/h);
-      return Math.Asin(r / h)* h ) / orb_vel;
+      return (Math.Asin(r / h)* h ) / orb_vel;
     }
 
     /// <summary>

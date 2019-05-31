@@ -21,7 +21,7 @@ namespace DynamicBatteryStorage.UI
 
     private string categoryName = "GenericHandledModule";
     private string categoryTotal = "0";
-    private string unit = "EC/s";
+    private string uiUnits = "EC/s";
 
     /// <summary>
     /// Constructor
@@ -32,7 +32,7 @@ namespace DynamicBatteryStorage.UI
     /// <param name="expandedState">Whether the widget should start extended or not</param>
     public UIExpandableItem(string catName, List<ModuleDataHandler> catHandlers, DynamicBatteryStorageUI uiHost, bool expandedState, float width, string uiUnit): base (uiHost)
     {
-      unit = uiUnit;
+      uiUnits = uiUnit;
       host = uiHost;
       expanded = expandedState;
       categoryName = String.Format("{0}", HandlerCategories.HandlerLocalizedNames[catName]);
@@ -76,12 +76,15 @@ namespace DynamicBatteryStorage.UI
     /// <param name="handler">The UICategoryItem to draw</param>
     private void DrawExpandedEntry(UICategoryItem handler)
     {
-      GUILayout.BeginHorizontal();
-      handler.PartHandler.Simulated = GUILayout.Toggle(handler.PartHandler, "", UIHost.GUIResources.GetStyle("button_toggle") );
-      GUILayout.Label(handler.PartName, UIHost.GUIResources.GetStyle("data_header"));
-      GUILayout.FlexibleSpace();
-      GUILayout.Label(handler.PartFlow, UIHost.GUIResources.GetStyle("data_field"));
-      GUILayout.EndHorizontal();
+      if (handler.PartHandler.IsVisible())
+      {
+        GUILayout.BeginHorizontal();
+        handler.PartHandler.Simulated = GUILayout.Toggle(handler.PartHandler.Simulated, "", UIHost.GUIResources.GetStyle("button_toggle"));
+        GUILayout.Label(handler.PartName, UIHost.GUIResources.GetStyle("data_header"));
+        GUILayout.FlexibleSpace();
+        GUILayout.Label(handler.PartFlow, UIHost.GUIResources.GetStyle("data_field"));
+        GUILayout.EndHorizontal();
+      }
     }
 
     /// <summary>
@@ -107,9 +110,10 @@ namespace DynamicBatteryStorage.UI
       double categoryFlow = 0d;
       for (int i = 0; i < cachedHandlers.Count ; i++)
       {
-        categoryFlow += cachedHandlers[i].GetValue(scalar);
+        if (cachedHandlers[i].Simulated)
+          categoryFlow += cachedHandlers[i].GetValue(scalar);
       }
-      categoryTotal = String.Format("{0:F2} {1}", categoryFlow, unit);
+      categoryTotal = String.Format("{0:F2} {1}", Math.Abs(categoryFlow), uiUnits);
       // Update each of the subcategories
       for (int i=0; i < uiItems.Count; i++)
       {
@@ -128,7 +132,7 @@ namespace DynamicBatteryStorage.UI
       int visItems = 0;
       for (int i=0; i < cachedHandlers.Count; i++)
       {
-        uiItems.Add(new UICategoryItem(catHandlers[i], unit));
+        uiItems.Add(new UICategoryItem(catHandlers[i], uiUnits));
         if (catHandlers[i].IsVisible())
         {
           visItems++;
@@ -159,7 +163,7 @@ namespace DynamicBatteryStorage.UI
 
     public string PartName { get {return partName; }}
     public string PartFlow { get {return partFlow; }}
-    public string PartHandler { get {return cachedHandler; }}
+    public ModuleDataHandler PartHandler { get {return cachedHandler; }}
 
     /// <summary>
     /// Constructor
@@ -170,9 +174,9 @@ namespace DynamicBatteryStorage.UI
     {
       cachedHandler = handler;
 
-      unit = uiUnit;
+      uiUnit = unit;
       partName = cachedHandler.PartTitle();
-      partFlow = String.Format("{0:F2} {1}", cachedHandler.GetValue(1.0f), uiUnit);
+      partFlow = String.Format("{0:F2} {1}", Math.Abs(cachedHandler.GetValue(1.0f)), uiUnit);
     }
 
     /// <summary>
@@ -187,7 +191,7 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     public void Update(float scalar)
     {
-      partFlow = String.Format("{0:F2} {1}", cachedHandler.GetValue(scalar), uiUnit);
+      partFlow = String.Format("{0:F2} {1}", Math.Abs(cachedHandler.GetValue(scalar)), uiUnit);
     }
   }
 

@@ -25,6 +25,7 @@ namespace DynamicBatteryStorage
     ModuleRadioisotopeGenerator,
     ModuleCryoTank,
     ModuleAntimatterTank,
+    ModuleDeployableCentrifuge,
 
     // RealBattery
     RealBattery,

@@ -21,8 +21,10 @@ namespace DynamicBatteryStorage
       }
       else
       {
+        float throttle = 100f;
+        float.TryParse(pm.Fields.GetValue("CurrentPowerPercent").ToString(), out throttle);
         double.TryParse(pm.Fields.GetValue("HeatGeneration").ToString(), out results);
-        results /= 50.0d;
+        results = results * throttle/100f / 50f;
       }
       return results;
     }

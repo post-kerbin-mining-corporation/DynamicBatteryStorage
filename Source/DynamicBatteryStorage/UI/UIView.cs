@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using UnityEngine;
+using System.Linq;
 using DynamicBatteryStorage;
+using KSP.Localization;
 
 namespace DynamicBatteryStorage.UI
 {
@@ -25,7 +29,7 @@ namespace DynamicBatteryStorage.UI
       protected string totalConsumptionHeader = "";
       protected string totalProductionHeader = "";
       protected string totalConsumption = "";
-      protected string totalProductionn = "";
+      protected string totalProduction = "";
 
       protected string powerFlowUnits = "";
       protected string powerUnits = "";
@@ -65,10 +69,10 @@ namespace DynamicBatteryStorage.UI
       protected override void Localize()
       {
         base.Localize();
-        powerFlowUnits = Localizer.Format("LOC_DynamicBatteryStorage_UI_ElectricalFlowUnits");
-        powerUnits = Localizer.Format("LOC_DynamicBatteryStorage_UI_ElectricalUnits");
-        heatFlowUnits = Localizer.Format("LOC_DynamicBatteryStorage_UI_ThermalFlowUnits");
-        timeUnits = Localizer.Format("LOC_DynamicBatteryStorage_UI_TimeUnits");
+        powerFlowUnits = Localizer.Format("#LOC_DynamicBatteryStorage_UI_ElectricalFlowUnits");
+        powerUnits = Localizer.Format("#LOC_DynamicBatteryStorage_UI_ElectricalUnits");
+        heatFlowUnits = Localizer.Format("#LOC_DynamicBatteryStorage_UI_ThermalFlowUnits");
+        timeUnits = Localizer.Format("#LOC_DynamicBatteryStorage_UI_TimeUnits");
 
       }
 
@@ -94,10 +98,7 @@ namespace DynamicBatteryStorage.UI
       /// </summary>
       protected virtual void DrawDetailPanel()
       {
-        if (showDetails)
-          UIHost.windowPos.height = 500f;
-        else
-          UIHost.windowPos.height = 270f;
+        
         GUILayout.BeginHorizontal();
 
         if (GUILayout.Button(" ", UIHost.GUIResources.GetStyle("positive_button"), GUILayout.Width(col_width)))
@@ -147,11 +148,7 @@ namespace DynamicBatteryStorage.UI
       /// </summary>
       public virtual void Update()
       {
-        if (dataHost.ElectricalData != null)
-        {
-          UpdateHeaderPanelData();
-          UpdateDetailPanelData();
-        }
+      
       }
 
       /// <summary>
@@ -194,6 +191,7 @@ namespace DynamicBatteryStorage.UI
                 producerCats[categoryEntry.Key].Add(handlers[i]);
               else
                 consumerCats[categoryEntry.Key].Add(handlers[i]);
+
               if (Settings.DebugUIMode)
                 Utils.Log(String.Format("[UI]: [UIView]: Added {0} (Producer = {1}) to category {2}",
                   handlers[i].PartTitle(), handlers[i].IsProducer(), categoryEntry.Key));

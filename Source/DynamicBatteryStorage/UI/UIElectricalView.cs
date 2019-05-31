@@ -67,10 +67,10 @@ namespace DynamicBatteryStorage.UI
     protected override void Localize()
     {
       base.Localize();
-      totalConsumptionHeader = Localizer.Format("LOC_DynamicBatteryStorage_UI_TotalPowerConsumptionTitle");
-      totalProductionHeader = Localizer.Format("LOC_DynamicBatteryStorage_UI_TotalPowerGenerationTitle");
-      batteryStatusHeader = Localizer.Format("LOC_DynamicBatteryStorage_UI_BatteryManagerTitle");
-      batteryChargeDepleted = Localizer.Format("#LOC_DynamicBatteryStorage_UI_BatteryTimeDepleted");
+      totalConsumptionHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_TotalPowerConsumptionTitle");
+      totalProductionHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_TotalPowerGenerationTitle");
+      batteryStatusHeader = Localizer.Format("#LOC_DynamicBatteryStorage_UI_BatteryManagerTitle");
+      batteryChargeDepleted = Localizer.Format("#LOC_DynamicBatteryStorage_UI_BatteryTimeDepletion");
       batteryChargeStable = Localizer.Format("#LOC_DynamicBatteryStorage_UI_BatteryTimeStable");
       batteryChargeCharging = Localizer.Format("#LOC_DynamicBatteryStorage_UI_BatteryTimeCharging");
       batteryChargeFullCharge = Localizer.Format("#LOC_DynamicBatteryStorage_UI_BatteryTimeFullCharge");
@@ -114,15 +114,25 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     protected override void DrawDetailPanel()
     {
+      if (showDetails)
+        UIHost.windowPos.height = 500f;
+      else
+        UIHost.windowPos.height = 270f;
+
       base.DrawDetailPanel();
     }
 
     /// <summary>
     /// Updates the data for drawing - strings and handler data caches
     /// </summary>
-    protected override void Update()
+    public override void Update()
     {
-      base.Update();
+    
+      if (dataHost.ElectricalData != null)
+      {
+        UpdateHeaderPanelData();
+        UpdateDetailPanelData();
+      }
       if (dataHost.ElectricalData != null && HighLogic.LoadedSceneIsEditor)
         solarManager.Update();
     }
@@ -130,7 +140,7 @@ namespace DynamicBatteryStorage.UI
     /// <summary>
     /// Updates the header string data
     /// </summary>
-    protected override UpdateHeaderPanelData()
+    protected override void UpdateHeaderPanelData()
     {
       double EC = 0d;
       double maxEC = 0d;
@@ -141,14 +151,14 @@ namespace DynamicBatteryStorage.UI
       if (netPower == 0d)
       {
         charging = false;
-        netPowerFlux = String.Format("{0:F2} {1}", netPower, powerFlowUnits);
+        netPowerFlux = String.Format("{0:F2} {1}", Math.Abs(netPower), powerFlowUnits);
         chargeTime = String.Format("{0}", batteryChargeStable);
       }
       else if (netPower > 0d)
       {
 
         charging = true;
-        netPowerFlux = String.Format("▲ {0:F2} {1}", netPower, powerFlowUnits);
+        netPowerFlux = String.Format("▲ {0:F2} {1}", Math.Abs(netPower), powerFlowUnits);
         if (HighLogic.LoadedSceneIsFlight)
         {
           if (maxEC - EC < 0.01d)
@@ -163,7 +173,7 @@ namespace DynamicBatteryStorage.UI
       else
       {
         charging = false;
-        netPowerFlux = String.Format("<color=red> ▼ {0:F2} {1}</color>", netPower, powerFlowUnits);
+        netPowerFlux = String.Format("<color=#fd6868> ▼ {0:F2} {1}</color>", Math.Abs(netPower), powerFlowUnits);
         if (EC < 0.01d)
           chargeTime = "0 s";
         else
@@ -171,10 +181,10 @@ namespace DynamicBatteryStorage.UI
       }
 
       totalConsumption = String.Format("▼ {0:F2} {1}",
-        dataHost.ElectricalData.CurrentConsumption,
+        Math.Abs(dataHost.ElectricalData.CurrentConsumption),
         powerFlowUnits);
       totalProduction = String.Format("▲ {0:F2} {1}",
-        dataHost.ElectricalData.GetSimulatedElectricalProdution(solarSimulationScalar),
+        Math.Abs(dataHost.ElectricalData.GetSimulatedElectricalProdution(solarSimulationScalar)),
         powerFlowUnits);
       availableBattery = String.Format("{0:F0} / {1:F0} ({2:F1}%)", EC, maxEC, EC/maxEC * 100d);
     }
@@ -183,7 +193,7 @@ namespace DynamicBatteryStorage.UI
     /// <summary>
     /// Updates the detail panel data - this is mostly rebuilding the handler list
     /// </summary>
-    protected virtual void UpdateDetailPanelData()
+    protected override void UpdateDetailPanelData()
     {
       // If no cached list, rebuild it from scratch
       if (cachedHandlers == null)
@@ -203,7 +213,7 @@ namespace DynamicBatteryStorage.UI
       else
       {
         // Just update if no changes
-        for (int i = 0 ; i < categoryNames.Count ; i++)
+        for (int i = 0 ; i < categoryNames.Count() ; i++)
         {
           producerCategoryUIItems[categoryNames[i]].Update(solarSimulationScalar);
           consumerCategoryUIItems[categoryNames[i]].Update(solarSimulationScalar);
