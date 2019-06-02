@@ -19,7 +19,7 @@ namespace DynamicBatteryStorage
         {
             double results = 0d;
             double.TryParse(pm.Fields.GetValue("lastECpower").ToString(), out results);
-            if (result > 0)
+            if (results > 0)
             {
               producer = false;
               consumer = true;
@@ -31,11 +31,11 @@ namespace DynamicBatteryStorage
 
             return results * -1.0d; // positive value means the battery is charging --> consuming EC; thus negating result
         }
-        protected override double GetValueVAB()
+        protected override double GetValueFlight()
         {
             double results = 0d;
             double.TryParse(pm.Fields.GetValue("lastECpower").ToString(), out results);
-            if (result > 0)
+            if (results > 0)
             {
               producer = false;
               consumer = true;

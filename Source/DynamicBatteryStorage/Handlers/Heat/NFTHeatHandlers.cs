@@ -60,6 +60,7 @@ namespace DynamicBatteryStorage
     {
       base.Initialize(pm);
       engine = (ModuleEnginesFX)pm;
+      return true;
     }
 
     protected override double GetValueEditor()

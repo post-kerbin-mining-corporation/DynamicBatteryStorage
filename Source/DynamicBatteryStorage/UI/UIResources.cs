@@ -111,19 +111,19 @@ namespace DynamicBatteryStorage.UI
 
       // Reddish header button type
       draftStyle = new GUIStyle(HighLogic.Skin.button);
-      draftStyle.fontSize = 12;
+      draftStyle.fontSize = 14;
       draftStyle.alignment = TextAnchor.MiddleLeft;
       styleList.Add("positive_button", new GUIStyle(draftStyle));
       draftStyle.stretchWidth = true;
       // Blueish head button type
       draftStyle = new GUIStyle(HighLogic.Skin.button);
-      draftStyle.fontSize = 12;
+      draftStyle.fontSize = 14;
       draftStyle.alignment = TextAnchor.MiddleLeft;
       styleList.Add("negative_button", new GUIStyle(draftStyle));
       draftStyle.stretchWidth = true;
       // Blueish head button type
       draftStyle = new GUIStyle(HighLogic.Skin.button);
-      draftStyle.fontSize = 12;
+      draftStyle.fontSize = 14;
       draftStyle.alignment = TextAnchor.MiddleLeft;
       draftStyle.padding.left = 3;
       styleList.Add("category_header_button", new GUIStyle(draftStyle));
@@ -135,7 +135,7 @@ namespace DynamicBatteryStorage.UI
       draftStyle = new GUIStyle(HighLogic.Skin.label);
       draftStyle.fontStyle = FontStyle.Bold;
       draftStyle.alignment = TextAnchor.UpperRight;
-      draftStyle.fontSize = 12;
+      draftStyle.fontSize = 18;
       draftStyle.stretchWidth = true;
       styleList.Add("window_header", new GUIStyle(draftStyle));
       // Basic text

@@ -27,12 +27,12 @@ namespace DynamicBatteryStorage.UI
       foreach (KeyValuePair<string, List<ModuleDataHandler>> entry in producerCats)
       {
         // Currently always generated with Show = false
-        producerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, col_width, heatFlowUnits));
+        producerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, (col_width - 20f), heatFlowUnits));
       }
       foreach (KeyValuePair<string, List<ModuleDataHandler>> entry in consumerCats)
       {
         // Currently always generated with Show = false
-        consumerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, col_width, heatFlowUnits));
+        consumerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, (col_width - 20f), heatFlowUnits));
       }
       if (Settings.DebugUIMode)
         Utils.Log("[UI]: [ThermalView]: New instance created");
@@ -56,10 +56,11 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     protected override void DrawUpperPanel()
     {
-      GUILayout.BeginHorizontal(UIHost.GUIResources.GetStyle("block_background"), GUILayout.Height(80f));
+      GUILayout.BeginVertical(UIHost.GUIResources.GetStyle("block_background"), GUILayout.Height(80f));
+      GUILayout.Label(heatFlowHeader, UIHost.GUIResources.GetStyle("panel_header_centered"));
+      GUILayout.BeginHorizontal();
 
       GUILayout.BeginVertical(GUILayout.MaxWidth(150f));
-      GUILayout.Label(heatFlowHeader, UIHost.GUIResources.GetStyle("panel_header_centered"));
       GUILayout.FlexibleSpace();
       Rect flowRect = GUILayoutUtility.GetRect(80f, 48f);
       UIUtils.IconDataField(flowRect, UIHost.GUIResources.GetIcon("fire"), netHeatFlux, UIHost.GUIResources.GetStyle("data_field_large"));
@@ -68,11 +69,12 @@ namespace DynamicBatteryStorage.UI
 
       GUILayout.BeginVertical();
       GUILayout.FlexibleSpace();
-      GUILayout.Label(vesselHeatStatus, UIHost.GUIResources.GetStyle("data_field_large"));
+      GUILayout.Label(vesselHeatStatus, UIHost.GUIResources.GetStyle("panel_header_centered"));
       GUILayout.FlexibleSpace();
       GUILayout.EndVertical();
 
       GUILayout.EndHorizontal();
+      GUILayout.EndVertical();
     }
 
     /// <summary>
@@ -81,9 +83,9 @@ namespace DynamicBatteryStorage.UI
     protected override void DrawDetailPanel()
     {
       if (showDetails)
-        UIHost.windowPos.height = 300f;
+        UIHost.windowPos.height = 230f + scrollHeight;
       else
-        UIHost.windowPos.height = 200f;
+        UIHost.windowPos.height = 230f;
       base.DrawDetailPanel();
     }
 
@@ -92,6 +94,7 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     public override void Update()
     {
+      base.Update();
       if (dataHost.ThermalData != null)
       {
         UpdateHeaderPanelData();

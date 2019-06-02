@@ -28,8 +28,7 @@ namespace DynamicBatteryStorage
         public static bool DebugMode = true;
         public static bool DebugUIMode = true;
         public static int UIUpdateInterval = 3;
-
-        public static float BufferScaling = 1.75f;
+   
 
         public static void Load()
         {

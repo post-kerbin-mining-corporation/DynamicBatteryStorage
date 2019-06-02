@@ -346,7 +346,7 @@ namespace DynamicBatteryStorage
       }
       return 0d;
     }
-    protected override double GetValueEditor()
+    protected override double GetValueFlight()
     {
       if (harvester != null)
       {
@@ -413,7 +413,7 @@ namespace DynamicBatteryStorage
       }
       return 0d;
     }
-    protected override double GetValueEditor()
+    protected override double GetValueFlight()
     {
       if (converter != null)
       {

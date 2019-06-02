@@ -237,6 +237,7 @@ namespace DynamicBatteryStorage
         double.TryParse(pm.Fields.GetValue("PowerGenerationTotal").ToString(), out results);
         return results;
       }
+      return results;
     }
   }
 

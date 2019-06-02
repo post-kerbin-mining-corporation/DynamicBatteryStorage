@@ -13,6 +13,7 @@ namespace DynamicBatteryStorage.UI
   public class UIExpandableItem: UIWidget
   {
     private bool visible = false;
+    private bool controlDirty = true;
     private bool expanded = false;
     private float colWidth = 150f;
     private DynamicBatteryStorageUI host;
@@ -46,6 +47,10 @@ namespace DynamicBatteryStorage.UI
         Utils.Log(String.Format("[UI]: [UIExpandableItem]: building UI element for category {0}", catName));
     }
 
+    public void SetDirty()
+    {
+      controlDirty = true;
+    }
     /// <summary>
     /// Draw the UI
     /// </summary>
@@ -58,7 +63,11 @@ namespace DynamicBatteryStorage.UI
         if (expanded)
           DrawExpanded();
         GUILayout.EndVertical();
-        controlSize = GUILayoutUtility.GetLastRect();
+        if (Event.current.type == EventType.Repaint || controlDirty)
+        {
+          controlSize = GUILayoutUtility.GetLastRect();
+          controlDirty = false;
+        }
       }
     }
 
@@ -97,7 +106,10 @@ namespace DynamicBatteryStorage.UI
     {
 
       if (GUILayout.Button("", UIHost.GUIResources.GetStyle("category_header_button")))
+      {
+        controlDirty = true;
         expanded = !expanded;
+      }
 
       GUI.Label( GUILayoutUtility.GetLastRect(), categoryName, UIHost.GUIResources.GetStyle("category_header"));
       GUI.Label( GUILayoutUtility.GetLastRect(), categoryTotal, UIHost.GUIResources.GetStyle("category_header_field"));
@@ -189,14 +201,7 @@ namespace DynamicBatteryStorage.UI
       partName = cachedHandler.PartTitle();
       partFlow = String.Format("{0:F2} {1}", Math.Abs(cachedHandler.GetValue()), uiUnit);
     }
-
-    /// <summary>
-    /// Update the assoicated flow string
-    /// </summary>
-    public void Update()
-    {
-      Update(1.0f);
-    }
+   
     /// <summary>
     /// Update the assoicated flow string
     /// </summary>

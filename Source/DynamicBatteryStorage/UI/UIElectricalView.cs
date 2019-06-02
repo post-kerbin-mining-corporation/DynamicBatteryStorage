@@ -49,12 +49,12 @@ namespace DynamicBatteryStorage.UI
       foreach (KeyValuePair<string, List<ModuleDataHandler>> entry in producerCats)
       {
         // Currently always generated with Show = false
-        producerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, col_width, powerFlowUnits));
+        producerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, (col_width - 20f), powerFlowUnits));
       }
       foreach (KeyValuePair<string, List<ModuleDataHandler>> entry in consumerCats)
       {
         // Currently always generated with Show = false
-        consumerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, col_width, powerFlowUnits));
+        consumerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, (col_width - 20f), powerFlowUnits));
       }
 
       if (Settings.DebugUIMode)
@@ -119,9 +119,9 @@ namespace DynamicBatteryStorage.UI
     protected override void DrawDetailPanel()
     {
       if (showDetails)
-        UIHost.windowPos.height = 500f;
+        UIHost.windowPos.height = 310f + scrollHeight;
       else
-        UIHost.windowPos.height = 270f;
+        UIHost.windowPos.height = 310f;
 
       base.DrawDetailPanel();
     }
@@ -131,7 +131,7 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     public override void Update()
     {
-
+      base.Update();
       if (dataHost.ElectricalData != null)
       {
         UpdateHeaderPanelData();
@@ -188,7 +188,7 @@ namespace DynamicBatteryStorage.UI
         Math.Abs(dataHost.ElectricalData.CurrentConsumption),
         powerFlowUnits);
       totalProduction = String.Format("▲ {0:F2} {1}",
-        Math.Abs(dataHost.ElectricalData.GetSimulatedElectricalProdution(solarSimulationScalar)),
+        Math.Abs(dataHost.ElectricalData.GetSimulatedElectricalProdution()),
         powerFlowUnits);
       availableBattery = String.Format("{0:F0} / {1:F0} ({2:F1}%)", EC, maxEC, EC/maxEC * 100d);
     }

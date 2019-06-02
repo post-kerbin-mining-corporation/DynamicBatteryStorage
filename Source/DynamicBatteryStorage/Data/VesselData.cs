@@ -122,7 +122,7 @@ namespace DynamicBatteryStorage
     {
       get
       {
-        return handlers.FindAll(handler => handler.IsProducer());
+        return handlers.FindAll(handler => handler.Producer);
       }
     }
 
@@ -133,7 +133,7 @@ namespace DynamicBatteryStorage
     {
       get
       {
-        return handlers.FindAll(handler => !handler.IsProducer());
+        return handlers.FindAll(handler => handler.Consumer);
       }
     }
 

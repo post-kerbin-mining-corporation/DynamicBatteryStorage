@@ -42,7 +42,7 @@ namespace DynamicBatteryStorage
       if (radiator != null)
       {
         if (radiator.IsCooling)
-          return -radiator.maxEnergyTransfer / 50d;)
+          return -radiator.maxEnergyTransfer / 50d;
       }
       return 0d;
     }
