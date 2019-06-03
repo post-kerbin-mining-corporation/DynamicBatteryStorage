@@ -85,7 +85,7 @@ namespace DynamicBatteryStorage
         double consumption = 0d;
         for (int i=0; i < handlers.Count; i++)
         {
-          if (handlers[i].Simulated)
+          if (HighLogic.LoadedSceneIsFlight || handlers[i].Simulated)
           {
             double pwr = handlers[i].GetValue();
             if (pwr < 0d)
@@ -104,7 +104,7 @@ namespace DynamicBatteryStorage
         double production = 0d;
         for (int i=0; i < handlers.Count; i++)
         {
-          if (handlers[i].Simulated)
+          if (HighLogic.LoadedSceneIsFlight || handlers[i].Simulated)
           {
             double pwr = handlers[i].GetValue();
             if (pwr > 0d)

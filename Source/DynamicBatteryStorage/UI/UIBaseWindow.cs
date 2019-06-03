@@ -20,8 +20,8 @@ namespace DynamicBatteryStorage.UI
     protected bool initUI = false;
 
     // Assets
-    protected string toolbarUIIconURLOff = "DynamicBatteryStorage/UI/toolbar_off.png";
-    protected string toolbarUIIconURLOn = "DynamicBatteryStorage/UI/toolbar_on.png";
+    protected string toolbarUIIconURLOff = "DynamicBatteryStorage/UI/toolbar_off";
+    protected string toolbarUIIconURLOn = "DynamicBatteryStorage/UI/toolbar_on";
     protected UIResources resources;
 
     // Stock toolbar button

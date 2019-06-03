@@ -186,6 +186,7 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void CalculateElectricalData()
     {
+      Utils.Log(LogVessel("Regenerating electrical data"));
       if (vessel == null || vessel.Parts == null)
       {
           Utils.Log(LogVessel("Refresh of electrical data failed for vessel, not initialized"));
@@ -200,25 +201,16 @@ namespace DynamicBatteryStorage
         totalEcMax = maxAmount;
         CreateBufferStorage();
       }
-
-      if (vessel.loaded)
-      {
-        Utils.Log(String.Format("Summary: \n vessel {0} (loaded state {1})\n" +
-        "- {2} stock power handlers", vessel.name, vessel.loaded.ToString(), powerHandlers.Count));
-      }
-
       dataReady = true;
     }
 
 
     protected void CalculateElectricalData(Vessel eventVessel)
     {
-      //Utils.Log("Refreshing data from Vessel event");
       CalculateElectricalData();
     }
     protected void CalculateElectricalData(ConfigNode node)
     {
-        //Utils.Log("Refresh from save node event");
         CalculateElectricalData();
     }
 
@@ -270,16 +262,15 @@ namespace DynamicBatteryStorage
           return;
         }
       }
-
       Utils.Log(LogVessel(String.Format("Could not find an electrical storage part")));
     }
 
-
+    /// <summary>
+    /// Creates a log message that is prefixed by the vessel name
+    /// </summary>
     protected string LogVessel(string msg)
     {
       return String.Format("[Controller] [{0}]: {1}",  vessel.name,msg);
     }
-
-
   }
 }

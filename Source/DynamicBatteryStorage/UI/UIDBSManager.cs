@@ -120,7 +120,6 @@ namespace DynamicBatteryStorage.UI
       GUILayout.EndVertical();
     }
 
-
     /// <summary>
     /// Update UI fields and recalculate quantities
     /// </summary>>
@@ -163,6 +162,9 @@ namespace DynamicBatteryStorage.UI
         }
       }
     }
+    /// <summary>
+    /// Finds the main DBS controller
+    /// </summary>
     public void FindController()
     {
       activeVessel = FlightGlobals.ActiveVessel;

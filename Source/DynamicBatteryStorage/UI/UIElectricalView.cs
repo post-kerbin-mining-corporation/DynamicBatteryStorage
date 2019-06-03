@@ -10,7 +10,6 @@ namespace DynamicBatteryStorage.UI
   public class UIElectricalView: UIView
   {
 
-
     public float SolarSimulationScalar
     {
       get { return solarSimulationScalar; }
@@ -21,6 +20,7 @@ namespace DynamicBatteryStorage.UI
     bool charging = false;
     float solarSimulationScalar;
     UISolarPanelManager solarManager;
+    UIDBSManager dbsManager;
 
     #region GUI Strings
     string batteryStatusHeader = "";
@@ -45,6 +45,8 @@ namespace DynamicBatteryStorage.UI
 
       if (HighLogic.LoadedSceneIsEditor)
         solarManager = new UISolarPanelManager(uiHost, this);
+      if (HighLogic.LoadedSceneIsFlight)
+        dbsManager = new UIDBSManager(uiHost, this);
 
       foreach (KeyValuePair<string, List<ModuleDataHandler>> entry in producerCats)
       {
@@ -141,6 +143,9 @@ namespace DynamicBatteryStorage.UI
       }
       if (dataHost.ElectricalData != null && HighLogic.LoadedSceneIsEditor)
         solarManager.Update();
+
+      if (dataHost.ElectricalData != null && HighLogic.LoadedSceneIsFlight)
+        dbsManager.Update();
     }
 
     /// <summary>
@@ -167,11 +172,12 @@ namespace DynamicBatteryStorage.UI
         netPowerFlux = String.Format("▲ {0:F2} {1}", Math.Abs(netPower), powerFlowUnits);
         if (HighLogic.LoadedSceneIsFlight)
         {
-          if (maxEC - EC < 0.01d)
+          if ((maxEC - EC) < 0.001d)
             chargeTime = "0 s";
           else
             chargeTime = String.Format("{0} {1}", batteryChargeCharging, FormatUtils.FormatTimeString((maxEC - EC) / netPower));
-        } else
+        }
+        else
         {
           chargeTime = String.Format("{0} {1}", batteryChargeFullCharge, FormatUtils.FormatTimeString(maxEC / netPower));
         }
@@ -180,7 +186,7 @@ namespace DynamicBatteryStorage.UI
       {
         charging = false;
         netPowerFlux = String.Format("<color=#fd6868> ▼ {0:F2} {1}</color>", Math.Abs(netPower), powerFlowUnits);
-        if (EC < 0.01d)
+        if (EC < 0.0001d)
           chargeTime = "0 s";
         else
           chargeTime = String.Format("{0} in {1}", batteryChargeDepleted, FormatUtils.FormatTimeString(EC / netPower));
