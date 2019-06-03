@@ -109,6 +109,8 @@ namespace DynamicBatteryStorage.UI
 
       if (HighLogic.LoadedSceneIsEditor)
         solarManager.Draw();
+      if (HighLogic.LoadedSceneIsFlight)
+        dbsManager.Draw();
 
       GUILayout.EndHorizontal();
     }
