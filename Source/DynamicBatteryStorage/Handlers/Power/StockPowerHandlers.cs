@@ -179,7 +179,10 @@ namespace DynamicBatteryStorage
     protected override double GetValueFlight()
     {
       if (antenna != null)
-        return -antenna.DataResourceCost * (1.0d / antenna.packetInterval);
+      {
+        if (antenna.IsBusy())
+          return -antenna.DataResourceCost * (1.0d / antenna.packetInterval);
+      }
       return 0d;
     }
   }

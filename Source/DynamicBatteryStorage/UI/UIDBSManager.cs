@@ -29,6 +29,7 @@ namespace DynamicBatteryStorage.UI
     string currentBufferSize = "";
     string bufferPart = "";
     string savedEC = "";
+    string savedVesselEC = "";
 
     /// <summary>
     /// Constructor
@@ -51,16 +52,16 @@ namespace DynamicBatteryStorage.UI
       base.Localize();
       panelName = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSManagerTitle");
       systemStatusTitle = "System Offline";
-      bufferSizeTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSManagerBufferSize"); "Required Buffer";
-      bufferPartTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSManagerBufferPart");"Affected Part";
-      debugTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSDebugTitle");"Internal Data";
-      savedVesselECTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSVesselCachedTitle"); "Vessel Cached EC ";
-      savedECTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSPartCachedTitle");"Part Cached EC ";
+      bufferSizeTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSManagerBufferSize"); 
+      bufferPartTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSManagerBufferPart");
+      debugTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSDebugTitle");
+      savedVesselECTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSVesselCachedTitle"); 
+      savedECTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSPartCachedTitle");
 
-      errorNoController = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSErrorController");"Could not detect controller";
-      errorTimewarp = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSErrorTimewarp", Settings.TimeWarpLimit);"System offline below";
+      errorNoController = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSErrorController");
+      errorTimewarp = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSErrorTimewarp", Settings.TimeWarpLimit);
 
-      errorNone = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSNoError");"Compensation enabled";
+      errorNone = Localizer.Format("#LOC_DynamicBatteryStorage_UI_DBSNoError");
 
       currentBufferSize = "";
       bufferPart = "";
@@ -96,24 +97,24 @@ namespace DynamicBatteryStorage.UI
           GUILayout.Space(5);
           GUILayout.Label(systemStatusTitle, UIHost.GUIResources.GetStyle("panel_header_centered"));
           GUILayout.BeginHorizontal();
-          GUILayout.Label(bufferSizeTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
-          GUILayout.Label(currentBufferSize, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
+          GUILayout.Label(bufferSizeTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(190f));
+          GUILayout.Label(currentBufferSize, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(80f));
           GUILayout.EndHorizontal();
 
           GUILayout.BeginHorizontal();
-          GUILayout.Label(bufferPartTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
-          GUILayout.Label(bufferPart, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
+          GUILayout.Label(bufferPartTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(190f));
+          GUILayout.Label(bufferPart, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(80f));
           GUILayout.EndHorizontal();
 
           GUILayout.Space(2);
           GUILayout.Label(debugTitle, UIHost.GUIResources.GetStyle("panel_header_centered"));
           GUILayout.BeginHorizontal();
-          GUILayout.Label(savedECTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
-          GUILayout.Label(savedEC, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
+          GUILayout.Label(savedECTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(190f));
+          GUILayout.Label(savedEC, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(100f));
           GUILayout.EndHorizontal();
           GUILayout.BeginHorizontal();
-          GUILayout.Label(savedVesselECTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
-          GUILayout.Label(savedVesselEC, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
+          GUILayout.Label(savedVesselECTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(190f));
+          GUILayout.Label(savedVesselEC, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(100f));
           GUILayout.EndHorizontal();
         }
       }
@@ -151,14 +152,14 @@ namespace DynamicBatteryStorage.UI
       {
         if (!controller.AnalyticMode)
         {
-          systemStatusTitle = errorNoController;
+          systemStatusTitle = errorTimewarp;
         } else
         {
           systemStatusTitle = errorNone;
-          currentBufferSize = String.Format("{0} {1}", controller.BufferSize, powerUnits);
-          bufferPart = String.Format("{0}", controller.BufferPart.partInfo.name);
-          savedEC = String.Format("{0} {1}:{2} {3}", controller.MaxEC, powerUnits, controller.SavedMaxEC, powerUnits);
-          savedVesselEC = String.Format("{0} {1}", controller.SavedVesselMaxEC, powerUnits);
+          currentBufferSize = String.Format("{0:F2} {1}", controller.BufferSize, powerUnits);
+          bufferPart = String.Format("{0}", controller.BufferPart.partInfo.title);
+          savedEC = String.Format("{0:F1} {1} : {2:F1} {3}", controller.MaxEC, powerUnits, controller.SavedMaxEC, powerUnits);
+          savedVesselEC = String.Format("{0:F1} {1}", controller.SavedVesselMaxEC, powerUnits);
         }
       }
     }

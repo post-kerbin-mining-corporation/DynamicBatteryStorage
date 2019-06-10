@@ -49,7 +49,7 @@ namespace DynamicBatteryStorage
         {
           handlerStates.Add(handlers[i].ToString());
         }
-        return string.Join("\n", handlerStates.ToArray());
+        return string.Join("\n -", handlerStates.ToArray());
       }
       return "No Power Handlers";
     }

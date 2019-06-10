@@ -69,6 +69,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="UI\DynamicBatteryStorageUI.cs" />
     <Compile Include="UI\UIBaseWindow.cs" />
+    <Compile Include="UI\UIDBSManager.cs" />
     <Compile Include="UI\UIElectricalView.cs" />
     <Compile Include="UI\UIExpandableItem.cs" />
     <Compile Include="UI\UIResources.cs" />

@@ -229,7 +229,7 @@ namespace DynamicBatteryStorage.UI
         consumerScrollHeight += consumerCategoryUIItems[categoryNames[i]].GetHeight();
       }
       scrollHeight = Mathf.Max(consumerScrollHeight, producerScrollHeight) + 15f;
-      Debug.Log(String.Format("TotalScroll {0}", scrollHeight));
+      // Debug.Log(String.Format("TotalScroll {0}", scrollHeight));
     }
 
     /// <summary>

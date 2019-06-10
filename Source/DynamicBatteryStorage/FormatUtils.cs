@@ -76,7 +76,7 @@ namespace DynamicBatteryStorage
       int minutes = (int)(rem / (60.0d));
       rem = rem % (60.0d);
       int secs = (int)rem;
-      int msecs = rem*1000 - secs*1000;
+      int msec = (int)(rem*1000d )- secs*1000;
 
       string result = "";
 

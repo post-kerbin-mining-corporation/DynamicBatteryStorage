@@ -135,7 +135,7 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void DoHighWarpSimulation()
     {
-      if (vesselData.ElectricalData.AllHandlers.Count > 0)
+      if (vesselData != null && vesselData.ElectricalData != null)
       {
         double production = vesselData.ElectricalData.CurrentProduction;
         double consumption = vesselData.ElectricalData.CurrentConsumption;
@@ -148,7 +148,7 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void CalculateBuffer(double production, double consumption)
     {
-      float powerNet = Mathf.Clamp((float)(production - consumption), -9999999f, 0f);
+      float powerNet = (float)(production + consumption);
 
       if (powerNet < 0d)
       {
@@ -162,7 +162,7 @@ namespace DynamicBatteryStorage
       else
       {
         // Buffer size should be equal to one physics frame of consumption with an appropriate fudge factor
-        bufferSize = consumption * (double)TimeWarp.fixedDeltaTime * bufferScale;
+        bufferSize = Math.Abs(consumption) * (double)TimeWarp.fixedDeltaTime * bufferScale;
 
         if (bufferStorage != null)
         {
