@@ -186,10 +186,10 @@ namespace DynamicBatteryStorage.UI
       {
         charging = false;
         netPowerFlux = String.Format("<color=#fd6868> ▼ {0:F2} {1}</color>", Math.Abs(netPower), powerFlowUnits);
-        if (EC < 0.0001d)
+        if (EC < 0.1d)
           chargeTime = "0 s";
         else
-          chargeTime = String.Format("{0} in {1}", batteryChargeDepleted, FormatUtils.FormatTimeString(EC / netPower));
+          chargeTime = String.Format("{0} in {1}", batteryChargeDepleted, FormatUtils.FormatTimeString(EC / -netPower));
       }
 
       totalConsumption = String.Format("▼ {0:F2} {1}",

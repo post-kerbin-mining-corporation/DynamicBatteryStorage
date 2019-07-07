@@ -19,7 +19,7 @@ namespace DynamicBatteryStorage
       {"Generators", new List<string>(new string[] {"ModuleGenerator", "ModuleCurvedSolarPanel", "ModuleRadioisotopeGenerator", "ModuleCoreHeat"})},
       {"FissionReactors", new List<string>(new string[] {"FissionGenerator", "FissionReactor"})},
       {"FusionReactors", new List<string>(new string[] {"ModuleFusionReactor"})},
-      {"Batteries", new List<string>(new string[] {"RealBattery"})},
+      {"Batteries", new List<string>(new string[] {"RealBattery", "DischargeCapacitor"})},
       {"FuelTanks", new List<string>(new string[] {"ModuleCryoTank", "ModuleAntimatterTank", "SSTUResourceBoiloff"})},
       {"Lights", new List<string>(new string[] {"ModuleLight"})},
       {"Command", new List<string>(new string[] {"ModuleCommand"}) },

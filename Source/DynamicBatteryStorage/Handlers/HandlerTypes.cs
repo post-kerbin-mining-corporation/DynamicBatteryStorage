@@ -24,6 +24,7 @@ namespace DynamicBatteryStorage
     // NFT
     ModuleCurvedSolarPanel,
     FissionGenerator,
+    DischargeCapacitor,
     ModuleRadioisotopeGenerator,
     ModuleCryoTank,
     ModuleAntimatterTank,

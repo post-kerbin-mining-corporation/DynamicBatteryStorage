@@ -240,7 +240,62 @@ namespace DynamicBatteryStorage
       return results;
     }
   }
+  public class DischargeCapacitorPowerHandler : ModuleDataHandler
+  {
+    public DischargeCapacitorPowerHandler()
+    {
+      solarEfficiencyEffects = false;
+      visible = true;
+      simulated = true;
+      timewarpFunctional = true;
+      producer = false;
+      consumer = true;
+    }
+    public override bool Initialize(PartModule pm)
+    {
+      base.Initialize(pm);
+      double results = 0d;
+      return true;
+    }
 
+    protected override double GetValueEditor()
+    {
+
+      double results = 0d;
+      bool charging = false;
+
+      bool discharging = false;
+
+      bool.TryParse(pm.Fields.GetValue("Enabled").ToString(), out charging);
+      bool.TryParse(pm.Fields.GetValue("Discharging").ToString(), out discharging);
+      if (charging)
+      {
+        double.TryParse(pm.Fields.GetValue("ChargeRate").ToString(), out results);
+        results *= -1d;
+      } else
+        double.TryParse(pm.Fields.GetValue("dischargeActual").ToString(), out results);
+      return results;
+    }
+    protected override double GetValueFlight()
+    {
+      double results = 0d;
+      bool charging = false;
+
+      bool discharging = false;
+
+      bool.TryParse(pm.Fields.GetValue("Enabled").ToString(), out charging);
+      bool.TryParse(pm.Fields.GetValue("Discharging").ToString(), out discharging);
+      if (charging)
+      {
+        double.TryParse(pm.Fields.GetValue("ChargeRate").ToString(), out results);
+        results *= -1d;
+      }
+       if (discharging)
+
+        double.TryParse(pm.Fields.GetValue("dischargeActual").ToString(), out results);
+      return results;
+    }
+  }
   // Centrifuge
   public class ModuleDeployableCentrifugePowerHandler : ModuleDataHandler
   {
