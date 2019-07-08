@@ -433,11 +433,11 @@ namespace DynamicBatteryStorage
   }
 
   /// <summary>
-  /// ModuleEnginesFX
+  /// ModuleEngines
   /// </summary>
-  public class ModuleEnginesFXPowerHandler : ModuleDataHandler
+  public class ModuleEnginesPowerHandler : ModuleDataHandler
   {
-    ModuleEnginesFX engine;
+    ModuleEngines engine;
     double engineBaseECRate  =0d;
 
     public ModuleEnginesFXPowerHandler()
@@ -452,7 +452,7 @@ namespace DynamicBatteryStorage
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
-      engine = (ModuleEnginesFX)pm;
+      engine = (ModuleEngines)pm;
 
       bool toMonitor = false;
       double ecRatio = 1.0;
@@ -510,6 +510,10 @@ namespace DynamicBatteryStorage
       return String.Format("{0} ({1})", base.PartTitle(), engine.engineID);
     }
   }
+
+  public class ModuleEnginesFXPowerHandler : ModuleDataHandler
+  {}
+
   /// <summary>
   /// ModuleAlternator
   /// </summary>
