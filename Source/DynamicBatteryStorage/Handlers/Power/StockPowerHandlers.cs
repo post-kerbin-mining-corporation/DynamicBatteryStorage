@@ -440,7 +440,7 @@ namespace DynamicBatteryStorage
     ModuleEngines engine;
     double engineBaseECRate  =0d;
 
-    public ModuleEnginesFXPowerHandler()
+    public ModuleEnginesPowerHandler()
     {
       solarEfficiencyEffects = false;
       visible = true;
@@ -511,7 +511,7 @@ namespace DynamicBatteryStorage
     }
   }
 
-  public class ModuleEnginesFXPowerHandler : ModuleDataHandler
+  public class ModuleEnginesFXPowerHandler : ModuleEnginesPowerHandler
   {}
 
   /// <summary>
