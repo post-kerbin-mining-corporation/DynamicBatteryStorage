@@ -187,7 +187,7 @@ namespace DynamicBatteryStorage.UI
 
         GUILayout.BeginHorizontal(GUILayout.Width(col_width*2f-40f));
         GUILayout.FlexibleSpace();
-        GUILayout.BeginVertical(GUILayout.Width(col_width-25f));
+        GUILayout.BeginVertical(GUILayout.Width(col_width-15f));
         GUILayout.Space(1f);
 
         for (int i = 0 ; i < categoryNames.Count ; i++)
@@ -195,7 +195,7 @@ namespace DynamicBatteryStorage.UI
           producerCategoryUIItems[categoryNames[i]].Draw();
         }
         GUILayout.EndVertical();
-        GUILayout.BeginVertical(GUILayout.Width(col_width-25f));
+        GUILayout.BeginVertical(GUILayout.Width(col_width-15f));
         GUILayout.Space(1f);
         for (int i = 0 ; i < categoryNames.Count ; i++)
         {

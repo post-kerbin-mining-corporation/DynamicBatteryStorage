@@ -185,10 +185,14 @@ namespace DynamicBatteryStorage.UI
         // This is a gemetric approximation assuming a circular equatorial orbit and a cylindrical solar occlusion
       // Note the scaling factors for KM here
       double scaling = 1000.0d;
-      double r = selectedBody.Radius / scaling;
-      double h = (r + bodyRefOrbitHeight);
-      double orb_vel = Math.Sqrt(selectedBody.gravParameter/Math.Pow(scaling, 3)/h);
-      return (Math.Asin(r / h)* h ) / orb_vel;
+      double bodyRadius = selectedBody.Radius / scaling;
+      double orbitDistance = (bodyRadius + bodyRefOrbitHeight);
+
+      double eclipseFraction = (1d / Math.PI) * Math.Acos(Math.Sqrt(Math.Pow(bodyRefOrbitHeight,2) + 2d* bodyRadius*bodyRefOrbitHeight)/(orbitDistance));
+      double period = (2 * Math.PI) / (Math.Sqrt((selectedBody.gravParameter/Math.Pow(scaling,3))/ Math.Pow(orbitDistance, 3)));
+      return period * eclipseFraction;
+      //double orb_vel = Math.Sqrt(selectedBody.gravParameter/Math.Pow(scaling, 3)/orbitDistance);
+      //return (Math.Asin(bodyRadius / orbitDistance) * orbitDistance) / orb_vel;
     }
 
     /// <summary>

@@ -13,6 +13,7 @@ namespace DynamicBatteryStorage
   {
 
     protected List<Part> parts;
+    protected List<PartModule> modules;
     protected List<ModuleDataHandler> handlers;
 
     /// <summary>
@@ -21,33 +22,82 @@ namespace DynamicBatteryStorage
     /// <param name="vesselParts">Th elist of parts comprising a vessel</param>
     public VesselData(List<Part> vesselParts)
     {
-      parts = vesselParts;
       handlers = new List<ModuleDataHandler>();
-      RefreshData();
+      modules = new List<PartModule>();
+      RefreshData(true, vesselParts);
     }
 
     /// <summary>
     /// Refresh the data
     /// </summary>
-    public void RefreshData()
+    public void RefreshData(bool fromScratch, List<Part> vesselParts)
     {
-      ClearData();
+      parts = vesselParts;
+      if (fromScratch)
+      {
+        ClearData();
+      }
+
       if (parts == null)
       {
         Utils.Warn(String.Format("[{0}]: Refresh failed for vessel, vessel or parts list is null", this.GetType().Name));
         return;
       }
+      List<PartModule> newModules = new List<PartModule>();
+
       for (int i = parts.Count - 1; i >= 0; --i)
       {
         Part part = parts[i];
         for (int j = part.Modules.Count - 1; j >= 0; --j)
         {
-          PartModule m = part.Modules[j];
-          SetupDataHandler(m);
+          newModules.Add(part.Modules[j]);
+        }
+      }
+
+      List<PartModule> modulesToSetup = newModules.Except(modules).ToList();
+
+      for (int i = handlers.Count - 1; i >= 0; --i)
+      {
+        if (handlers[i] == null || handlers[i].PM == null || handlers[i].PM.part == null || !handlers[i].PM.part.isAttached)
+        {
+
+          handlers.RemoveAt(i);
+          Utils.Log(String.Format("A handler was removed"));
+        }
+      }
+      if (Settings.DebugMode)
+      {
+        Utils.Log(String.Format("[{0}]: Checking {1} new candidate PMs", this.GetType().Name, modulesToSetup.Count));
+      }
+      for (int i = modulesToSetup.Count - 1; i >= 0; --i)
+      {
+        SetupDataHandler(modulesToSetup[i]);
+        modules.Add(modulesToSetup[i]);
+      }
+
+          
+    }
+
+    public void RemoveHandlersForPart(Part p)
+    {
+
+      for (int i = handlers.Count - 1; i >= 0; --i)
+      {
+        if (handlers[i].PM.part == p)
+        {
+          for (int j = modules.Count - 1; j >= 0; --j)
+          {
+            if (modules[j] == handlers[i].PM)
+            {
+              modules.RemoveAt(j);
+              Utils.Log(String.Format("A module was removed"));
+            }
+          }
+          handlers.RemoveAt(i);
+          Utils.Log(String.Format("A modulehandler was removed"));
         }
       }
     }
-
     /// <summary>
     /// Dumps a string representation of the set of data
     /// </summary>
@@ -63,6 +113,7 @@ namespace DynamicBatteryStorage
     protected virtual void ClearData()
     {
       handlers.Clear();
+      modules.Clear();
     }
 
     /// <summary>
@@ -74,6 +125,21 @@ namespace DynamicBatteryStorage
       // Implement this
     }
 
+    /// <summary>
+    /// Remove a part module's data handler
+    /// </summary>
+    /// <param name="m">The PartModule to build the data handler off of.</param>
+    protected virtual void RemoveDataHandler(PartModule m)
+    {
+      for (int i = handlers.Count - 1; i >= 0; --i)
+      {
+        if (handlers[i].PM == null)
+        {
+          handlers.RemoveAt(i);
+       
+        }
+      }
+    }
 
     public List<ModuleDataHandler> AllHandlers { get { return handlers; } }
 

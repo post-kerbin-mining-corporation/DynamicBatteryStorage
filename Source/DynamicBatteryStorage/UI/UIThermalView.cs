@@ -27,12 +27,12 @@ namespace DynamicBatteryStorage.UI
       foreach (KeyValuePair<string, List<ModuleDataHandler>> entry in producerCats)
       {
         // Currently always generated with Show = false
-        producerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, (col_width - 20f), heatFlowUnits));
+        producerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, (col_width - 10f), heatFlowUnits));
       }
       foreach (KeyValuePair<string, List<ModuleDataHandler>> entry in consumerCats)
       {
         // Currently always generated with Show = false
-        consumerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, (col_width - 20f), heatFlowUnits));
+        consumerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, (col_width - 10f), heatFlowUnits));
       }
       if (Settings.DebugUIMode)
         Utils.Log("[UI]: [ThermalView]: New instance created");

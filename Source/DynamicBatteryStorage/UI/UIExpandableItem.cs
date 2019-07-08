@@ -68,6 +68,10 @@ namespace DynamicBatteryStorage.UI
           controlSize = GUILayoutUtility.GetLastRect();
           controlDirty = false;
         }
+      } 
+      else
+      {
+        controlSize = new Rect(0, 0, 0, 0);
       }
     }
 

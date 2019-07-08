@@ -28,6 +28,11 @@ namespace DynamicBatteryStorage
     protected float solarEfficiency = 1.0f;
 
     #region Accessors
+    public PartModule PM
+    {
+      get { return pm; }
+      set { pm = value; }
+    }
     public bool Simulated
     {
       get {return simulated;}

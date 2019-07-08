@@ -246,15 +246,23 @@ namespace DynamicBatteryStorage
     {
       solarEfficiencyEffects = false;
       visible = true;
-      simulated = true;
-      timewarpFunctional = true;
+      simulated = false;
+      timewarpFunctional = false;
       producer = false;
       consumer = true;
     }
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
-      double results = 0d;
+      bool charging = false;
+
+      bool discharging = false;
+
+      bool.TryParse(pm.Fields.GetValue("Enabled").ToString(), out charging);
+      if (charging)
+        producer = false;
+      if (discharging)
+        producer = true;
       return true;
     }
 
@@ -274,6 +282,12 @@ namespace DynamicBatteryStorage
         results *= -1d;
       } else
         double.TryParse(pm.Fields.GetValue("dischargeActual").ToString(), out results);
+
+      if (charging)
+        producer = false;
+      if (discharging)
+        producer = true;
+
       return results;
     }
     protected override double GetValueFlight()
@@ -293,6 +307,11 @@ namespace DynamicBatteryStorage
        if (discharging)
 
         double.TryParse(pm.Fields.GetValue("dischargeActual").ToString(), out results);
+
+      if (charging)
+        producer = false;
+      if (discharging)
+        producer = true;
       return results;
     }
   }
