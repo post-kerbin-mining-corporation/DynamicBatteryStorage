@@ -212,6 +212,7 @@ namespace DynamicBatteryStorage
         if (gen.resHandler.inputResources[i].name == "ElectricCharge")
         {
           producer = false;
+          consumer = true;
           savedRate = gen.resHandler.inputResources[i].rate;
           toMonitor = true;
         }
@@ -220,6 +221,7 @@ namespace DynamicBatteryStorage
         if (gen.resHandler.outputResources[i].name == "ElectricCharge")
         {
           producer = true;
+          consumer = false;
           savedRate = gen.resHandler.outputResources[i].rate;
           toMonitor = true;
          }
@@ -393,6 +395,7 @@ namespace DynamicBatteryStorage
         {
           converterEcRate = converter.inputList[i].Ratio;
           producer = false;
+          consumer = true;
           toMonitor = true;
         }
       }
@@ -402,6 +405,7 @@ namespace DynamicBatteryStorage
         {
           converterEcRate = converter.outputList[i].Ratio;
           producer = true;
+          consumer = false;
           toMonitor = true;
         }
       }
@@ -412,7 +416,10 @@ namespace DynamicBatteryStorage
     {
       if (converter != null)
       {
-        return -converterEcRate;
+        if (producer)
+          return converterEcRate;
+        else
+          return -converterEcRate;
       }
       return 0d;
     }
@@ -421,7 +428,10 @@ namespace DynamicBatteryStorage
       if (converter != null)
       {
         if (converter.IsActivated)
-          return converterEcRate * converter.lastTimeFactor * -1.0d;
+          if (producer)
+            return converterEcRate * converter.lastTimeFactor;
+          else
+            return converterEcRate * converter.lastTimeFactor * -1.0d;
       }
       return 0d;
     }

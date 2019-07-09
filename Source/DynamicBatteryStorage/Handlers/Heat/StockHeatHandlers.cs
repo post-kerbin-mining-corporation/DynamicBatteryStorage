@@ -165,7 +165,11 @@ namespace DynamicBatteryStorage
     {
       base.Initialize(pm);
       core = (ModuleCoreHeat)pm;
-      return true;
+
+      if (core.MaxCoolant > 0f)
+        return false;
+      else
+        return true;
     }
 
     protected override double GetValueEditor()
