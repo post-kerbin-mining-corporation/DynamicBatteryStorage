@@ -31,8 +31,8 @@ namespace DynamicBatteryStorage
           Utils.Log(String.Format("[{0}]: Detected supported thermal handler of type: {1}",  this.GetType().Name, typeName));
         }
         ModuleDataHandler handler = (ModuleDataHandler) System.Activator.CreateInstance("DynamicBatteryStorage", typeName).Unwrap();
-        handler.Initialize(pm);
-        handlers.Add(handler);
+        if (handler.Initialize(pm))
+          handlers.Add(handler);
       }
     }
 
