@@ -15,18 +15,44 @@ namespace DynamicBatteryStorage
     ModuleResourceConverter,
     ModuleActiveRadiator,
     ModuleResourceHarvester,
+    ModuleCommand,
+    ModuleLight,
+    ModuleDataTransmitter,
+    ModuleEnginesFX,
+    ModuleEngines,
+    ModuleAlternator,
 
     // NFT
     ModuleCurvedSolarPanel,
     FissionGenerator,
+    DischargeCapacitor,
     ModuleRadioisotopeGenerator,
     ModuleCryoTank,
     ModuleAntimatterTank,
+    ModuleDeployableCentrifuge,
 
     // RealBattery
     RealBattery,
 
     // Kopernicus
-    KopernicusSolarPanel 
+    KopernicusSolarPanel,
+
+    // SSTU
+    SSTUResourceBoiloff,
+    SSTUSolarPanelStatic,
+    SSTUSolarPanelDeployable
+
+  }
+
+  // This enum consists of all handled types. They MUST match the module name
+  public enum HeatHandlerType {
+    // Stock
+    ModuleCoreHeat,       // ONLY HANDLES PASSIVE HEAT
+    ModuleResourceConverter,
+    ModuleActiveRadiator,
+    ModuleResourceHarvester,
+
+    // NFT
+    FissionReactor
   }
 }

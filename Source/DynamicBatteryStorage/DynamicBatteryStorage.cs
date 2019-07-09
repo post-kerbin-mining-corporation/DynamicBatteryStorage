@@ -7,393 +7,270 @@ using UnityEngine;
 namespace DynamicBatteryStorage
 {
 
+  /// <summary>
+  /// This Vessel Module calculates vessel energy production and consumption, and chooses a part to act as a 'battery buffer' at high time warp speeds
+  ///
+  /// </summary>
   public class ModuleDynamicBatteryStorage : VesselModule
   {
-        float timeWarpLimit = 100f;
-        double bufferScale = 1.5d;
+    public bool AnalyticMode {get {return analyticMode;}}
 
-        bool vesselLoaded = false;
-        bool analyticMode = false;
-        bool dataReady = false;
-        int partCount = -1;
+    public Part BufferPart { get { return bufferPart; } }
+    public PartResource BufferResource { get { return bufferStorage; } }
 
-        public bool AnalyticMode {get {return analyticMode;}}
+    public double BufferScale { get { return bufferScale; } }
+    public double BufferSize { get { return bufferSize; } }
+    public double MaxEC { get { return originalMax + bufferDifference; } }
 
-        public Part BufferPart { get { return bufferPart; } }
-        public PartResource BufferResource { get { return bufferStorage; } }
+    public double SavedMaxEC { get { return originalMax; } }
+    public double SavedVesselMaxEC { get { return totalEcMax; } }
 
-        public double BufferScale { get { return bufferScale; } }
-        public double BufferSize { get { return bufferSize; } }
-        public double SavedMaxEC { get { return originalMax; } }
-        public double SavedVesselMaxEC { get { return totalEcMax; } }
+    #region PrivateVariables
 
-        public double ShipPowerConsumption {
-          get {
+    float timeWarpLimit = 100f;
+    double bufferScale = 1.5d;
 
-            double consumption = 0d;
-            for (int i=0; i < powerHandlers.Count; i++)
-            {
-              double pwr = powerHandlers[i].GetPower();
-              if (pwr < 0d)
-                  consumption += pwr;
-            }
-            return consumption;
-          }
-        }
-        public double ShipPowerProduction {
-         get {
-           double production = 0d;
-           for (int i=0; i < powerHandlers.Count; i++)
-           {
-               double pwr = powerHandlers[i].GetPower();
-             if (pwr > 0d)
-               production += pwr;
+    bool vesselLoaded = false;
+    bool analyticMode = false;
+    bool dataReady = false;
+    bool hasBuffer = false;
+    double bufferSize = 0d;
 
-             }
-             return production;
-           }
-        }
-        public List<PowerHandler> ShipProducers
+    // The base, non-buffered EC total of the buffer part
+    double originalMax = 0d;
+    // The base, non-buffered EC total of the Vessel
+    double totalEcMax = 0d;
+    // The amount to be added to originalMax to get the needed buffer size
+    double bufferDifference = 0d;
+
+    VesselDataManager vesselData;
+    PartResource bufferStorage;
+    Part bufferPart;
+
+    #endregion
+
+    protected override void  OnStart()
+    {
+      base.OnStart();
+
+      bufferScale = (double)Settings.BufferScaling;
+      timeWarpLimit = Settings.TimeWarpLimit;
+
+      GameEvents.onVesselDestroy.Add(new EventData<Vessel>.OnEvent(CalculateElectricalData));
+      GameEvents.onVesselGoOnRails.Add(new EventData<Vessel>.OnEvent(CalculateElectricalData));
+      GameEvents.onVesselWasModified.Add(new EventData<Vessel>.OnEvent(CalculateElectricalData));
+
+      FindDataManager();
+      if (Settings.DebugMode)
+      {
+          Utils.Log(String.Format("Initialization completed with buffer scale {0} and timewarp limit {1}", bufferScale, timeWarpLimit));
+      }
+    }
+
+    protected override void OnSave(ConfigNode node)
+    {
+      // Saving needs to trigger a buffer clear
+      ClearBufferStorage();
+      base.OnSave(node);
+    }
+
+    void OnDestroy()
+    {
+      GameEvents.onVesselDestroy.Remove(CalculateElectricalData);
+      GameEvents.onVesselGoOnRails.Remove(CalculateElectricalData);
+      GameEvents.onVesselWasModified.Remove(CalculateElectricalData);
+    }
+
+    void FindDataManager()
+    {
+      vesselData = vessel.GetComponent<VesselDataManager>();
+      if (!vesselData)
+      {
+        Utils.Error(LogVessel("Could not find vessel data manager"));
+      }
+    }
+
+    void FixedUpdate()
+    {
+      if (HighLogic.LoadedSceneIsFlight)
+      {
+
+        if (!vesselLoaded && FlightGlobals.ActiveVessel == vessel)
         {
-          get
+          FindDataManager();
+          CalculateElectricalData();
+          vesselLoaded = true;
+        }
+        if (vesselLoaded && FlightGlobals.ActiveVessel != vessel)
+        {
+          vesselLoaded = false;
+        }
+
+        if (TimeWarp.CurrentRate < timeWarpLimit)
+        {
+          analyticMode = false;
+          DoLowWarpSimulation();
+
+        } else
+        {
+          analyticMode = true;
+          DoHighWarpSimulation();
+        }
+      }
+    }
+
+    /// <summary>
+    /// Runs the compensation at low warp. This typically means do nothing
+    /// </summary>
+    protected void DoLowWarpSimulation()
+    {
+      if (bufferStorage != null && bufferStorage.maxAmount != originalMax)
+      {
+        bufferStorage.maxAmount = originalMax;
+      }
+    }
+
+    /// <summary>
+    /// Runs the compensation at high warp
+    /// </summary>
+    protected void DoHighWarpSimulation()
+    {
+      if (vesselData != null && vesselData.ElectricalData != null)
+      {
+        double production = vesselData.ElectricalData.CurrentProduction;
+        double consumption = vesselData.ElectricalData.CurrentConsumption;
+        CalculateBuffer(production, consumption);
+      }
+    }
+
+    /// <summary>
+    /// Calculates the required buffer and applies it
+    /// </summary>
+    protected void CalculateBuffer(double production, double consumption)
+    {
+      float powerNet = (float)(production + consumption);
+
+      if (powerNet < 0d)
+      {
+        // In this case, power generation is too low to handle draw, so no buffer is required
+        if (bufferStorage != null)
+        {
+          Utils.Log(LogVessel("Power production too low, clearing buffer"));
+          ClearBufferStorage();
+        }
+      }
+      else
+      {
+        // Buffer size should be equal to one physics frame of consumption with an appropriate fudge factor
+        bufferSize = Math.Abs(consumption) * (double)TimeWarp.fixedDeltaTime * bufferScale;
+
+        if (bufferStorage != null)
+        {
+          // Calculate the difference between a required buffer size and the vessel maximum EC
+          bufferDifference = (double)Mathf.Clamp((float)(bufferSize - totalEcMax), 0f, 9999999f);
+
+          if (Settings.DebugMode)
           {
-            List<PowerHandler> handlers = new List<PowerHandler>();
-            for (int i=0; i < powerHandlers.Count; i++)
-            {
-              if (powerHandlers[i].IsProducer())
-              {
-                handlers.Add(powerHandlers[i]);
-              }
-            }
-            return handlers;
-          }
-        }
-        public List<PowerHandler> ShipConsumers
-        {
-          get
-          {
-            List<PowerHandler> handlers = new List<PowerHandler>();
-            for (int i=0; i < powerHandlers.Count; i++)
-            {
-              if (!powerHandlers[i].IsProducer())
-              {
-                handlers.Add(powerHandlers[i]);
-              }
-            }
-            return handlers;
-          }
-        }
-
-        double bufferSize;
-
-        double originalMax = 0d;
-        double totalEcMax = 0d;
-
-        PartResource bufferStorage;
-        Part bufferPart;
-
-        List<PowerHandler> powerHandlers = new List<PowerHandler>();
-
-        //public override VesselModule.Activation GetActivation()
-        //{
-            //return Activation..LoadedVessels;
-        //}
-
-        protected override void  OnStart()
-        {
- 	          base.OnStart();
-
-              bufferScale = (double)Settings.BufferScaling;
-              timeWarpLimit = Settings.TimeWarpLimit;
-
-            GameEvents.onVesselDestroy.Add(new EventData<Vessel>.OnEvent(RefreshVesselElectricalData));
-            GameEvents.onVesselGoOnRails.Add(new EventData<Vessel>.OnEvent(RefreshVesselElectricalData));
-            GameEvents.onVesselWasModified.Add(new EventData<Vessel>.OnEvent(RefreshVesselElectricalData));
-
-            RefreshVesselElectricalData();
-        }
-
-        protected override void OnSave(ConfigNode node)
-        {
-            //Debug.Log("Saving, clearing buffer");
-            ClearBufferStorage();
-            base.OnSave(node);
-        }
-
-        void OnDestroy()
-        {
-          GameEvents.onVesselDestroy.Remove(RefreshVesselElectricalData);
-          GameEvents.onVesselGoOnRails.Remove(RefreshVesselElectricalData);
-          GameEvents.onVesselWasModified.Remove(RefreshVesselElectricalData);
-        }
-        void FixedUpdate()
-        {
-          if (HighLogic.LoadedSceneIsFlight && dataReady)
-          {
-             // Debug.Log(String.Format("BufferStorage: Vessel {0}, loaded state is {1}",  vessel.name, vessel.loaded.ToString()));
-              if (!vesselLoaded && FlightGlobals.ActiveVessel == vessel)
-              {
-                  //Debug.Log("Vessel changed state from unfocused to focused");
-                  RefreshVesselElectricalData();
-                  vesselLoaded = true;
-              }
-              if (vesselLoaded && FlightGlobals.ActiveVessel != vessel)
-              {
-                  vesselLoaded = false;
-              }
-
-            if (TimeWarp.CurrentRate < timeWarpLimit)
-            {
-                analyticMode = false;
-                DoLowWarpSimulation();
-
-            } else
-            {
-              analyticMode = true;
-              DoHighWarpSimulation();
-            }
-
-          }
-        }
-        protected void DoLowWarpSimulation()
-        {
-            if (bufferStorage != null && bufferStorage.maxAmount != originalMax)
-            {
-                bufferStorage.maxAmount = originalMax;
-            }
-        }
-        protected void DoHighWarpSimulation()
-        {
-          if (powerHandlers.Count > 0)
-          {
-
-            double production = 0d;
-            double consumption = 0d;
-
-            for (int i=0; i < powerHandlers.Count; i++)
-            {
-                double pwr = powerHandlers[i].GetPower();
-              if (pwr > 0d)
-                  production += pwr;
-              else
-                  consumption += -pwr;
-            }
-            AllocatePower(production, consumption);
-          }
-        }
-
-        protected void AllocatePower(double production, double consumption)
-        {
-           // Debug.Log(String.Format("P: {0} C: {1}", production, consumption));
-          // normalize this
-          consumption = consumption * 1d;
-
-          float powerNet = Mathf.Clamp((float)(production - consumption), -9999999f, 0f);
-
-          if (powerNet < 0d)
-          {
-            if (bufferStorage != null)
-            {
-                Debug.Log("Power production too low, clearing buffer");
-              ClearBufferStorage();
-            }
-          }
-          else
-          {
-            bufferSize = consumption * (double)TimeWarp.fixedDeltaTime * bufferScale;
-            if (bufferStorage != null)
-            {
-                double delta = (double)Mathf.Clamp((float)(bufferSize - totalEcMax), 0f, 9999999f);
-                Debug.Log(String.Format("delta {0}, target amt {1}", delta, originalMax+delta ));
-                bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax + delta));
-                bufferStorage.maxAmount = originalMax + delta;
-            }
-          }
-        }
-
-        protected void RefreshVesselElectricalData(Vessel eventVessel)
-        {
-          //Utils.Log("Refreshing data from Vessel event");
-          RefreshVesselElectricalData();
-        }
-        protected void RefreshVesselElectricalData(ConfigNode node)
-        {
-            //Utils.Log("Refresh from save node event");
-            RefreshVesselElectricalData();
-        }
-        protected void RefreshVesselElectricalData()
-        {
-          ClearElectricalData();
-          if (vessel == null || vessel.Parts == null)
-          {
-              Utils.Log("Refresh failed for vessel, not initialized");
-              return;
+            Utils.Log(LogVessel(String.Format("Buffer needs {0:F2} EC space to reach target amount of {1:F2} EC", bufferDifference, originalMax + bufferDifference )));
           }
 
-          partCount = vessel.Parts.Count;
-
-          for (int i = partCount - 1; i >= 0; --i)
-          {
-              Part part = vessel.Parts[i];
-              for (int j = part.Modules.Count - 1; j >= 0; --j)
-              {
-                  PartModule m = part.Modules[j];
-                  // Try to create accessor modules
-
-                  SetupPowerHandler(m);
-                  
-              }
-            }
-
-            if (powerHandlers.Count > 0)
-            {
-                double amount;
-                double maxAmount;
-
-                if (bufferPart != null)
-                {
-                    
-                } else {
-                vessel.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, out amount, out maxAmount);
-                totalEcMax = maxAmount;
-                
-                CreateBufferStorage();
-                }
-                //Debug.Log(String.Format("TotalEcMax {0}",totalEcMax));
-            }
-            if (vessel.loaded)
-            {
-             Utils.Log(String.Format("Summary: \n vessel {0} (loaded state {1})\n" +
-                "- {2} stock power handlers", vessel.name, vessel.loaded.ToString(), powerHandlers.Count));
-            }
-
-          dataReady = true;
+          // Apply the buffer
+          bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax + bufferDifference));
+          bufferStorage.maxAmount = originalMax + bufferDifference;
         }
+      }
+    }
 
-        protected void ClearElectricalData()
-        {
-          powerHandlers.Clear();
-        }
+    /// <summary>
+    /// Calculates all required electrical data elements
+    /// </summary>
+    protected void CalculateElectricalData()
+    {
+      Utils.Log(LogVessel("Regenerating electrical data"));
+      if (vessel == null || vessel.Parts == null)
+      {
+          Utils.Log(LogVessel("Refresh of electrical data failed for vessel, not initialized"));
+          return;
+      }
+      // If the buffer does not exist, create it
+      if (bufferPart == null)
+      {
+        double amount;
+        double maxAmount;
+        vessel.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, out amount, out maxAmount);
+        totalEcMax = maxAmount;
+        CreateBufferStorage();
+      }
+      dataReady = true;
+    }
 
-        protected void ClearBufferStorage()
+
+    protected void CalculateElectricalData(Vessel eventVessel)
+    {
+      CalculateElectricalData();
+    }
+    protected void CalculateElectricalData(ConfigNode node)
+    {
+        CalculateElectricalData();
+    }
+
+    /// <summary>
+    /// Clears the buffer (reverts it to its initial state)
+    /// </summary>
+    protected void ClearBufferStorage()
+    {
+
+      if (bufferStorage != null)
+      {
+        Utils.Log(LogVessel("Trying to clear buffer storage"));
+        // Clamp the energy to the initial maximum and revert the maximum
+        bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax));
+        bufferStorage.maxAmount = originalMax;
+
+        // Also do this to tbe ProtoResource
+        foreach(ProtoPartResourceSnapshot proto in bufferPart.protoPartSnapshot.resources)
         {
-          //Utils.Log("Trying to clear buffer storage");
-          if (bufferStorage != null)
+          if (proto.resourceName == "ElectricCharge")
           {
-              bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax));
-            bufferStorage.maxAmount = originalMax;
-
-            //Debug.Log(String.Format("{0}, {1}", bufferStorage.amount, bufferStorage.maxAmount));
-              foreach(ProtoPartResourceSnapshot proto in bufferPart.protoPartSnapshot.resources)
-              {
-                  if (proto.resourceName == "ElectricCharge")
-                  {
-                      //Debug.Log(String.Format("{0}, {1}", proto.amount, proto.maxAmount));
-                      proto.amount = bufferStorage.amount;
-                      proto.maxAmount = originalMax;
-                      //Debug.Log(String.Format("{0}, {1}", proto.amount, proto.maxAmount));
-                  }
-
-              }
-
-
+            proto.amount = bufferStorage.amount;
+            proto.maxAmount = originalMax;
           }
         }
+      }
+    }
 
-        bool hasBuffer = false;
-        protected void CreateBufferStorage()
+    /// <summary>
+    /// Creates the buffer and initializes the appropriate variables
+    /// </summary>
+    protected void CreateBufferStorage()
+    {
+      if (bufferPart != null)
+      {
+        Utils.Log(LogVessel(String.Format("Already has buffer on {0} with an initial capacity of {1:F1} EC", bufferPart.partInfo.name, originalMax)));
+        return;
+      }
+      // Find a part containing electricity and set it as the buffer
+      for (int i = 0; i < vessel.parts.Count; i++ )
+      {
+        if (vessel.parts[i].Resources.Contains("ElectricCharge"))
         {
-            if (bufferPart != null)
-            {
-                Utils.Log(String.Format("Has buffer on {0} with orig max {1}", bufferPart.partInfo.name, originalMax));
-                
-                
-                return;
-            }
-            for (int i = 0; i < vessel.parts.Count; i++ )
-            {
-                if (vessel.parts[i].Resources.Contains("ElectricCharge"))
-                {
-                    bufferPart = vessel.parts[i];
-                    bufferStorage = vessel.parts[i].Resources.Get("ElectricCharge");
-                    originalMax = bufferStorage.maxAmount;
-                    Utils.Log(String.Format("Located storage on {0} with {1} inital EC", vessel.parts[i].partInfo.name, originalMax));
-                    return;
-                }
-            }
-            Utils.Log(String.Format("Could not find an electrical storage part on the vessel"));
+          bufferPart = vessel.parts[i];
+          bufferStorage = vessel.parts[i].Resources.Get("ElectricCharge");
+          originalMax = bufferStorage.maxAmount;
+
+          Utils.Log(LogVessel(String.Format("Created buffer on {0} with an initial capacity of {1} EC", vessel.parts[i].partInfo.name, originalMax)));
+          return;
         }
+      }
+      Utils.Log(LogVessel(String.Format("Could not find an electrical storage part")));
+    }
 
-        protected void SetupPowerHandler(PartModule pm)
-        {
-          PowerHandlerType handlerType;
-          if (TryParse<PowerHandlerType>(pm.moduleName, out handlerType))
-          {
-              //Utils.Log(String.Format("Type string: {0}", pm.moduleName + "Handler" + ",DynamicBatteryStorage"));
-              //Utils.Log(String.Format("Type: {0}", Type.GetType(pm.moduleName + "Handler"+",DynamicBatteryStorage")));
-              PowerHandler handler = (PowerHandler) System.Activator.CreateInstance("DynamicBatteryStorage", "DynamicBatteryStorage."+ pm.moduleName + "Handler").Unwrap();
-            handler.Initialize(pm);
-            powerHandlers.Add(handler);
-          }
-        }
-
-
-        /// Checks to see whether a ModuleGenerator/ModuleResourceConverter/ModuleResourceHarvester is a producer or consumer
-        protected bool VerifyInputs(PartModule pm, bool isProducer)
-        {
-          if (pm.moduleName == "ModuleResourceConverter" || pm.moduleName == "ModuleResourceHarvester")
-          {
-            BaseConverter conv = (BaseConverter)pm;
-            if (isProducer)
-            {
-              for (int i = 0;i < conv.outputList.Count;i++)
-                if (conv.inputList[i].ResourceName == "ElectricCharge")
-                    return true;
-              return false;
-            } else
-            {
-                for (int i = 0; i < conv.inputList.Count; i++)
-                    if (conv.inputList[i].ResourceName == "ElectricCharge")
-                        return true;
-              return false;
-            }
-          }
-          if (pm.moduleName == "ModuleGenerator")
-          {
-            ModuleGenerator gen = (ModuleGenerator)pm;
-            if (isProducer)
-            {
-              for (int i = 0; i < gen.resHandler.outputResources.Count; i++)
-                  if (gen.resHandler.outputResources[i].name == "ElectricCharge")
-                  {
-                      return true;
-                  }
-              return false;
-            } else
-            {
-              for (int i = 0; i < gen.resHandler.inputResources.Count; i++)
-                  if (gen.resHandler.inputResources[i].name == "ElectricCharge")
-                  {
-                      return true;
-                  }
-              return false;
-            }
-          }
-          return true;
-        }
-
-
-        public static bool TryParse<TEnum>(string value, out TEnum result)
-      where TEnum : struct, IConvertible
-        {
-            var retValue = value == null ?
-                        false :
-                        Enum.IsDefined(typeof(TEnum), value);
-            result = retValue ?
-                        (TEnum)Enum.Parse(typeof(TEnum), value) :
-                        default(TEnum);
-            return retValue;
-        }
-
+    /// <summary>
+    /// Creates a log message that is prefixed by the vessel name
+    /// </summary>
+    protected string LogVessel(string msg)
+    {
+      return String.Format("[Controller] [{0}]: {1}",  vessel.name,msg);
+    }
   }
 }

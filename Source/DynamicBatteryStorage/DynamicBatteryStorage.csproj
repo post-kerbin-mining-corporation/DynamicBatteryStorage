@@ -39,7 +39,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
@@ -50,20 +49,50 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DynamicBatteryStorageUI.cs" />
+    <Compile Include="Data\VABVesselDataManager.cs" />
+    <Compile Include="Data\VesselData.cs" />
+    <Compile Include="Data\VesselDataManager.cs" />
+    <Compile Include="Data\VesselElectricalData.cs" />
+    <Compile Include="Data\VesselThermalData.cs" />
     <Compile Include="DynamicBatteryStorage.cs" />
-    <Compile Include="Handlers\KopernicusPowerHandlers.cs" />
-    <Compile Include="Handlers\NFTPowerHandlers.cs" />
-    <Compile Include="Handlers\PowerHandler.cs" />
-    <Compile Include="Handlers\PowerHandlerTypes.cs" />
+    <Compile Include="FormatUtils.cs" />
+    <Compile Include="Handlers\HandlerCategories.cs" />
+    <Compile Include="Handlers\HandlerTypes.cs" />
+    <Compile Include="Handlers\Heat\NFTHeatHandlers.cs" />
+    <Compile Include="Handlers\Heat\StockHeatHandlers.cs" />
+    <Compile Include="Handlers\ModuleDataHandler.cs" />
+    <Compile Include="Handlers\Power\KopernicusPowerHandlers.cs" />
+    <Compile Include="Handlers\Power\NFTPowerHandlers.cs" />
+    <Compile Include="Handlers\Power\RealBatteryPowerHandlers.cs" />
+    <Compile Include="Handlers\Power\StockPowerHandlers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Handlers\RealBatteryPowerHandlers.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Handlers\StockPowerHandlers.cs" />
+    <Compile Include="UI\DynamicBatteryStorageUI.cs" />
+    <Compile Include="UI\UIBaseWindow.cs" />
+    <Compile Include="UI\UIDBSManager.cs" />
+    <Compile Include="UI\UIElectricalView.cs" />
+    <Compile Include="UI\UIExpandableItem.cs" />
+    <Compile Include="UI\UIResources.cs" />
+    <Compile Include="UI\UISolarPanelManager.cs" />
+    <Compile Include="UI\UIThermalView.cs" />
+    <Compile Include="UI\UIUtils.cs" />
+    <Compile Include="UI\UIView.cs" />
+    <Compile Include="UI\UIWidget.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>del "C:\Games\Steam\steamapps\common\Kerbal Space Program\GameData\DynamicBatteryStorage\Plugins\UnityEngine.dll"
+del "C:\Games\Steam\steamapps\common\Kerbal Space Program\GameData\DynamicBatteryStorage\Plugins\KSPAssets.dll"
+del "C:\Games\Steam\steamapps\common\Kerbal Space Program\GameData\DynamicBatteryStorage\Plugins\Ionic.Zip.dll"
+del "C:\Games\Steam\steamapps\common\Kerbal Space Program\GameData\DynamicBatteryStorage\Plugins\KSPTrackIR.dll"
+del "C:\Games\Steam\steamapps\common\Kerbal Space Program\GameData\DynamicBatteryStorage\Plugins\Mono.Cecil.dll"
+del "C:\Games\Steam\steamapps\common\Kerbal Space Program\GameData\DynamicBatteryStorage\Plugins\TDx.TDxInput.dll"
+del "C:\Games\Steam\steamapps\common\Kerbal Space Program\GameData\DynamicBatteryStorage\Plugins\UnityEngine.UI.dll"
+del "C:\Games\Steam\steamapps\common\Kerbal Space Program\GameData\DynamicBatteryStorage\Plugins\Assembly-CSharp.dll"
+del "C:\Games\Steam\steamapps\common\Kerbal Space Program\GameData\DynamicBatteryStorage\Plugins\Assembly-CSharp-firstpass.dll"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
