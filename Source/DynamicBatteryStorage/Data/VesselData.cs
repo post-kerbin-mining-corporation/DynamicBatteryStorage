@@ -75,9 +75,12 @@ namespace DynamicBatteryStorage
         modules.Add(modulesToSetup[i]);
       }
 
-          
-    }
 
+    }
+    /// <summary>
+    /// Removes handlers associated with a specific part
+    /// </summary>
+    /// <param name="p">The part whose handlers to strip.</param>
     public void RemoveHandlersForPart(Part p)
     {
 
@@ -136,7 +139,6 @@ namespace DynamicBatteryStorage
         if (handlers[i].PM == null)
         {
           handlers.RemoveAt(i);
-       
         }
       }
     }

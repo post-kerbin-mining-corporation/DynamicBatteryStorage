@@ -11,14 +11,8 @@ namespace DynamicBatteryStorage
   // Curved Solar Panel
   public class ModuleCurvedSolarPanelPowerHandler: ModuleDataHandler
   {
-    public ModuleCurvedSolarPanelPowerHandler()
-    {
-      solarEfficiencyEffects = true;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = true;
-    }
+    public ModuleCurvedSolarPanelPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     protected override double GetValueEditor()
     {
       double results = 0d;
@@ -36,14 +30,8 @@ namespace DynamicBatteryStorage
   // Fission Reactor
   public class FissionGeneratorPowerHandler: ModuleDataHandler
   {
-    public FissionGeneratorPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = true;
-    }
+    public FissionGeneratorPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
 
     PartModule core;
 
@@ -82,14 +70,8 @@ namespace DynamicBatteryStorage
   // RTG
   public class ModuleRadioisotopeGeneratorPowerHandler: ModuleDataHandler
   {
-    public ModuleRadioisotopeGeneratorPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = true;
-    }
+    public ModuleRadioisotopeGeneratorPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     protected override double GetValueEditor()
     {
       double results = 0d;
@@ -107,15 +89,8 @@ namespace DynamicBatteryStorage
   // CryoTank
   public class ModuleCryoTankPowerHandler: ModuleDataHandler
   {
-    public ModuleCryoTankPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = false;
-      consumer = true;
-    }
+    public ModuleCryoTankPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     protected override double GetValueEditor()
     {
       double resAmt = GetMaxFuelAmt();
@@ -150,15 +125,8 @@ namespace DynamicBatteryStorage
   // Antimatter Tank
   public class ModuleAntimatterTankPowerHandler: ModuleDataHandler
   {
-    public ModuleAntimatterTankPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = false;
-      consumer = true;
-    }
+    public ModuleAntimatterTankPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     protected override double GetValueEditor()
     {
       double results = 0d;
@@ -179,15 +147,8 @@ namespace DynamicBatteryStorage
 
     bool hasOfflineGenerator = false;
     double offlineBaseRate = 0d;
-    public ModuleChargeableEnginePowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = false;
-      consumer = true;
-    }
+    public ModuleChargeableEnginePowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     public override bool Initialize(PartModule pm)
     {
       bool.TryParse(pm.Fields.GetValue("PowerGeneratedOffline").ToString(), out hasOfflineGenerator);
@@ -242,15 +203,8 @@ namespace DynamicBatteryStorage
   }
   public class DischargeCapacitorPowerHandler : ModuleDataHandler
   {
-    public DischargeCapacitorPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = false;
-      timewarpFunctional = false;
-      producer = false;
-      consumer = true;
-    }
+    public DischargeCapacitorPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -318,15 +272,9 @@ namespace DynamicBatteryStorage
   // Centrifuge
   public class ModuleDeployableCentrifugePowerHandler : ModuleDataHandler
   {
-    public ModuleDeployableCentrifugePowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = false;
-      consumer = true;
-    }
+    public ModuleDeployableCentrifugePowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
+
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);

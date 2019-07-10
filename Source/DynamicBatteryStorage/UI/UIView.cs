@@ -62,10 +62,10 @@ namespace DynamicBatteryStorage.UI
 
       consumerCats = new Dictionary<string, List<ModuleDataHandler>>();
       producerCats = new Dictionary<string, List<ModuleDataHandler>>();
-      categoryNames = HandlerCategories.HandlerCategoryMap.Keys.ToList();
+      categoryNames = Settings.HandlerCategories;
 
 
-      foreach (KeyValuePair<string, List<string>> categoryEntry in HandlerCategories.HandlerCategoryMap)
+      foreach (KeyValuePair<string, List<HandlerCategory>> categoryEntry in Settings.HandlerCategoryData)
       {
         consumerCats.Add(categoryEntry.Key, new List<ModuleDataHandler>());
         producerCats.Add(categoryEntry.Key, new List<ModuleDataHandler>());
@@ -215,15 +215,15 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     public virtual void Update()
     {
-     
+
       float producerScrollHeight = 0f;
       float consumerScrollHeight = 0f;
-      
+
       for (int i = 0; i < categoryNames.Count; i++)
       {
         producerScrollHeight += producerCategoryUIItems[categoryNames[i]].GetHeight();
       }
-    
+
       for (int i = 0; i < categoryNames.Count; i++)
       {
         consumerScrollHeight += consumerCategoryUIItems[categoryNames[i]].GetHeight();
@@ -255,7 +255,7 @@ namespace DynamicBatteryStorage.UI
 
       // Rebuild the blank dictionary
 
-      foreach (KeyValuePair<string, List<string>> categoryEntry in HandlerCategories.HandlerCategoryMap)
+      foreach (KeyValuePair<string, List<HandlerCategory>> categoryEntry in Settings.HandlerCategoryData)
       {
         consumerCats[categoryEntry.Key] = new List<ModuleDataHandler>();
         producerCats[categoryEntry.Key] = new List<ModuleDataHandler>();
@@ -264,9 +264,9 @@ namespace DynamicBatteryStorage.UI
       // Sort through all handlers found and add to the appropriate category
       for (int i = 0; i < handlers.Count; i++)
       {
-        foreach(KeyValuePair<string, List<string>> categoryEntry in HandlerCategories.HandlerCategoryMap)
+        foreach(KeyValuePair<string, List<HandlerCategory>> categoryEntry in Settings.HandlerCategoryData)
         {
-          if (categoryEntry.Value.FindAll(module => module == handlers[i].ModuleName()).Count > 0)
+          if (categoryEntry.Value.handledModules.FindAll(module => module == handlers[i].ModuleName()).Count > 0)
           {
             if (handlers[i].Producer)
               producerCats[categoryEntry.Key].Add(handlers[i]);

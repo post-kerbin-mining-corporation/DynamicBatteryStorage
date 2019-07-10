@@ -11,15 +11,8 @@ namespace DynamicBatteryStorage
   // Fission Reactor
   public class FissionReactorHeatHandler: ModuleDataHandler
   {
-    public FissionReactorHeatHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = true;
-      consumer = false;
-    }
+    public FissionReactorHeatHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
 
     protected override double GetValueEditor()
     {
@@ -46,15 +39,8 @@ namespace DynamicBatteryStorage
   {
     ModuleEnginesFX engine;
 
-    public FissionFlowRadiatorHeatHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = false;
-      timewarpFunctional = false;
-      producer = false;
-      consumer = true;
-    }
+    public FissionFlowRadiatorHeatHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
 
     public override bool Initialize(PartModule pm)
     {

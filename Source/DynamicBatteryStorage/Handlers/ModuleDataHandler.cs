@@ -11,7 +11,8 @@ namespace DynamicBatteryStorage
   {
     // The associated PartModule to monitor
     protected PartModule pm;
-
+    // The config data for this data handler type
+    protected HandlerModuleData data;
     // Is this module visible in the UI?
     protected bool visible = true;
     // Should this module be included in the DBS simulations?
@@ -69,12 +70,21 @@ namespace DynamicBatteryStorage
     /// <summary>
     /// Constructor
     /// </summary>
-    public ModuleDataHandler()
+    /// <param name="data">The config-loaded data for this module type </param>
+    public ModuleDataHandler(HandlerModuleData moduleData)
     {
+      data = moduleData;
 
+      solarEfficiencyEffects = moduleData.solarEfficiencyEffects;
+      consumer = moduleData.consumer;
+      producer = moduleData.producer;
+      timewarpFunctional = moduleData.simulatedInTimewarp;
+      simulated = moduleData.simulated;
+      visible = moduleData.startsActive;
     }
     /// <summary>
-    /// Initializer - should cache relevant items
+    /// Initializer - should cache relevant items. Should also validate whether this
+    /// instance of the PM is really valid - ie check a converter module for actual power use
     /// </summary>
     /// <param name="module">The PartModule to monitor </param>
     public virtual bool Initialize(PartModule module)
@@ -114,7 +124,7 @@ namespace DynamicBatteryStorage
       return 0d;
     }
     /// <summary>
-    /// Accessor for the name of the module. 
+    /// Accessor for the name of the module.
     /// </summary>
     public virtual string ModuleName()
     {

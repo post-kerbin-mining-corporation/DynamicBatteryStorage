@@ -17,24 +17,24 @@ namespace DynamicBatteryStorage
     {}
 
     /// <summary>
-    /// Set up the appropriate PowerHandler component for a PartModule which polls the underlying PartModule for relevant properties
-    /// The PartModue must be supported as in the enums defined in PowerHandlerType
+    /// Set up the appropriate HeatHandler component for a PartModule which polls the underlying PartModule for relevant properties
     /// </summary>
+
     protected override void SetupDataHandler(PartModule pm)
     {
-      HeatHandlerType handlerType;
-      if (Utils.TryParseEnum<HeatHandlerType>(pm.moduleName, false, out handlerType))
+      if (Settings.IsSupportedPartModule(pm.moduleName, ResourcesSupported.Heat))
       {
-        string typeName =  "DynamicBatteryStorage."+ pm.moduleName + "HeatHandler";
+        HandlerModuleData data = Settings.GetPartModuleData(pm.moduleName, ResourcesSupported.Heat);
         if (Settings.DebugMode)
         {
-          Utils.Log(String.Format("[{0}]: Detected supported thermal handler of type: {1}",  this.GetType().Name, typeName));
+          Utils.Log(String.Format("[{0}]: Detected supported heat handler for {1}: {2}",  this.GetType().Name, pm.moduleName, data.handlerModuleName));
         }
-        ModuleDataHandler handler = (ModuleDataHandler) System.Activator.CreateInstance("DynamicBatteryStorage", typeName).Unwrap();
-        if (handler.Initialize(pm))
+        ModuleDataHandler handler = (ModuleDataHandler) System.Activator.CreateInstance("DynamicBatteryStorage", "DynamicBatteryStorage." + data.handlerModuleName).Unwrap();
+        if( handler.Initialize(pm, data))
           handlers.Add(handler);
       }
     }
+
 
     /// <summary>
     /// Dumps the entire handler array as a set of single-line strings defining the handlers on the vessel

@@ -13,15 +13,8 @@ namespace DynamicBatteryStorage
   {
     ModuleActiveRadiator radiator;
 
-    public ModuleActiveRadiatorHeatHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = false;
-      consumer = true;
-    }
+    public ModuleActiveRadiatorHeatHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     public override bool Initialize(PartModule pm)
     {
       radiator = (ModuleActiveRadiator)pm;
@@ -55,15 +48,8 @@ namespace DynamicBatteryStorage
     ModuleResourceHarvester harvester;
     ModuleCoreHeat core;
 
-    public ModuleResourceHarvesterHeatHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = true;
-      consumer = false;
-    }
+    public ModuleResourceHarvesterHeatHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -104,15 +90,8 @@ namespace DynamicBatteryStorage
     ModuleResourceConverter converter;
     ModuleCoreHeat core;
 
-    public ModuleResourceConverterHeatHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = true;
-      consumer = false;
-    }
+    public ModuleResourceConverterHeatHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
 
     public override bool Initialize(PartModule pm)
     {
@@ -151,7 +130,7 @@ namespace DynamicBatteryStorage
   {
     ModuleCoreHeat core;
 
-    public ModuleCoreHeatHeatHandler()
+    public ModuleCoreHeatHeatHandler(HandlerModuleData moduleData):base(moduleData)
     {
       solarEfficiencyEffects = false;
       visible = true;

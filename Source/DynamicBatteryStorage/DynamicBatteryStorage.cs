@@ -155,7 +155,8 @@ namespace DynamicBatteryStorage
         // In this case, power generation is too low to handle draw, so no buffer is required
         if (bufferStorage != null)
         {
-          Utils.Log(LogVessel("Power production too low, clearing buffer"));
+          if (Settings.DebugMode)
+            Utils.Log(LogVessel("Power production too low, clearing buffer"));
           ClearBufferStorage();
         }
       }
@@ -186,10 +187,12 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void CalculateElectricalData()
     {
-      Utils.Log(LogVessel("Regenerating electrical data"));
+      if (Settings.DebugMode)
+        Utils.Log(LogVessel("Regenerating electrical data"));
       if (vessel == null || vessel.Parts == null)
       {
-          Utils.Log(LogVessel("Refresh of electrical data failed for vessel, not initialized"));
+          if (Settings.DebugMode)
+            Utils.Log(LogVessel("Refresh of electrical data failed for vessel, not initialized"));
           return;
       }
       // If the buffer does not exist, create it
@@ -222,7 +225,8 @@ namespace DynamicBatteryStorage
 
       if (bufferStorage != null)
       {
-        Utils.Log(LogVessel("Trying to clear buffer storage"));
+        if (Settings.DebugMode)
+          Utils.Log(LogVessel("Trying to clear buffer storage"));
         // Clamp the energy to the initial maximum and revert the maximum
         bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax));
         bufferStorage.maxAmount = originalMax;
@@ -246,7 +250,8 @@ namespace DynamicBatteryStorage
     {
       if (bufferPart != null)
       {
-        Utils.Log(LogVessel(String.Format("Already has buffer on {0} with an initial capacity of {1:F1} EC", bufferPart.partInfo.name, originalMax)));
+        if (Settings.DebugMode)
+          Utils.Log(LogVessel(String.Format("Already has buffer on {0} with an initial capacity of {1:F1} EC", bufferPart.partInfo.name, originalMax)));
         return;
       }
       // Find a part containing electricity and set it as the buffer
@@ -258,11 +263,13 @@ namespace DynamicBatteryStorage
           bufferStorage = vessel.parts[i].Resources.Get("ElectricCharge");
           originalMax = bufferStorage.maxAmount;
 
-          Utils.Log(LogVessel(String.Format("Created buffer on {0} with an initial capacity of {1} EC", vessel.parts[i].partInfo.name, originalMax)));
+          if (Settings.DebugMode)
+            Utils.Log(LogVessel(String.Format("Created buffer on {0} with an initial capacity of {1} EC", vessel.parts[i].partInfo.name, originalMax)));
           return;
         }
       }
-      Utils.Log(LogVessel(String.Format("Could not find an electrical storage part")));
+      if (Settings.DebugMode)
+        Utils.Log(LogVessel(String.Format("Could not find an electrical storage part")));
     }
 
     /// <summary>

@@ -38,7 +38,7 @@ namespace DynamicBatteryStorage.UI
       uiUnits = uiUnit;
       host = uiHost;
       expanded = expandedState;
-      categoryName = String.Format("{0}", HandlerCategories.HandlerLocalizedNames[catName]);
+      categoryName = String.Format("{0}", Settings.HandlerCategoryData[catName].title);
       colWidth = width;
 
       RefreshHandlers(catHandlers);
@@ -68,7 +68,7 @@ namespace DynamicBatteryStorage.UI
           controlSize = GUILayoutUtility.GetLastRect();
           controlDirty = false;
         }
-      } 
+      }
       else
       {
         controlSize = new Rect(0, 0, 0, 0);
@@ -205,7 +205,7 @@ namespace DynamicBatteryStorage.UI
       partName = cachedHandler.PartTitle();
       partFlow = String.Format("{0:F2} {1}", Math.Abs(cachedHandler.GetValue()), uiUnit);
     }
-   
+
     /// <summary>
     /// Update the assoicated flow string
     /// </summary>

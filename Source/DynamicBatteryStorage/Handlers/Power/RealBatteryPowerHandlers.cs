@@ -6,15 +6,8 @@ namespace DynamicBatteryStorage
   // NOTE: The VAB stuff here might need updates
   public class RealBatteryPowerHandler : ModuleDataHandler
   {
-    public RealBatteryPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = false;
-      consumer = false;
-    }
+    public RealBatteryPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     protected override double GetValueEditor()
     {
       double results = 0d;

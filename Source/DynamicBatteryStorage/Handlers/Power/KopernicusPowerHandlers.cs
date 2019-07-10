@@ -13,14 +13,8 @@ namespace DynamicBatteryStorage
   {
     ModuleDeployableSolarPanel panel;
 
-    public KopernicusSolarPanelPowerHandler()
-    {
-      solarEfficiencyEffects = true;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = true;
-    }
+    public KopernicusSolarPanelPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
 
     public override bool Initialize(PartModule pm)
     {
