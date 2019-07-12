@@ -14,14 +14,8 @@ namespace DynamicBatteryStorage
   public class ModuleDeployableSolarPanelPowerHandler: ModuleDataHandler
   {
     ModuleDeployableSolarPanel panel;
-    public ModuleDeployableSolarPanelPowerHandler()
-    {
-      solarEfficiencyEffects = true;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = true;
-    }
+    public ModuleDeployableSolarPanelPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
 
     public override bool Initialize(PartModule pm)
     {
@@ -51,15 +45,8 @@ namespace DynamicBatteryStorage
   {
     ModuleCommand pod;
 
-    public ModuleCommandPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = false;
-      consumer = true;
-    }
+    public ModuleCommandPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
 
     public override bool Initialize(PartModule pm)
     {
@@ -116,15 +103,8 @@ namespace DynamicBatteryStorage
   {
     ModuleLight light;
 
-    public ModuleLightPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = false;
-      consumer = true;
-    }
+    public ModuleLightPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -153,15 +133,8 @@ namespace DynamicBatteryStorage
   {
     ModuleDataTransmitter antenna;
 
-    public ModuleDataTransmitterPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = false;
-      timewarpFunctional = false;
-      producer = false;
-      consumer = true;
-    }
+    public ModuleDataTransmitterPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
 
     public override bool Initialize(PartModule pm)
     {
@@ -195,13 +168,8 @@ namespace DynamicBatteryStorage
     ModuleGenerator gen;
     double savedRate = 0.0;
 
-    public ModuleGeneratorPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-    }
+    public ModuleGeneratorPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
 
     public override bool Initialize(PartModule pm)
     {
@@ -262,15 +230,8 @@ namespace DynamicBatteryStorage
   {
     ModuleActiveRadiator radiator;
 
-    public ModuleActiveRadiatorPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = false;
-      consumer = true;
-    }
+    public ModuleActiveRadiatorPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -317,15 +278,8 @@ namespace DynamicBatteryStorage
     ModuleResourceHarvester harvester;
     double converterEcRate = 0.0d;
 
-    public ModuleResourceHarvesterPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = false;
-      consumer = false;
-    }
+    public ModuleResourceHarvesterPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
 
     public override bool Initialize(PartModule pm)
     {
@@ -375,15 +329,8 @@ namespace DynamicBatteryStorage
     ModuleResourceConverter converter;
     double converterEcRate = 0d;
 
-    public ModuleResourceConverterPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = false;
-      producer = false;
-      consumer = true;
-    }
+    public ModuleResourceConverterPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -450,15 +397,9 @@ namespace DynamicBatteryStorage
     ModuleEngines engine;
     double engineBaseECRate  =0d;
 
-    public ModuleEnginesPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = false;
-      timewarpFunctional = false;
-      producer = false;
-      consumer = true;
-    }
+    public ModuleEnginesPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
+
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -522,7 +463,10 @@ namespace DynamicBatteryStorage
   }
 
   public class ModuleEnginesFXPowerHandler : ModuleEnginesPowerHandler
-  {}
+  {
+    public ModuleEnginesFXPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
+  }
 
   /// <summary>
   /// ModuleAlternator
@@ -531,27 +475,39 @@ namespace DynamicBatteryStorage
   {
     ModuleAlternator alternator;
 
-    public ModuleAlternatorPowerHandler()
-    {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = false;
-      timewarpFunctional = false;
-      producer = true;
-      consumer = false;
-    }
+    public ModuleAlternatorPowerHandler(HandlerModuleData moduleData):base(moduleData)
+    {}
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
       alternator = (ModuleAlternator)pm;
-      return true;
+
+      // Test to see if the ModuleCommand actually uses power
+      for (int i = 0; i < alternator.resHandler.outputResources.Count; i++)
+      {
+        if (alternator.resHandler.outputResources[i].name == "ElectricCharge")
+        {
+          if (alternator.resHandler.outputResources[i].rate > 0.0d)
+          {
+            return true;
+          }
+        }
+      }
+
+      return false;
     }
 
     protected override double GetValueEditor()
     {
       if (alternator != null)
       {
-        return alternator.outputRate;
+        for (int i = 0; i < alternator.resHandler.outputResources.Count; i++)
+        {
+          if (alternator.resHandler.outputResources[i].name == "ElectricCharge")
+          {
+            return alternator.resHandler.outputResources[i].rate;
+          }
+        }
       }
       return 0d;
     }

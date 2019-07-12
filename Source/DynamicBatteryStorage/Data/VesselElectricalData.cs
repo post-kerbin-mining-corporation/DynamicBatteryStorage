@@ -19,19 +19,20 @@ namespace DynamicBatteryStorage
 
     /// <summary>
     /// Set up the appropriate PowerHandler component for a PartModule which polls the underlying PartModule for relevant properties
-    /// The PartModue must be supported as in the enums defined in PowerHandlerType
     /// </summary>
     protected override void SetupDataHandler(PartModule pm)
     {
-      PowerHandlerType handlerType;
-      if (Utils.TryParseEnum<PowerHandlerType>(pm.moduleName, false, out handlerType))
+      if (Settings.IsSupportedPartModule(pm.moduleName, ResourcesSupported.Power))
       {
-        string typeName =  "DynamicBatteryStorage."+ pm.moduleName + "PowerHandler";
+        HandlerModuleData data = Settings.GetPartModuleData(pm.moduleName, ResourcesSupported.Power);
         if (Settings.DebugMode)
         {
-          Utils.Log(String.Format("[{0}]: Detected supported power handler of type: {1}",  this.GetType().Name, typeName));
+          Utils.Log(String.Format("[{0}]: Detected supported power handler for {1}: {2}",  this.GetType().Name, pm.moduleName, data.handlerModuleName));
         }
-        ModuleDataHandler handler = (ModuleDataHandler) System.Activator.CreateInstance("DynamicBatteryStorage", typeName).Unwrap();
+        
+        string typeName = this.GetType().AssemblyQualifiedName;
+        typeName = typeName.Replace("VesselElectricalData", data.handlerModuleName);
+        ModuleDataHandler handler = (ModuleDataHandler) System.Activator.CreateInstance(Type.GetType(typeName), data);
         if( handler.Initialize(pm))
           handlers.Add(handler);
       }

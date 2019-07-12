@@ -1,3 +1,14 @@
+v2.0.1
+------
+- Disabled SSTU and FFT support (until I get time to work on it)
+- Fixed some log messages that were not gated behind the DebugMode config setting
+- Fixed ModuleCurvedSolarPanel being in the Generators instead of the Solar Panels category
+- Consolidated Fission/Fusion reactor categories
+- Categories are now configurable (see config for details)
+- Some properties of handlers are now configurable (see config for details)
+- Added support for FissionFlowRadiator as a Heat type (NFE/Kerbal Atomics)
+- Fixed ModuleAternator not polling right in the VAB
+
 v2.0.0
 ------
 - Complete rebuild

@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class SSTUSolarPanelDeployablePowerHandler: ModuleDataHandler
 {
-  public SSTUSolarPanelDeployablePowerHandler()
+  public SSTUSolarPanelDeployablePowerHandler(HandlerModuleData moduleData):base(moduleData)
   {
     solarEfficiencyEffects = true;
     visible = true;
@@ -33,7 +33,7 @@ public class SSTUSolarPanelDeployablePowerHandler: ModuleDataHandler
 }
 public class SSTUSolarPanelStaticPowerHandler: ModuleDataHandler
 {
-  public SSTUSolarPanelStaticPowerHandler()
+  public SSTUSolarPanelStaticPowerHandler(HandlerModuleData moduleData):base(moduleData)
   {
     solarEfficiencyEffects = true;
     visible = true;
@@ -59,7 +59,7 @@ public class SSTUSolarPanelStaticPowerHandler: ModuleDataHandler
 }
 public class SSTUResourceBoiloffPowerHandler: ModuleDataHandler
 {
-  public SSTUResourceBoiloffPowerHandler()
+  public SSTUResourceBoiloffPowerHandler(HandlerModuleData moduleData):base(moduleData)
   {
     solarEfficiencyEffects = false;
     visible = true;
