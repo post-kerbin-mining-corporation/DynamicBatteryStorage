@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using KSP.Localization;
 
 namespace DynamicBatteryStorage
 {
@@ -25,8 +26,7 @@ namespace DynamicBatteryStorage
   public enum ResourcesSupported
   {
     Heat,
-    Power,
-    Both
+    Power
   }
 
   /// <summary>
@@ -70,6 +70,7 @@ namespace DynamicBatteryStorage
         Utils.Log("[Settings]: Loading handler categories");
         HandlerCategoryData = new Dictionary<string, HandlerCategory>();
         ConfigNode[] categoryNodes = settingsNode.GetNodes("HANDLERCATEGORY");
+
         foreach (ConfigNode node in categoryNodes)
         {
           HandlerCategory newCat = new HandlerCategory(node);
@@ -77,7 +78,7 @@ namespace DynamicBatteryStorage
         }
 
         Utils.Log("[Settings]: Loading handler modules");
-        HandlerPartModuleData = new Dictionary<string, HandlerModuleData>();
+        HandlerPartModuleData = new List<HandlerModuleData>();
         ConfigNode[] partModuleNodes = settingsNode.GetNodes("PARTMODULEHANDLER");
         foreach (ConfigNode node in partModuleNodes)
         {
@@ -98,7 +99,7 @@ namespace DynamicBatteryStorage
     /// Returns a list of handler categories currently in the mod
     /// </summary>
     public static List<String> HandlerCategories {
-      get { return new List<string>(Settings.HandlerData.Keys); }
+      get { return new List<string>(Settings.HandlerCategoryData.Keys); }
     }
 
     /// <summary>
@@ -108,7 +109,7 @@ namespace DynamicBatteryStorage
     /// <param name="resourceType">The type of ResourcesSupported to support</param>
     public static bool IsSupportedPartModule(string moduleName, ResourcesSupported resourceType)
     {
-      if (Settings.SupportedModules.Contains(moduleName, resourceType))
+      if (Settings.SupportedModules(resourceType).Contains(moduleName))
         return true;
       return false;
     }
@@ -137,7 +138,7 @@ namespace DynamicBatteryStorage
       for (int i = 0; i < HandlerPartModuleData.Count; i++)
       {
         if (HandlerPartModuleData[i].resourceType == resourceType)
-          supportedModules.Add(HandlerPartModuleData[i]);
+          supportedModules.Add(HandlerPartModuleData[i].handledModule);
       }
       return supportedModules;
     }
@@ -149,7 +150,7 @@ namespace DynamicBatteryStorage
   public class HandlerCategory
   {
     public string name ;
-    public List<HandlerModuleData> handledModules;
+    public List<string> handledModules;
     public string title;
 
     public HandlerCategory(ConfigNode node)
@@ -167,7 +168,7 @@ namespace DynamicBatteryStorage
 
     public string ToString()
     {
-      return String.Format("{0} category supporting {1}", name, string.Join(", ", handledModules.ToArray()));
+      return String.Format("{0}", name);
     }
   }
 
@@ -195,7 +196,7 @@ namespace DynamicBatteryStorage
     public void Load(ConfigNode node)
     {
       handledModule = node.GetValue("name");
-      Utils.TryParseEnum<PowerHandlerType>(node.GetValue("type"), false, out resourceType)
+      Utils.TryParseEnum<ResourcesSupported>(node.GetValue("type"), false, out resourceType);
       node.TryGetValue("handlerModuleName", ref handlerModuleName);
 
       node.TryGetValue("consumer", ref consumer);

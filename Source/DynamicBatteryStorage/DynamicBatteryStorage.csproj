@@ -56,8 +56,6 @@
     <Compile Include="Data\VesselThermalData.cs" />
     <Compile Include="DynamicBatteryStorage.cs" />
     <Compile Include="FormatUtils.cs" />
-    <Compile Include="Handlers\HandlerCategories.cs" />
-    <Compile Include="Handlers\HandlerTypes.cs" />
     <Compile Include="Handlers\Heat\NFTHeatHandlers.cs" />
     <Compile Include="Handlers\Heat\StockHeatHandlers.cs" />
     <Compile Include="Handlers\ModuleDataHandler.cs" />

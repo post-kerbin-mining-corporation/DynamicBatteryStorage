@@ -78,9 +78,9 @@ namespace DynamicBatteryStorage
       solarEfficiencyEffects = moduleData.solarEfficiencyEffects;
       consumer = moduleData.consumer;
       producer = moduleData.producer;
-      timewarpFunctional = moduleData.simulatedInTimewarp;
+      timewarpFunctional = moduleData.continuous;
       simulated = moduleData.simulated;
-      visible = moduleData.startsActive;
+      visible = moduleData.visible;
     }
     /// <summary>
     /// Initializer - should cache relevant items. Should also validate whether this

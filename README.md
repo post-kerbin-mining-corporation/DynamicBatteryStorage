@@ -59,7 +59,6 @@ At the moment, DBS needs to be made aware of modules so it can get data from the
 * **ModuleRadioisotopeGenerator** (Near Future Electrical)
 * **ModuleCryoTank** (CryoTanks)
 * **ModuleDeployableCentrifuge** (Stockalike Station Parts Expansion Redux)
-* **ModuleAntimatterTank** (Far Future Technologies)
 * **RealBattery** (RealBattery)
 * **KopernicusSolarPanel** (Kopernicus)
 
@@ -69,7 +68,7 @@ At the moment, DBS needs to be made aware of modules so it can get data from the
 * **ModuleActiveRadiator** (Stock)
 * **ModuleResourceHarvester** (Stock)
 * **FissionGenerator** (Near Future Electrical)
-* **ModuleFusionCore** (Far Future Technologies)
+* **FissionFlowRadiator** (Near Future Electrical)
 
 Adding support for your mod is not difficult - contact me if you wish to do so
 

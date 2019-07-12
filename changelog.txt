@@ -7,7 +7,7 @@ v2.0.1
 - Categories are now configurable (see config for details)
 - Some properties of handlers are now configurable (see config for details)
 - Added support for FissionFlowRadiator as a Heat type (NFE/Kerbal Atomics)
-- Added support for ModuleFusionCore as a Heat/Power type (FFT)
+- Fixed ModuleAternator not polling right in the VAB
 
 v2.0.0
 ------

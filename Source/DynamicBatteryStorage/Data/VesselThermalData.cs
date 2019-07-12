@@ -29,8 +29,11 @@ namespace DynamicBatteryStorage
         {
           Utils.Log(String.Format("[{0}]: Detected supported heat handler for {1}: {2}",  this.GetType().Name, pm.moduleName, data.handlerModuleName));
         }
-        ModuleDataHandler handler = (ModuleDataHandler) System.Activator.CreateInstance("DynamicBatteryStorage", "DynamicBatteryStorage." + data.handlerModuleName).Unwrap();
-        if( handler.Initialize(pm, data))
+
+        string typeName = this.GetType().AssemblyQualifiedName;
+        typeName = typeName.Replace("VesselThermalData", data.handlerModuleName);
+        ModuleDataHandler handler = (ModuleDataHandler)System.Activator.CreateInstance(Type.GetType(typeName), data);
+        if (handler.Initialize(pm))
           handlers.Add(handler);
       }
     }

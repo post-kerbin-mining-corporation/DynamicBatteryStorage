@@ -38,6 +38,8 @@ namespace DynamicBatteryStorage
   public class FissionFlowRadiatorHeatHandler: ModuleDataHandler
   {
     ModuleEnginesFX engine;
+    ModuleEnginesFX[] engines;
+    MultiModeEngine multiEngine;
 
     public FissionFlowRadiatorHeatHandler(HandlerModuleData moduleData):base(moduleData)
     {}
@@ -45,17 +47,32 @@ namespace DynamicBatteryStorage
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
-      engine = (ModuleEnginesFX)pm;
+      engines = pm.GetComponents<ModuleEnginesFX>();
+      multiEngine = pm.GetComponent<MultiModeEngine>();
       return true;
     }
 
     protected override double GetValueEditor()
     {
       double results = 0d;
+      if (engines.Length > 1 && multiEngine)
+      {
+        if (multiEngine.runningPrimary)
+        {
+          engine = multiEngine.PrimaryEngine;
+        } 
+        else
+        {
+          engine = multiEngine.SecondaryEngine;
+        }
+      } else
+      {
+        engine = engines[0];
+      }
       if (engine != null)
       {
         double.TryParse(pm.Fields.GetValue("exhaustCooling").ToString(), out results);
-        results = results/50.0d * engine.thrustPercentage / 100f;;
+        results = results * engine.thrustPercentage / 100f;;
       }
       return results;
     }

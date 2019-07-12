@@ -463,7 +463,10 @@ namespace DynamicBatteryStorage
   }
 
   public class ModuleEnginesFXPowerHandler : ModuleEnginesPowerHandler
-  {}
+  {
+    public ModuleEnginesFXPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
+  }
 
   /// <summary>
   /// ModuleAlternator
@@ -478,14 +481,33 @@ namespace DynamicBatteryStorage
     {
       base.Initialize(pm);
       alternator = (ModuleAlternator)pm;
-      return true;
+
+      // Test to see if the ModuleCommand actually uses power
+      for (int i = 0; i < alternator.resHandler.outputResources.Count; i++)
+      {
+        if (alternator.resHandler.outputResources[i].name == "ElectricCharge")
+        {
+          if (alternator.resHandler.outputResources[i].rate > 0.0d)
+          {
+            return true;
+          }
+        }
+      }
+
+      return false;
     }
 
     protected override double GetValueEditor()
     {
       if (alternator != null)
       {
-        return alternator.outputRate;
+        for (int i = 0; i < alternator.resHandler.outputResources.Count; i++)
+        {
+          if (alternator.resHandler.outputResources[i].name == "ElectricCharge")
+          {
+            return alternator.resHandler.outputResources[i].rate;
+          }
+        }
       }
       return 0d;
     }
