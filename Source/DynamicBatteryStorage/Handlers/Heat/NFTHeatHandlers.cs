@@ -60,7 +60,7 @@ namespace DynamicBatteryStorage
         if (multiEngine.runningPrimary)
         {
           engine = multiEngine.PrimaryEngine;
-        } 
+        }
         else
         {
           engine = multiEngine.SecondaryEngine;
@@ -72,7 +72,7 @@ namespace DynamicBatteryStorage
       if (engine != null)
       {
         double.TryParse(pm.Fields.GetValue("exhaustCooling").ToString(), out results);
-        results = results * engine.thrustPercentage / 100f;;
+        results = -results * engine.thrustPercentage / 100f;;
       }
       return results;
     }
@@ -80,7 +80,7 @@ namespace DynamicBatteryStorage
     {
       double results = 0d;
       double.TryParse(pm.Fields.GetValue("currentCooling").ToString(), out results);
-      return results;
+      return -results;
     }
   }
 }

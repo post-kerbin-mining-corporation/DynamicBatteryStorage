@@ -1,3 +1,8 @@
+v2.0.2
+------
+- Added support for GenericFieldDataHandler - a simple plug and play handler for other mods to use
+- Fixed FissionFlowRadiator adding heat to the simulation instead of removing it
+
 v2.0.1
 ------
 - Disabled SSTU and FFT support (until I get time to work on it)

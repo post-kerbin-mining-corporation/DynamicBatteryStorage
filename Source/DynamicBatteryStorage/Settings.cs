@@ -188,6 +188,8 @@ namespace DynamicBatteryStorage
     public bool continuous = true;
     public bool simulated = true;
 
+    public HandlerConfiguration config;
+
     public HandlerModuleData(ConfigNode node)
     {
       Load(node);
@@ -205,11 +207,54 @@ namespace DynamicBatteryStorage
       node.TryGetValue("solarEfficiencyEffects", ref solarEfficiencyEffects);
       node.TryGetValue("simulated", ref simulated);
       node.TryGetValue("continuous", ref continuous);
+
+      if (handlerModuleName == "GenericFieldHandler")
+      {
+        config = new HandlerConfiguration(node.GetNode("HANDLER_CONFIG"));
+      }
     }
 
     public string ToString()
     {
       return String.Format("Type {0} ({1})", handledModule, resourceType);
     }
+  }
+
+
+  /// <summary>
+  /// Defines data for a sepecific type of handler
+  /// </summary>
+  public class HandlerConfiguration
+  {
+    public string editorFieldName = "";
+    public string flightFieldName = "";
+
+    public double editorValueScalar = 1.0d;
+    public double flightValueScalar = 1.0d;
+
+    public HandlerConfiguration(ConfigNode node)
+    {
+      Load(node);
+    }
+
+    public void Load(ConfigNode node)
+    {
+      node.TryGetValue("editorFieldName", ref editorFieldName);
+      node.TryGetValue("flightFieldName", ref flightFieldName);
+      node.TryGetValue("flightValueScalar", ref flightValueScalar);
+      node.TryGetValue("editorValueScalar", ref editorValueScalar);
+
+      if (editorFieldName == "" && flightFieldName == "")
+      {
+        Utils.LogError("At least one of editorFieldName or flightFieldName must be specified in HANDLER_CONFIG for GenericFieldDataHandler");
+      } else if (editorFieldName == "")
+      {
+        editorFieldName = flightFieldName;
+      } else if (flightFieldName == "")
+      {
+        flightFieldName = editorFieldName;
+      }
+    }
+
   }
 }
