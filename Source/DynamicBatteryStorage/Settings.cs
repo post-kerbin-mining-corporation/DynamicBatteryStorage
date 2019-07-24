@@ -246,7 +246,7 @@ namespace DynamicBatteryStorage
 
       if (editorFieldName == "" && flightFieldName == "")
       {
-        Utils.LogError("At least one of editorFieldName or flightFieldName must be specified in HANDLER_CONFIG for GenericFieldDataHandler");
+        Utils.Log("At least one of editorFieldName or flightFieldName must be specified in HANDLER_CONFIG for GenericFieldDataHandler");
       } else if (editorFieldName == "")
       {
         editorFieldName = flightFieldName;
