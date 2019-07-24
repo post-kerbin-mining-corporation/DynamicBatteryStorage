@@ -277,7 +277,10 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected string LogVessel(string msg)
     {
-      return String.Format("[Controller] [{0}]: {1}",  vessel.name,msg);
+      if (vessel)
+        return String.Format("[Controller] [{0}]: {1}",  vessel.name,msg);
+      else
+        return String.Format("[Controller] [{0}]: {1}", "No vessel", msg);
     }
   }
 }
