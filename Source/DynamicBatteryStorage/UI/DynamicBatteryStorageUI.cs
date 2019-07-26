@@ -58,7 +58,9 @@ namespace DynamicBatteryStorage.UI
         if (HighLogic.LoadedSceneIsFlight)
           return vesselData.ElectricalData;
         else
-          return editorVesselData.ElectricalData;
+          if (editorVesselData)
+            return editorVesselData.ElectricalData;
+        return null;
        }
     }
 

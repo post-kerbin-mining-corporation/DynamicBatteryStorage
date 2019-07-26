@@ -101,8 +101,10 @@ namespace DynamicBatteryStorage
 
     protected void RemovePart(Part p)
     {
+      
       electricalData.RemoveHandlersForPart(p);
       heatData.RemoveHandlersForPart(p);
+      
     }
     #endregion
 
@@ -142,9 +144,11 @@ namespace DynamicBatteryStorage
       if (Settings.DebugMode)
         Utils.Log("[VAB VesselDataManager][Editor]: Vessel PART REMOVE");
       if (!HighLogic.LoadedSceneIsEditor) { return; }
-
-      RemovePart(p.target);
-    // InitializeEditorConstruct(EditorLogic.fetch.ship);
+     
+      if (electricalData == null || heatData == null)
+        InitializeEditorConstruct(EditorLogic.fetch.ship, false);
+      else
+        RemovePart(p.target);
     }
     public void onEditorVesselModified(ShipConstruct ship)
     {

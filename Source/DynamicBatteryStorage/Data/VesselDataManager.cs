@@ -36,7 +36,7 @@ namespace DynamicBatteryStorage
       base.OnStart();
 
       // These events need to trigger a refresh
-      GameEvents.onVesselDestroy.Add(new EventData<Vessel>.OnEvent(RefreshVesselData));
+      //GameEvents.onVesselDestroy.Add(new EventData<Vessel>.OnEvent(RefreshVesselData));
       GameEvents.onVesselGoOnRails.Add(new EventData<Vessel>.OnEvent(RefreshVesselData));
       GameEvents.onVesselWasModified.Add(new EventData<Vessel>.OnEvent(RefreshVesselData));
     }
@@ -44,7 +44,7 @@ namespace DynamicBatteryStorage
     void OnDestroy()
     {
       // Clean up events when the item is destroyed
-      GameEvents.onVesselDestroy.Remove(RefreshVesselData);
+      //GameEvents.onVesselDestroy.Remove(RefreshVesselData);
       GameEvents.onVesselGoOnRails.Remove(RefreshVesselData);
       GameEvents.onVesselWasModified.Remove(RefreshVesselData);
     }

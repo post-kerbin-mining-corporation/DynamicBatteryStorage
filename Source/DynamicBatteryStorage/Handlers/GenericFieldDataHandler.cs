@@ -7,22 +7,23 @@ using UnityEngine;
 
 namespace DynamicBatteryStorage
 {
-
+  // This is a generic handler that parses a KSPField 
   public class GenericFieldDataHandler: ModuleDataHandler
   {
-
     string editorFieldName;
     string flightFieldName;
 
+    double editorValueScalar = 1.0d;
+    double flightValueScalar = 1.0d;
+
     public GenericFieldDataHandler(HandlerModuleData moduleData):base(moduleData)
     {
-      solarEfficiencyEffects = false;
-      visible = true;
-      simulated = true;
-      timewarpFunctional = true;
-      producer = false;
-      consumer = true;
+      editorFieldName = moduleData.config.editorFieldName;
+      flightFieldName = moduleData.config.flightFieldName;
+      editorValueScalar = moduleData.config.editorValueScalar;
+      flightValueScalar = moduleData.config.flightValueScalar;
     }
+
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -32,13 +33,13 @@ namespace DynamicBatteryStorage
     {
       double results = 0d;
       double.TryParse(pm.Fields.GetValue(editorFieldName).ToString(), out results);
-      return results* -1.0d;
+      return results* editorValueScalar;
     }
     protected override double GetValueFlight()
     {
       double results = 0d;
       double.TryParse(pm.Fields.GetValue(flightFieldName).ToString(), out results);
-      return results* -1.0d;
+      return results* flightValueScalar;
     }
   }
 }
