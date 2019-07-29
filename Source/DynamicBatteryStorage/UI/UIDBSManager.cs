@@ -153,7 +153,11 @@ namespace DynamicBatteryStorage.UI
         if (!controller.AnalyticMode)
         {
           systemStatusTitle = errorTimewarp;
-        } else
+        } else if (controller.BufferPart == null)
+        {
+          systemStatusTitle = errorNoController;
+        }
+        else
         {
           systemStatusTitle = errorNone;
           currentBufferSize = String.Format("{0:F2} {1}", controller.BufferSize, powerUnits);

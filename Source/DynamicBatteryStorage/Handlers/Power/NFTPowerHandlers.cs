@@ -89,8 +89,40 @@ namespace DynamicBatteryStorage
   // CryoTank
   public class ModuleCryoTankPowerHandler: ModuleDataHandler
   {
+
+    string[] fuels;
+
     public ModuleCryoTankPowerHandler(HandlerModuleData moduleData):base(moduleData)
     {}
+    public override bool Initialize(PartModule pm)
+    {
+      bool visible = base.Initialize(pm);
+      GetFuelTypes();
+      return visible;
+    }
+    protected void GetFuelTypes()
+    {
+      ConfigNode cfg;
+      foreach (UrlDir.UrlConfig pNode in GameDatabase.Instance.GetConfigs("PART"))
+      {
+        if (pNode.name.Replace("_", ".") == pm.part.partInfo.name)
+        {
+          Utils.Log(pNode.ToString());
+          Utils.Log(pNode.config.ToString());
+          cfg = pNode.config;
+          ConfigNode node = cfg.GetNodes("MODULE").Single(n => n.GetValue("name") == data.handledModule);
+          Utils.Log(node.ToString());
+          ConfigNode[] fuelNodes = node.GetNodes("BOILOFFCONFIG");
+          
+          fuels = new string[fuelNodes.Length];
+          for (int i = 0; i < fuelNodes.Length; i++)
+          {
+
+            fuels[i] = fuelNodes[i].GetValue("FuelName");
+          }
+        }
+      }
+    }
     protected override double GetValueEditor()
     {
       double resAmt = GetMaxFuelAmt();
@@ -98,7 +130,9 @@ namespace DynamicBatteryStorage
       if (resAmt > 0d)
       {
         double.TryParse(pm.Fields.GetValue("CoolingCost").ToString(), out results);
+        visible = true;
         return results * (resAmt / 1000d) * -1d;
+        
       } else
       {
         visible = false;
@@ -114,12 +148,19 @@ namespace DynamicBatteryStorage
     protected double GetMaxFuelAmt()
     {
       double max = 0d;
-      int id = PartResourceLibrary.Instance.GetDefinition("LqdHydrogen").id;
-      PartResource res = pm.part.Resources.Get(id);
-      if (res != null)
-        max += res.maxAmount;
+      if (fuels == null || fuels[0] == null)
+        GetFuelTypes();
+
+      for (int i = 0; i < fuels.Length; i++)
+      {
+        int id = PartResourceLibrary.Instance.GetDefinition(fuels[i]).id;
+        PartResource res = pm.part.Resources.Get(id);
+        if (res != null)
+          max += res.maxAmount;
+      }
       return max;
     }
+    
   }
 
   // Antimatter Tank

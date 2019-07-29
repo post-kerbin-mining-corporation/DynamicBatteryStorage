@@ -32,9 +32,16 @@ namespace DynamicBatteryStorage
         
         string typeName = this.GetType().AssemblyQualifiedName;
         typeName = typeName.Replace("VesselElectricalData", data.handlerModuleName);
-        ModuleDataHandler handler = (ModuleDataHandler) System.Activator.CreateInstance(Type.GetType(typeName), data);
-        if( handler.Initialize(pm))
-          handlers.Add(handler);
+        try
+        {
+          ModuleDataHandler handler = (ModuleDataHandler)System.Activator.CreateInstance(Type.GetType(typeName), data);
+          if (handler.Initialize(pm))
+            handlers.Add(handler);
+        }
+        catch (ArgumentNullException)
+        {
+          Utils.Log(String.Format("Failed to instantiate {0} (config as {1}) when trying to configure a handler for {2}", typeName, data.handlerModuleName, pm.moduleName));
+        }
       }
     }
 
