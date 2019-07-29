@@ -1,3 +1,10 @@
+v2.0.3
+------
+- Fixed GenericFieldDataHandler not being included causing all sorts of problems
+- Fixed KerbalHealth compatibility
+- Fixed a few small potential NREs and added better error handling for common cases
+- Fixed SimpleBoiloff handler not understanding multiple cryogenic fuel types
+
 v2.0.2
 ------
 - Added support for GenericFieldDataHandler - a simple plug and play handler for other mods to use
