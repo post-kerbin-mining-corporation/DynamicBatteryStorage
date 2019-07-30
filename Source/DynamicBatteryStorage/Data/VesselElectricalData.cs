@@ -29,7 +29,7 @@ namespace DynamicBatteryStorage
         {
           Utils.Log(String.Format("[{0}]: Detected supported power handler for {1}: {2}",  this.GetType().Name, pm.moduleName, data.handlerModuleName));
         }
-        
+
         string typeName = this.GetType().AssemblyQualifiedName;
         typeName = typeName.Replace("VesselElectricalData", data.handlerModuleName);
         try
@@ -39,6 +39,10 @@ namespace DynamicBatteryStorage
             handlers.Add(handler);
         }
         catch (ArgumentNullException)
+        {
+          Utils.Log(String.Format("Failed to instantiate {0} (config as {1}) when trying to configure a handler for {2}", typeName, data.handlerModuleName, pm.moduleName));
+        }
+        catch (TargetInvocationException: )
         {
           Utils.Log(String.Format("Failed to instantiate {0} (config as {1}) when trying to configure a handler for {2}", typeName, data.handlerModuleName, pm.moduleName));
         }
