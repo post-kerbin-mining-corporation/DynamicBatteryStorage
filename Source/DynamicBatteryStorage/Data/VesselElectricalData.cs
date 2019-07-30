@@ -42,10 +42,6 @@ namespace DynamicBatteryStorage
         {
           Utils.Log(String.Format("Failed to instantiate {0} (config as {1}) when trying to configure a handler for {2}", typeName, data.handlerModuleName, pm.moduleName));
         }
-        catch (TargetInvocationException: )
-        {
-          Utils.Log(String.Format("Failed to instantiate {0} (config as {1}) when trying to configure a handler for {2}", typeName, data.handlerModuleName, pm.moduleName));
-        }
       }
     }
 
@@ -73,9 +69,14 @@ namespace DynamicBatteryStorage
       {
         EditorLogic.fetch.ship.UpdateResourceSets();
        EditorLogic.fetch.ship.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, true, out EC, out maxEC, true);
-      } else
+      } else if (HighLogic.LoadedSceneIsFlight)
       {
         FlightGlobals.ActiveVessel.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, out EC, out maxEC);
+      }
+      else
+      {
+        EC = 0d;
+        maxEC = 0d;
       }
     }
 

@@ -27,7 +27,7 @@ namespace DynamicBatteryStorage
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
-      return false;
+      return true;
     }
     protected override double GetValueEditor()
     {
