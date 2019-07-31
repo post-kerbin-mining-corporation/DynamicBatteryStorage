@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace DynamicBatteryStorage
 {
-  // This is a generic handler that parses a KSPField 
+  // This is a generic handler that parses a KSPField
   public class GenericFieldDataHandler: ModuleDataHandler
   {
     string editorFieldName;
@@ -27,7 +27,7 @@ namespace DynamicBatteryStorage
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
-      return false;
+      return true;
     }
     protected override double GetValueEditor()
     {

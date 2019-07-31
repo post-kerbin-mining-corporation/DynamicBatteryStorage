@@ -29,7 +29,7 @@ namespace DynamicBatteryStorage
         {
           Utils.Log(String.Format("[{0}]: Detected supported power handler for {1}: {2}",  this.GetType().Name, pm.moduleName, data.handlerModuleName));
         }
-        
+
         string typeName = this.GetType().AssemblyQualifiedName;
         typeName = typeName.Replace("VesselElectricalData", data.handlerModuleName);
         try
@@ -69,9 +69,14 @@ namespace DynamicBatteryStorage
       {
         EditorLogic.fetch.ship.UpdateResourceSets();
        EditorLogic.fetch.ship.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, true, out EC, out maxEC, true);
-      } else
+      } else if (HighLogic.LoadedSceneIsFlight)
       {
         FlightGlobals.ActiveVessel.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, out EC, out maxEC);
+      }
+      else
+      {
+        EC = 0d;
+        maxEC = 0d;
       }
     }
 

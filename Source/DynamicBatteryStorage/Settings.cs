@@ -208,7 +208,7 @@ namespace DynamicBatteryStorage
       node.TryGetValue("simulated", ref simulated);
       node.TryGetValue("continuous", ref continuous);
 
-      if (handlerModuleName == "GenericFieldHandler")
+      if (handlerModuleName == "GenericFieldDataHandler")
       {
         config = new HandlerConfiguration(node.GetNode("HANDLER_CONFIG"));
       }
