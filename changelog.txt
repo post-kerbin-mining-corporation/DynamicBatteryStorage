@@ -1,5 +1,7 @@
 v2.0.4
 ------
+- Fixed another NRE issue when reverting to space centre from VAB
+- Fixed serveral housekeeping issues with GenericFieldDataHandler
 
 v2.0.3
 ------
