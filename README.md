@@ -61,6 +61,10 @@ At the moment, DBS needs to be made aware of modules so it can get data from the
 * **ModuleDeployableCentrifuge** (Stockalike Station Parts Expansion Redux)
 * **RealBattery** (RealBattery)
 * **KopernicusSolarPanel** (Kopernicus)
+* **SoilRecycler** (Snacks!)
+* **SnackProcessor** (Snacks!)
+* **ModuleKerbalHealth** (Kerbal Health)
+* **ModuleSignalDelay** (Signal Delay)
 
 ### Supported Heat Modules
 
@@ -70,7 +74,7 @@ At the moment, DBS needs to be made aware of modules so it can get data from the
 * **FissionGenerator** (Near Future Electrical)
 * **FissionFlowRadiator** (Near Future Electrical)
 
-Adding support for your mod is not difficult - contact me if you wish to do so
+Adding support for your mod is not difficult - contact me if you wish to do so and we can figure it out.
 
 ## Installation
 
