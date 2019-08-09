@@ -107,11 +107,8 @@ namespace DynamicBatteryStorage
       {
         if (pNode.name.Replace("_", ".") == pm.part.partInfo.name)
         {
-          Utils.Log(pNode.ToString());
-          Utils.Log(pNode.config.ToString());
           cfg = pNode.config;
           ConfigNode node = cfg.GetNodes("MODULE").Single(n => n.GetValue("name") == data.handledModule);
-          Utils.Log(node.ToString());
           ConfigNode[] fuelNodes = node.GetNodes("BOILOFFCONFIG");
           
           fuels = new string[fuelNodes.Length];
