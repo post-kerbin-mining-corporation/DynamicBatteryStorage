@@ -1,3 +1,8 @@
+v2.0.5
+------
+- Fixed a rogue logging call in the Cryo Tanks handler
+- Added support for Snacks! SoilRecycler and SnackProcessor modules
+
 v2.0.4
 ------
 - Fixed another NRE issue when reverting to space centre from VAB
