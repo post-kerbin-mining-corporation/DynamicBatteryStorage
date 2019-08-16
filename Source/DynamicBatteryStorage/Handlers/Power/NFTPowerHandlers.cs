@@ -123,18 +123,31 @@ namespace DynamicBatteryStorage
     protected override double GetValueEditor()
     {
       double resAmt = GetMaxFuelAmt();
+      
+      
       double results = 0d;
       if (resAmt > 0d)
       {
-        double.TryParse(pm.Fields.GetValue("CoolingCost").ToString(), out results);
         visible = true;
-        return results * (resAmt / 1000d) * -1d;
-        
-      } else
+        double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
+      }
+      else
       {
         visible = false;
       }
-      return results;
+      return results * -1.0d;
+
+      
+      //{
+      //  double.TryParse(pm.Fields.GetValue("CoolingCost").ToString(), out results);
+      //  visible = true;
+      //  return results * (resAmt / 1000d) * -1d;
+        
+      //} else
+      //{
+      //  visible = false;
+      //}
+      //return results;
     }
     protected override double GetValueFlight()
     {
