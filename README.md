@@ -65,6 +65,7 @@ At the moment, DBS needs to be made aware of modules so it can get data from the
 * **SnackProcessor** (Snacks!)
 * **ModuleKerbalHealth** (Kerbal Health)
 * **ModuleSignalDelay** (Signal Delay)
+* **ModuleRTAntenna** (RemoteTech)
 
 ### Supported Heat Modules
 

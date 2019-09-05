@@ -1,3 +1,9 @@
+v2.0.6
+------
+- Rewrote ModuleCryoTank handler to account for misconfigured cryo Tanks
+- Improved error handling for unsupported handlers
+- Added support for RemoteTech (thanks TaxiService)
+
 v2.0.5
 ------
 - Fixed a rogue logging call in the Cryo Tanks handler
