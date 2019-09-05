@@ -63,6 +63,7 @@
     <Compile Include="Handlers\Power\KopernicusPowerHandlers.cs" />
     <Compile Include="Handlers\Power\NFTPowerHandlers.cs" />
     <Compile Include="Handlers\Power\RealBatteryPowerHandlers.cs" />
+    <Compile Include="Handlers\Power\RemoteTechPowerHandler.cs" />
     <Compile Include="Handlers\Power\StockPowerHandlers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
