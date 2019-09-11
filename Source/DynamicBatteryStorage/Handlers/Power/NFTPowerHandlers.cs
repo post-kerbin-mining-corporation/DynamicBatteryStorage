@@ -94,47 +94,88 @@ namespace DynamicBatteryStorage
 
     public ModuleCryoTankPowerHandler(HandlerModuleData moduleData):base(moduleData)
     {}
+
     public override bool Initialize(PartModule pm)
     {
       bool visible = base.Initialize(pm);
       GetFuelTypes();
       return visible;
     }
+
     protected void GetFuelTypes()
     {
-      ConfigNode cfg;
+      ConfigNode node = ReloadModuleNode();
+      ConfigNode[] fuelNodes = node.GetNodes("BOILOFFCONFIG");
+
+      fuels = new string[fuelNodes.Length];
+      for (int i = 0; i < fuelNodes.Length; i++)
+      {
+        fuels[i] = fuelNodes[i].GetValue("FuelName");
+      }
+    }
+
+    ConfigNode ReloadModuleNode()
+    {
+      ConfigNode cfg = null;
       foreach (UrlDir.UrlConfig pNode in GameDatabase.Instance.GetConfigs("PART"))
       {
         if (pNode.name.Replace("_", ".") == pm.part.partInfo.name)
         {
-          cfg = pNode.config;
-          ConfigNode node = cfg.GetNodes("MODULE").Single(n => n.GetValue("name") == data.handledModule);
-          ConfigNode[] fuelNodes = node.GetNodes("BOILOFFCONFIG");
-          
-          fuels = new string[fuelNodes.Length];
-          for (int i = 0; i < fuelNodes.Length; i++)
+          List<ConfigNode> cryoNodes = pNode.config.GetNodes("MODULE").ToList().FindAll(n => n.GetValue("name") ==  data.handledModule);
+          if (cryoNodes.Count > 1)
           {
-
-            fuels[i] = fuelNodes[i].GetValue("FuelName");
+            try
+            {
+              ConfigNode node = cryoNodes.Single(n => n.GetValue("moduleID") == data.handledModule);
+              cfg = node;
+            }
+            catch (InvalidOperationException)
+            {
+              // Thrown if predicate is not fulfilled, ie moduleName is not unqiue
+              Utils.Log(String.Format("[ModuleCryoTankPowerHandler]: Critical configuration error: Multiple ModuleCryoTank nodes found with identical or no moduleName"));
+            }
+            catch (ArgumentNullException)
+            {
+              // Thrown if ModuleCryoTank is not found (a Large Problem (tm))
+              Debug.Log(String.Format("[ModuleCryoTankPowerHandler]: Critical configuration error: No ModuleCryoTank nodes found in part"));
+            }
+          } else
+          {
+            cfg = cryoNodes[0];
           }
         }
       }
+      return cfg;
     }
+
     protected override double GetValueEditor()
     {
       double resAmt = GetMaxFuelAmt();
+
+
       double results = 0d;
       if (resAmt > 0d)
       {
-        double.TryParse(pm.Fields.GetValue("CoolingCost").ToString(), out results);
         visible = true;
-        return results * (resAmt / 1000d) * -1d;
-        
-      } else
+        double.TryParse(pm.Fields.GetValue("currentCoolingCost").ToString(), out results);
+      }
+      else
       {
         visible = false;
       }
-      return results;
+      return results * -1.0d;
+
+
+      //{
+      //  double.TryParse(pm.Fields.GetValue("CoolingCost").ToString(), out results);
+      //  visible = true;
+      //  return results * (resAmt / 1000d) * -1d;
+
+      //} else
+      //{
+      //  visible = false;
+      //}
+      //return results;
     }
     protected override double GetValueFlight()
     {
@@ -157,7 +198,7 @@ namespace DynamicBatteryStorage
       }
       return max;
     }
-    
+
   }
 
   // Antimatter Tank

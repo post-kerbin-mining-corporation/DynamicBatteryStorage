@@ -85,7 +85,7 @@ namespace DynamicBatteryStorage
           HandlerModuleData newDat = new HandlerModuleData(node);
           HandlerPartModuleData.Add(newDat);
         }
-        Utils.Log("[Settings]: Couldn't find settings file, using defaults");
+        
       }
       else
       {
@@ -212,6 +212,7 @@ namespace DynamicBatteryStorage
       {
         config = new HandlerConfiguration(node.GetNode("HANDLER_CONFIG"));
       }
+      Utils.Log(String.Format("[Settings]: Loaded {0}", this.ToString()));
     }
 
     public string ToString()

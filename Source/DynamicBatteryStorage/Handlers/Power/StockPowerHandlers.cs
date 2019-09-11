@@ -11,11 +11,11 @@ namespace DynamicBatteryStorage
   /// <summary>
   /// Deployable Solar Panel
   /// </summary>
-  public class ModuleDeployableSolarPanelPowerHandler: ModuleDataHandler
+  public class ModuleDeployableSolarPanelPowerHandler : ModuleDataHandler
   {
     ModuleDeployableSolarPanel panel;
-    public ModuleDeployableSolarPanelPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleDeployableSolarPanelPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
 
     public override bool Initialize(PartModule pm)
     {
@@ -45,8 +45,8 @@ namespace DynamicBatteryStorage
   {
     ModuleCommand pod;
 
-    public ModuleCommandPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleCommandPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
 
     public override bool Initialize(PartModule pm)
     {
@@ -103,8 +103,8 @@ namespace DynamicBatteryStorage
   {
     ModuleLight light;
 
-    public ModuleLightPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleLightPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -133,8 +133,8 @@ namespace DynamicBatteryStorage
   {
     ModuleDataTransmitter antenna;
 
-    public ModuleDataTransmitterPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleDataTransmitterPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
 
     public override bool Initialize(PartModule pm)
     {
@@ -163,13 +163,13 @@ namespace DynamicBatteryStorage
   /// <summary>
   /// ModuleGenerator
   /// </summary>
-  public class ModuleGeneratorPowerHandler: ModuleDataHandler
+  public class ModuleGeneratorPowerHandler : ModuleDataHandler
   {
     ModuleGenerator gen;
     double savedRate = 0.0;
 
-    public ModuleGeneratorPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleGeneratorPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
 
     public override bool Initialize(PartModule pm)
     {
@@ -192,7 +192,7 @@ namespace DynamicBatteryStorage
           consumer = false;
           savedRate = gen.resHandler.outputResources[i].rate;
           toMonitor = true;
-         }
+        }
       return toMonitor;
 
     }
@@ -226,12 +226,12 @@ namespace DynamicBatteryStorage
   /// <summary>
   /// ModuleActiveRadiator
   /// </summary>
-  public class ModuleActiveRadiatorPowerHandler: ModuleDataHandler
+  public class ModuleActiveRadiatorPowerHandler : ModuleDataHandler
   {
     ModuleActiveRadiator radiator;
 
-    public ModuleActiveRadiatorPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleActiveRadiatorPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -269,17 +269,17 @@ namespace DynamicBatteryStorage
     }
   }
 
-    /// <summary>
-    /// ModuleResourceHarvester
-    /// </summary>
-  public class ModuleResourceHarvesterPowerHandler: ModuleDataHandler
+  /// <summary>
+  /// ModuleResourceHarvester
+  /// </summary>
+  public class ModuleResourceHarvesterPowerHandler : ModuleDataHandler
   {
 
     ModuleResourceHarvester harvester;
     double converterEcRate = 0.0d;
 
-    public ModuleResourceHarvesterPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleResourceHarvesterPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
 
     public override bool Initialize(PartModule pm)
     {
@@ -290,8 +290,8 @@ namespace DynamicBatteryStorage
       {
         if (harvester.inputList[i].ResourceName == "ElectricCharge")
         {
-           converterEcRate = harvester.inputList[i].Ratio;
-           toMonitor = true;
+          converterEcRate = harvester.inputList[i].Ratio;
+          toMonitor = true;
         }
       }
       return toMonitor;
@@ -317,20 +317,20 @@ namespace DynamicBatteryStorage
 
     public override string PartTitle()
     {
-        return String.Format("{0} ({1})", base.PartTitle() , harvester.ConverterName);
+      return String.Format("{0} ({1})", base.PartTitle(), harvester.ConverterName);
     }
   }
 
   /// <summary>
   /// ModuleResourceConverter
   /// </summary>
-  public class ModuleResourceConverterPowerHandler: ModuleDataHandler
+  public class ModuleResourceConverterPowerHandler : ModuleDataHandler
   {
     ModuleResourceConverter converter;
     double converterEcRate = 0d;
 
-    public ModuleResourceConverterPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleResourceConverterPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -385,7 +385,7 @@ namespace DynamicBatteryStorage
 
     public override string PartTitle()
     {
-        return String.Format("{0} ({1})", base.PartTitle(), converter.ConverterName);
+      return String.Format("{0} ({1})", base.PartTitle(), converter.ConverterName);
     }
   }
 
@@ -395,10 +395,10 @@ namespace DynamicBatteryStorage
   public class ModuleEnginesPowerHandler : ModuleDataHandler
   {
     ModuleEngines engine;
-    double engineBaseECRate  =0d;
+    double engineBaseECRate = 0d;
 
-    public ModuleEnginesPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleEnginesPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
 
     public override bool Initialize(PartModule pm)
     {
@@ -418,7 +418,8 @@ namespace DynamicBatteryStorage
         {
           toMonitor = true;
           ecRatio = engine.propellants[i].ratio;
-        } else
+        }
+        else
         {
           ratioSum += engine.propellants[i].ratio;
           massFlowSum += engine.propellants[i].ratio * PartResourceLibrary.Instance.GetDefinition(engine.propellants[i].name).density;
@@ -429,7 +430,7 @@ namespace DynamicBatteryStorage
       for (int i = 0; i < engine.propellants.Count; i++)
       {
         if (engine.propellants[i].name != "ElectricCharge")
-          totalRate += (massFlowTotal/mixtureRatio) * engine.propellants[i].ratio/ratioSum;
+          totalRate += (massFlowTotal / mixtureRatio) * engine.propellants[i].ratio / ratioSum;
       }
       engineBaseECRate = ecRatio / ratioSum * totalRate;
       return toMonitor;
@@ -475,8 +476,8 @@ namespace DynamicBatteryStorage
   {
     ModuleAlternator alternator;
 
-    public ModuleAlternatorPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleAlternatorPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -523,6 +524,96 @@ namespace DynamicBatteryStorage
     public override string PartTitle()
     {
       return String.Format("{0} (Alternator)", base.PartTitle());
+    }
+  }
+
+  /// <summary>
+  /// ModuleScienceLab
+  /// </summary>
+  public class ModuleScienceLabPowerHandler : ModuleDataHandler
+  {
+    ModuleScienceLab lab;
+    double processRate = 0d;
+    public ModuleScienceLabPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
+    public override bool Initialize(PartModule pm)
+    {
+      base.Initialize(pm);
+      lab = (ModuleScienceLab)pm;
+      return true;
+    }
+
+    protected override double GetValueEditor()
+    {
+      if (lab != null)
+      {
+
+        for (int i = 0; i < lab.processResources.Count; i++)
+        {
+          if (lab.processResources[i].name == "ElectricCharge")
+          {
+            processRate = -1.0d* lab.processResources[i].amount;
+            return processRate;
+          }
+        }
+      }
+      return 0d;
+    }
+
+    protected override double GetValueFlight()
+    {
+      if (lab != null)
+      {
+        if (lab.IsOperational())
+          return processRate;
+      }
+      return 0d;
+    }
+    public override string PartTitle()
+    {
+      return String.Format("{0} (Clean Experiments)", base.PartTitle());
+    }
+  }
+  /// <summary>
+  /// ModuleAlternator
+  /// </summary>
+  public class ModuleScienceConverterPowerHandler : ModuleDataHandler
+  {
+    ModuleScienceConverter lab;
+    double processRate = 0d;
+    public ModuleScienceConverterPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
+    public override bool Initialize(PartModule pm)
+    {
+      base.Initialize(pm);
+      lab = (ModuleScienceConverter)pm;
+      return true;
+    }
+
+    protected override double GetValueEditor()
+    {
+      if (lab != null)
+      {
+
+        return -1.0d * lab.powerRequirement;
+      }
+      return 0d;
+    }
+
+    protected override double GetValueFlight()
+    {
+      if (lab != null)
+      {
+        if (lab.ModuleIsActive())
+        {
+          return -1.0d * lab.powerRequirement;
+        }
+      }
+      return 0d;
+    }
+    public override string PartTitle()
+    {
+      return String.Format("{0} (Science Lab)", base.PartTitle());
     }
   }
 }
