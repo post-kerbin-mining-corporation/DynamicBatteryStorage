@@ -13,7 +13,7 @@ namespace DynamicBatteryStorage.UI
   {
     // Control Vars
     protected static bool showWindow = false;
-    protected int windowID = new System.Random(3256231).Next();
+    protected int windowID = new System.Random(13123).Next();
     public Rect windowPos = new Rect(200f, 200f, 700f, 400f);
     private Vector2 scrollPosition = Vector2.zero;
     private float scrollHeight = 0f;

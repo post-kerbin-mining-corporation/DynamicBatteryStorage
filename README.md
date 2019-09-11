@@ -53,6 +53,7 @@ At the moment, DBS needs to be made aware of modules so it can get data from the
 * **ModuleEngines** (Stock)
 * **ModuleEnginesFX** (Stock)
 * **ModuleAlternator** (Stock)
+* **ModuleScienceConverter** (Stock)
 * **ModuleCurvedSolarPanel** (Near Future Solar)
 * **FissionGenerator** (Near Future Electrical)
 * **DischargeCapacitor** (Near Future Electrical)

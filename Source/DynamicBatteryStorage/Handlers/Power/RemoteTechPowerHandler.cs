@@ -49,7 +49,7 @@ namespace DynamicBatteryStorage
 
                 //consumerAmount = isBroken ? 0.0f : isActive ? (float)(energyCost * consumptionMultipler) : 0.0f;
             }
-            return consumerAmount;
+            return -1.0d * consumerAmount;
         }
     }
 }

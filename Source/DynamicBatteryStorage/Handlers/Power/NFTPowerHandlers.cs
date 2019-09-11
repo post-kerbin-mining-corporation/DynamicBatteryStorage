@@ -116,18 +116,18 @@ namespace DynamicBatteryStorage
 
     ConfigNode ReloadModuleNode()
     {
-      ConfigNode cfg;
+      ConfigNode cfg = null;
       foreach (UrlDir.UrlConfig pNode in GameDatabase.Instance.GetConfigs("PART"))
       {
-        if (pNode.name.Replace("_", ".") == part.partInfo.name)
+        if (pNode.name.Replace("_", ".") == pm.part.partInfo.name)
         {
-          List<ConfigNode> cryoNodes = pNode.GetNodes("MODULE").FindAll(n => n.GetValue("name") ==  data.handledModule);
+          List<ConfigNode> cryoNodes = pNode.config.GetNodes("MODULE").ToList().FindAll(n => n.GetValue("name") ==  data.handledModule);
           if (cryoNodes.Count > 1)
           {
             try
             {
-              ConfigNode node = cryoNodes.Single(n => n.GetValue("moduleID") == moduleID);
-              return node;
+              ConfigNode node = cryoNodes.Single(n => n.GetValue("moduleID") == data.handledModule);
+              cfg = node;
             }
             catch (InvalidOperationException)
             {
@@ -141,11 +141,11 @@ namespace DynamicBatteryStorage
             }
           } else
           {
-            return cryoNodes[0];
+            cfg = cryoNodes[0];
           }
         }
       }
-      return ConfigNode;
+      return cfg;
     }
 
     protected override double GetValueEditor()
