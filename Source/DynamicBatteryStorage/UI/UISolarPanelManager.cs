@@ -107,13 +107,13 @@ namespace DynamicBatteryStorage.UI
 
       GUILayout.BeginHorizontal();
       GUILayout.Label(solarAltitudeTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
-      sunRefOrbitHeight = (double)GUILayout.HorizontalSlider((float)sunRefOrbitHeight, 5f, 50000f, GUILayout.MaxWidth(120f));
+      sunRefOrbitHeight = (double)GUILayout.HorizontalSlider((float)sunRefOrbitHeight, 5f, 500000f, GUILayout.MaxWidth(120f));
       GUILayout.Label(solarAltitude, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
       GUILayout.EndHorizontal();
 
       GUILayout.BeginHorizontal();
       GUILayout.Label(bodyAltitudeTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
-      bodyRefOrbitHeight = (double)GUILayout.HorizontalSlider((float)bodyRefOrbitHeight, 1f, selectedBody.sphereOfInfluence/1000f, GUILayout.MaxWidth(120f));
+      bodyRefOrbitHeight = (double)GUILayout.HorizontalSlider((float)bodyRefOrbitHeight, 1f, (float)selectedBody.sphereOfInfluence/1000f, GUILayout.MaxWidth(120f));
       GUILayout.Label(bodyAltitude, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
       GUILayout.EndHorizontal();
 

@@ -1,3 +1,11 @@
+v2.1.0
+------
+- KSP 1.8
+- Updated plugin to .NET 4.5
+- Improvements to solar panel... panel
+ - Right clicking the body name now decrements the body
+ - Body Orbital Height slider now adapts to the selected body SOI
+
 v2.0.6
 ------
 - Rewrote ModuleCryoTank handler to account for misconfigured cryo Tanks
