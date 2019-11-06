@@ -93,18 +93,27 @@ namespace DynamicBatteryStorage.UI
       GUILayout.BeginHorizontal();
       GUILayout.Label(planetNameTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
       if (GUILayout.Button(planetName, UIHost.GUIResources.GetStyle("radio_text_button"), GUILayout.MaxWidth(100f)))
-        IncrementBody();
+      {
+        if(Input.GetMouseButtonUp(0)) {
+          IncrementBody();
+        }
+        else if(Input.GetMouseButtonUp(1)) {
+          DecrementBody();
+        }
+
+      }
+
       GUILayout.EndHorizontal();
 
       GUILayout.BeginHorizontal();
       GUILayout.Label(solarAltitudeTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
-      sunRefOrbitHeight = (double)GUILayout.HorizontalSlider((float)sunRefOrbitHeight, 5f, 50000f, GUILayout.MaxWidth(120f));
+      sunRefOrbitHeight = (double)GUILayout.HorizontalSlider((float)sunRefOrbitHeight, 5f, 500000f, GUILayout.MaxWidth(120f));
       GUILayout.Label(solarAltitude, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
       GUILayout.EndHorizontal();
 
       GUILayout.BeginHorizontal();
       GUILayout.Label(bodyAltitudeTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
-      bodyRefOrbitHeight = (double)GUILayout.HorizontalSlider((float)bodyRefOrbitHeight, 1f, 50000000, GUILayout.MaxWidth(120f));
+      bodyRefOrbitHeight = (double)GUILayout.HorizontalSlider((float)bodyRefOrbitHeight, 1f, (float)selectedBody.sphereOfInfluence/1000f, GUILayout.MaxWidth(120f));
       GUILayout.Label(bodyAltitude, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
       GUILayout.EndHorizontal();
 
@@ -133,6 +142,22 @@ namespace DynamicBatteryStorage.UI
         selectedBodyIndex = 0;
       else
         selectedBodyIndex++;
+
+      SelectBody(FlightGlobals.Bodies[selectedBodyIndex]);
+
+    }
+
+    /// <summary>
+    /// Decrement the selected CelestialBody
+    /// </summary>
+    private void DecrementBody()
+    {
+      double prevOrbitalHeight = sunRefOrbitHeight;
+
+      if (selectedBodyIndex == 0)
+        selectedBodyIndex = FlightGlobals.Bodies.Count - 1;
+      else
+        selectedBodyIndex--;
 
       SelectBody(FlightGlobals.Bodies[selectedBodyIndex]);
 

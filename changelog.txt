@@ -1,3 +1,12 @@
+v2.1.0
+------
+- KSP 1.8
+- Updated plugin to .NET 4.5
+- Add Russian localization (Sool3)
+- Improvements to solar panel... panel
+ - Right clicking the target body in the solar panel simulator now decrements while left click increments
+ - Target body selection will now set the maximum orbital height to be equal to the SOI size (will improve results with large scale solar systems)
+
 v2.0.6
 ------
 - Rewrote ModuleCryoTank handler to account for misconfigured cryo Tanks
