@@ -115,13 +115,13 @@ namespace DynamicBatteryStorage
     protected override double GetValueFlight()
     {
       if (light != null)
-        return light.resourceAmount;
+        return -1.0d*light.resourceAmount;
       return 0d;
     }
     protected override double GetValueEditor()
     {
       if (light != null)
-        return light.resourceAmount;
+        return -1.0d * light.resourceAmount;
       return 0d;
     }
   }
@@ -452,7 +452,7 @@ namespace DynamicBatteryStorage
       {
         if (!engine.engineShutdown)
         {
-          return -engineBaseECRate * engine.currentThrottle / 100f;
+          return -engineBaseECRate * engine.currentThrottle;
         }
       }
       return 0d;

@@ -113,8 +113,20 @@ namespace DynamicBatteryStorage.UI
 
       GUILayout.BeginHorizontal();
       GUILayout.Label(bodyAltitudeTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
-      bodyRefOrbitHeight = (double)GUILayout.HorizontalSlider((float)bodyRefOrbitHeight, 1f, (float)selectedBody.sphereOfInfluence/1000f, GUILayout.MaxWidth(120f));
-      GUILayout.Label(bodyAltitude, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
+      bodyAltitude = GUILayout.TextField(bodyAltitude, 25, GUILayout.MaxWidth(120f));
+      double parsedAlt = 0d;
+      if (double.TryParse(bodyAltitude, out parsedAlt))
+      {
+        bodyRefOrbitHeight = parsedAlt;
+
+        if (parsedAlt > selectedBody.sphereOfInfluence)
+          bodyRefOrbitHeight = selectedBody.sphereOfInfluence;
+        if (parsedAlt <= 1d)
+          bodyRefOrbitHeight = 1d;
+      }
+      //bodyAltitude = String.Format("{0:F0}", bodyRefOrbitHeight);
+      //bodyRefOrbitHeight = (double)GUILayout.HorizontalSlider((float)bodyRefOrbitHeight, 1f, (float)selectedBody.sphereOfInfluence/1000f, GUILayout.MaxWidth(120f));
+      GUILayout.Label("km", UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
       GUILayout.EndHorizontal();
 
 
@@ -168,14 +180,23 @@ namespace DynamicBatteryStorage.UI
     /// </summary>>
     public void Update()
     {
+      if (sunBody != null && selectedBody != null)
+      {
+        if (selectedBody == sunBody)
+        {
+          bodyRefOrbitHeight = sunRefOrbitHeight;
+        }
+      }
       solarAltitude = String.Format("{0}{1}", FormatUtils.ToSI(sunRefOrbitHeight * 1000, "F0"), distanceUnits);
-      bodyAltitude = String.Format("{0}{1}", FormatUtils.ToSI(bodyRefOrbitHeight * 1000, "F0"), distanceUnits);
+      bodyAltitude = String.Format("{0:F0}", bodyRefOrbitHeight);
       panelEfficiency = String.Format("{0:F1}%", panelScalar*100f);
       darkTime = FormatUtils.FormatTimeString(occlusionTime);
       // Determine scaling constant
       panelScalar = CalculatePanelScalar();
       occlusionTime = CalculateOcclusionTime();
       electricalView.SolarSimulationScalar = panelScalar;
+
+
     }
 
     /// <summary>
@@ -188,12 +209,16 @@ namespace DynamicBatteryStorage.UI
 
       planetName = selectedBody.name;
       if (selectedBody == sunBody)
-      { }
+      {
+        
+      }
       else
       {
         sunRefOrbitHeight = FlightGlobals.getAltitudeAtPos(selectedBody.getPositionAtUT(0d), sunBody)/1000000d;
       }
       bodyRefOrbitHeight = (selectedBody.atmosphereDepth + 10000d)/1000d;
+ 
+      bodyAltitude = String.Format("{0:F0}", bodyRefOrbitHeight);
 
       if (Settings.DebugUIMode)
         Utils.Log(String.Format("[UI Solar Manager] Selected {0}", selectedBody.name));

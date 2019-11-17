@@ -1,3 +1,10 @@
+v2.1.1
+------
+- Fixed ModuleLight counting as a generator instead of a consumer
+- Fixed ModuleEngines electricity handling being divided by 100 in flight
+- Changed solar panel body altitude selection to be a text field instead of a slider
+- Solar panel body alitude is now liked to solar altitude if the selected body is the sun
+
 v2.1.0
 ------
 - KSP 1.8
