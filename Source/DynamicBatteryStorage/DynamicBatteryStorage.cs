@@ -124,6 +124,8 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void DoLowWarpSimulation()
     {
+  	  if (!Settings.TimewarpCompensation)
+	    return;
       if (bufferStorage != null && bufferStorage.maxAmount != originalMax)
       {
         bufferStorage.maxAmount = originalMax;
@@ -135,7 +137,9 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void DoHighWarpSimulation()
     {
-      if (vesselData != null && vesselData.ElectricalData != null)
+	  if (!Settings.TimewarpCompensation)
+	    return;
+	  if (vesselData != null && vesselData.ElectricalData != null)
       {
         double production = vesselData.ElectricalData.CurrentProduction;
         double consumption = vesselData.ElectricalData.CurrentConsumption;
@@ -248,6 +252,8 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void CreateBufferStorage()
     {
+	  if (!Settings.TimewarpCompensation)
+	    return;
       if (bufferPart != null)
       {
         if (Settings.DebugMode)

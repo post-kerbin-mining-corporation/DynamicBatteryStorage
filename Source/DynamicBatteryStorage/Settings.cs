@@ -40,6 +40,7 @@ namespace DynamicBatteryStorage
     public static bool DebugMode = true;
     public static bool DebugSettings = true;
     public static bool DebugUIMode = true;
+	public static bool TimewarpCompensation = true;
     public static int UIUpdateInterval = 3;
 
 
@@ -52,6 +53,8 @@ namespace DynamicBatteryStorage
     public static void Load()
     {
       ConfigNode settingsNode;
+
+	  TimewarpCompensation = InitTimewarpCompensation();
 
       Utils.Log("[Settings]: Started loading");
       if (GameDatabase.Instance.ExistsConfigNode("DynamicBatteryStorage/DYNAMICBATTERYSTORAGE"))
@@ -66,6 +69,7 @@ namespace DynamicBatteryStorage
         settingsNode.TryGetValue("DebugUIMode", ref DebugUIMode);
         settingsNode.TryGetValue("BufferScaling ", ref BufferScaling);
         settingsNode.TryGetValue("UIUpdateInterval ", ref UIUpdateInterval);
+		settingsNode.TryGetValue("TimewarpCompensation", ref TimewarpCompensation);
 
         Utils.Log("[Settings]: Loading handler categories");
         HandlerCategoryData = new Dictionary<string, HandlerCategory>();
@@ -94,11 +98,28 @@ namespace DynamicBatteryStorage
       Utils.Log("[Settings]: Finished loading");
     }
 
+	/// <summary>
+	/// Find an initial default enablement value for timewarp compensation.
+	/// The result of this will be overridden by the plugin configuration.
+	/// </summary>
+	private static bool InitTimewarpCompensation()
+	{
+	  foreach (var a in AssemblyLoader.loadedAssemblies)
+	  {
+	    // search for conflicting mods
+		if (a.name.StartsWith("Kerbalism", StringComparison.Ordinal))
+		{
+		  Utils.Log("[Settings]: Kerbalism detected");
+		  return false;
+		}
+	  }
+	  return true;
+	}
 
-    /// <summary>
-    /// Returns a list of handler categories currently in the mod
-    /// </summary>
-    public static List<String> HandlerCategories {
+	/// <summary>
+	/// Returns a list of handler categories currently in the mod
+	/// </summary>
+	public static List<String> HandlerCategories {
       get { return new List<string>(Settings.HandlerCategoryData.Keys); }
     }
 
