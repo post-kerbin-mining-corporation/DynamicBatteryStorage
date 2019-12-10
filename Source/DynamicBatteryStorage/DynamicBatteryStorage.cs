@@ -49,11 +49,18 @@ namespace DynamicBatteryStorage
 
     #endregion
 
-    protected override void  OnStart()
+    protected override void OnAwake()
+    {
+	  base.OnAwake();
+	  enabled = Settings.Enabled;
+	}
+
+	protected override void  OnStart()
     {
       base.OnStart();
+	  if (!enabled) return;
 
-      bufferScale = (double)Settings.BufferScaling;
+	  bufferScale = (double)Settings.BufferScaling;
       timeWarpLimit = Settings.TimeWarpLimit;
 
       GameEvents.onVesselDestroy.Add(new EventData<Vessel>.OnEvent(CalculateElectricalData));
@@ -69,14 +76,14 @@ namespace DynamicBatteryStorage
 
     protected override void OnSave(ConfigNode node)
     {
-      // Saving needs to trigger a buffer clear
-      ClearBufferStorage();
+	  // Saving needs to trigger a buffer clear
+	  ClearBufferStorage();
       base.OnSave(node);
     }
 
     void OnDestroy()
     {
-      GameEvents.onVesselDestroy.Remove(CalculateElectricalData);
+	  GameEvents.onVesselDestroy.Remove(CalculateElectricalData);
       GameEvents.onVesselGoOnRails.Remove(CalculateElectricalData);
       GameEvents.onVesselWasModified.Remove(CalculateElectricalData);
     }
@@ -92,7 +99,7 @@ namespace DynamicBatteryStorage
 
     void FixedUpdate()
     {
-      if (HighLogic.LoadedSceneIsFlight)
+	  if (HighLogic.LoadedSceneIsFlight)
       {
 
         if (!vesselLoaded && FlightGlobals.ActiveVessel == vessel)
@@ -124,8 +131,6 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void DoLowWarpSimulation()
     {
-  	  if (!Settings.TimewarpCompensation)
-	    return;
       if (bufferStorage != null && bufferStorage.maxAmount != originalMax)
       {
         bufferStorage.maxAmount = originalMax;
@@ -137,8 +142,6 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void DoHighWarpSimulation()
     {
-	  if (!Settings.TimewarpCompensation)
-	    return;
 	  if (vesselData != null && vesselData.ElectricalData != null)
       {
         double production = vesselData.ElectricalData.CurrentProduction;
@@ -252,8 +255,6 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void CreateBufferStorage()
     {
-	  if (!Settings.TimewarpCompensation)
-	    return;
       if (bufferPart != null)
       {
         if (Settings.DebugMode)

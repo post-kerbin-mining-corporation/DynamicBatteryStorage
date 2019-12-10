@@ -240,6 +240,7 @@ namespace DynamicBatteryStorage.UI
 
     void ResetAppLauncher()
     {
+      if (!Settings.Enabled) return;
       if (Settings.DebugUIMode)
         Utils.Log("[UI]: Reset App Launcher");
       FindData();

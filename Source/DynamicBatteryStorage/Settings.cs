@@ -15,10 +15,11 @@ namespace DynamicBatteryStorage
     protected void Awake()
     {
       Instance = this;
-    }
+	}
     protected void Start()
     {
       Settings.Load();
+	  enabled = Settings.Enabled;
     }
   }
 
@@ -35,12 +36,12 @@ namespace DynamicBatteryStorage
   public static class Settings
   {
 
-    public static float TimeWarpLimit = 100f;
+	public static bool Enabled = true;
+	public static float TimeWarpLimit = 100f;
     public static float BufferScaling = 1.75f;
     public static bool DebugMode = true;
     public static bool DebugSettings = true;
     public static bool DebugUIMode = true;
-	public static bool TimewarpCompensation = true;
     public static int UIUpdateInterval = 3;
 
 
@@ -54,7 +55,7 @@ namespace DynamicBatteryStorage
     {
       ConfigNode settingsNode;
 
-	  TimewarpCompensation = InitTimewarpCompensation();
+	  Enabled = CheckForConflictingMods();
 
       Utils.Log("[Settings]: Started loading");
       if (GameDatabase.Instance.ExistsConfigNode("DynamicBatteryStorage/DYNAMICBATTERYSTORAGE"))
@@ -69,7 +70,7 @@ namespace DynamicBatteryStorage
         settingsNode.TryGetValue("DebugUIMode", ref DebugUIMode);
         settingsNode.TryGetValue("BufferScaling ", ref BufferScaling);
         settingsNode.TryGetValue("UIUpdateInterval ", ref UIUpdateInterval);
-		settingsNode.TryGetValue("TimewarpCompensation", ref TimewarpCompensation);
+		settingsNode.TryGetValue("Enabled", ref Enabled);
 
         Utils.Log("[Settings]: Loading handler categories");
         HandlerCategoryData = new Dictionary<string, HandlerCategory>();
@@ -99,17 +100,17 @@ namespace DynamicBatteryStorage
     }
 
 	/// <summary>
-	/// Find an initial default enablement value for timewarp compensation.
-	/// The result of this will be overridden by the plugin configuration.
+	/// Find any conflicting mods, return false if there are any.
+	/// The result of this will be overridden by the Enable setting in the plugin configuration.
 	/// </summary>
-	private static bool InitTimewarpCompensation()
+	private static bool CheckForConflictingMods()
 	{
 	  foreach (var a in AssemblyLoader.loadedAssemblies)
 	  {
 	    // search for conflicting mods
 		if (a.name.StartsWith("Kerbalism", StringComparison.Ordinal))
 		{
-		  Utils.Log("[Settings]: Kerbalism detected");
+		  Utils.Log("[Settings]: Kerbalism detected. DBS will disable itself.");
 		  return false;
 		}
 	  }
