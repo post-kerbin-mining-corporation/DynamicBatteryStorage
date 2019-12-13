@@ -33,6 +33,7 @@ namespace DynamicBatteryStorage
 
     protected void Awake()
     {
+	  enabled = Settings.Enabled;
       Instance = this;
     }
     protected void Start()

@@ -15,10 +15,11 @@ namespace DynamicBatteryStorage
     protected void Awake()
     {
       Instance = this;
-    }
+	}
     protected void Start()
     {
       Settings.Load();
+	  enabled = Settings.Enabled;
     }
   }
 
@@ -35,7 +36,8 @@ namespace DynamicBatteryStorage
   public static class Settings
   {
 
-    public static float TimeWarpLimit = 100f;
+	public static bool Enabled = true;
+	public static float TimeWarpLimit = 100f;
     public static float BufferScaling = 1.75f;
     public static bool DebugMode = true;
     public static bool DebugSettings = true;
@@ -53,6 +55,8 @@ namespace DynamicBatteryStorage
     {
       ConfigNode settingsNode;
 
+	  Enabled = CheckForConflictingMods();
+
       Utils.Log("[Settings]: Started loading");
       if (GameDatabase.Instance.ExistsConfigNode("DynamicBatteryStorage/DYNAMICBATTERYSTORAGE"))
       {
@@ -66,6 +70,7 @@ namespace DynamicBatteryStorage
         settingsNode.TryGetValue("DebugUIMode", ref DebugUIMode);
         settingsNode.TryGetValue("BufferScaling ", ref BufferScaling);
         settingsNode.TryGetValue("UIUpdateInterval ", ref UIUpdateInterval);
+		settingsNode.TryGetValue("Enabled", ref Enabled);
 
         Utils.Log("[Settings]: Loading handler categories");
         HandlerCategoryData = new Dictionary<string, HandlerCategory>();
@@ -94,11 +99,28 @@ namespace DynamicBatteryStorage
       Utils.Log("[Settings]: Finished loading");
     }
 
+	/// <summary>
+	/// Find any conflicting mods, return false if there are any.
+	/// The result of this will be overridden by the Enable setting in the plugin configuration.
+	/// </summary>
+	private static bool CheckForConflictingMods()
+	{
+	  foreach (var a in AssemblyLoader.loadedAssemblies)
+	  {
+	    // search for conflicting mods
+		if (a.name.StartsWith("Kerbalism", StringComparison.Ordinal))
+		{
+		  Utils.Log("[Settings]: Kerbalism detected. DBS will disable itself.");
+		  return false;
+		}
+	  }
+	  return true;
+	}
 
-    /// <summary>
-    /// Returns a list of handler categories currently in the mod
-    /// </summary>
-    public static List<String> HandlerCategories {
+	/// <summary>
+	/// Returns a list of handler categories currently in the mod
+	/// </summary>
+	public static List<String> HandlerCategories {
       get { return new List<string>(Settings.HandlerCategoryData.Keys); }
     }
 
