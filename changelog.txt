@@ -1,3 +1,9 @@
+v2.1.2
+------
+- Mod is now fully disabled when Kerbalism is installed (thanks SirMortimer)
+- Corrected units in solar altitude display
+- Added Chinese localization (tinygrox)
+
 v2.1.1
 ------
 - Fixed ModuleLight counting as a generator instead of a consumer

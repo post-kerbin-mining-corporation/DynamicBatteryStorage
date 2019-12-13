@@ -187,7 +187,7 @@ namespace DynamicBatteryStorage.UI
           bodyRefOrbitHeight = sunRefOrbitHeight;
         }
       }
-      solarAltitude = String.Format("{0}{1}", FormatUtils.ToSI(sunRefOrbitHeight * 1000, "F0"), distanceUnits);
+      solarAltitude = String.Format("{0}{1}", FormatUtils.ToSI(sunRefOrbitHeight * 1000* 1000, "F0"), distanceUnits);
       bodyAltitude = String.Format("{0:F0}", bodyRefOrbitHeight);
       panelEfficiency = String.Format("{0:F1}%", panelScalar*100f);
       darkTime = FormatUtils.FormatTimeString(occlusionTime);

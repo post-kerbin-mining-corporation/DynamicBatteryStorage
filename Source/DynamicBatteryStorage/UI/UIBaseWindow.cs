@@ -54,6 +54,8 @@ namespace DynamicBatteryStorage.UI
 
     protected virtual void Awake()
     {
+	  enabled = Settings.Enabled;
+	  if (!enabled) return;
       if (Settings.DebugUIMode)
         Utils.Log("[UI]: Awake fired");
       GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
