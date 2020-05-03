@@ -1,3 +1,8 @@
+v2.1.6
+------
+- Corrected an issue with SignalDelay compatibility
+- Added Spanish localization (Fitiales)
+
 v2.1.5
 ------
 - Bumped to KSP 1.9
