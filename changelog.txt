@@ -1,3 +1,9 @@
+v2.1.7
+------
+- KSP 1.10 compatibility
+- Added German localization (Sqeep)
+- Fixed solar panel manager calculating scaling incorrectly
+
 v2.1.6
 ------
 - Corrected an issue with SignalDelay compatibility

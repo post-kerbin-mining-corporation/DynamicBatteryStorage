@@ -15,3 +15,4 @@ C:\Users\Chris\KSP\Repos\DynamicBatteryStorage\Source\DynamicBatteryStorage\obj\
 C:\Users\Chris\KSP\Repos\DynamicBatteryStorage\Source\DynamicBatteryStorage\obj\Debug\DynamicBatteryStorage.csproj.CopyComplete
 C:\Users\Chris\KSP\Repos\DynamicBatteryStorage\Source\DynamicBatteryStorage\obj\Debug\DynamicBatteryStorage.dll
 C:\Users\Chris\KSP\Repos\DynamicBatteryStorage\Source\DynamicBatteryStorage\obj\Debug\DynamicBatteryStorage.pdb
+C:\Users\Chris\KSP\Repos\DynamicBatteryStorage\Source\DynamicBatteryStorage\obj\Debug\DynamicBatteryStorage.csprojAssemblyReference.cache

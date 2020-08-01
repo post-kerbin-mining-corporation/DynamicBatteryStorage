@@ -1,0 +1,86 @@
+// Übersetzung von Sqeep
+Localization
+{
+  de-de
+  {
+    // Main Panel
+	  #LOC_DynamicBatteryStorage_UI_WindowName = Near Future Systems Manager
+    #LOC_DynamicBatteryStorage_UI_ThermalModeName = THERMAL
+    #LOC_DynamicBatteryStorage_UI_ElectricalModeName = ELEKTRISCH
+
+    #LOC_DynamicBatteryStorage_UI_ElectricalFlowUnits = Ec/s
+    #LOC_DynamicBatteryStorage_UI_ElectricalUnits = Ec
+    #LOC_DynamicBatteryStorage_UI_ThermalFlowUnits = kW
+    #LOC_DynamicBatteryStorage_UI_TimeUnits = s
+    #LOC_DynamicBatteryStorage_UI_DistanceUnits = m
+
+
+    // Electrical View
+    // Solar Panel Manager
+    #LOC_DynamicBatteryStorage_UI_SolarManagerTitle = Solar-Simulator
+    #LOC_DynamicBatteryStorage_UI_EclipseTimeTitle = Zeit in der Finsternis
+    #LOC_DynamicBatteryStorage_UI_BodySelectionTitle = Referenzkörper
+    #LOC_DynamicBatteryStorage_UI_SolarAltitudeTitle = Mittlere Sonnenhöhe
+    #LOC_DynamicBatteryStorage_UI_OrbitAltitudeTitle = Körperorbitalgröße
+    #LOC_DynamicBatteryStorage_UI_SolarEfficiencyTitle = Geschätzte Solarpanel-Effizienz
+
+    // Battery Panel
+    #LOC_DynamicBatteryStorage_UI_BatteryManagerTitle = Batterie Status
+    #LOC_DynamicBatteryStorage_UI_BatteryTimeDepletion = Erschöpfung in
+    #LOC_DynamicBatteryStorage_UI_BatteryTimeCharging = Wiederaufgeladen in
+    #LOC_DynamicBatteryStorage_UI_BatteryTimeStable = stabil
+    #LOC_DynamicBatteryStorage_UI_BatteryTimeFullCharge = Vollgeladen in
+
+    // Dynamic Battery Panel
+    #LOC_DynamicBatteryStorage_UI_DBSManagerTitle = Dynamische Batterieeinstellung
+    #LOC_DynamicBatteryStorage_UI_DBSManagerBufferSize = Erforderlicher Puffer
+    #LOC_DynamicBatteryStorage_UI_DBSManagerBufferPart = Betroffener Teil
+    #LOC_DynamicBatteryStorage_UI_DBSDebugTitle = interne Datan
+    #LOC_DynamicBatteryStorage_UI_DBSVesselCachedTitle = Fahrzeug zwischengespeicherter Strom
+    #LOC_DynamicBatteryStorage_UI_DBSPartCachedTitle = Im Teil zwischengespeicherter Strom
+
+    #LOC_DynamicBatteryStorage_UI_DBSErrorController = Controller konnte nicht erkannt werden 
+    #LOC_DynamicBatteryStorage_UI_DBSErrorTimewarp = System offline unter <<1>>x
+    #LOC_DynamicBatteryStorage_UI_DBSNoError =  Kompensationssystem aktiviert
+
+    // Flows panel
+    #LOC_DynamicBatteryStorage_UI_FlowPanelTitle = Stromfluss
+    #LOC_DynamicBatteryStorage_UI_TotalPowerGenerationTitle = Gesamte Stromerzeugung
+    #LOC_DynamicBatteryStorage_UI_TotalPowerConsumptionTitle = Gesamtstromverbrauch
+
+
+    // Intermittent panel
+    #LOC_DynamicBatteryStorage_UI_SimulationPanelTitle = Überwachungsschaltung
+    #LOC_DynamicBatteryStorage_UI_ConstantPanelTitle = Alle
+    #LOC_DynamicBatteryStorage_UI_IntermittentPanelTitle = Auf Nachfrage
+    #LOC_DynamicBatteryStorage_UI_IntermittentToggle = UMSCHALTEN
+    #LOC_DynamicBatteryStorage_UI_IntermittentOff = AUS
+    #LOC_DynamicBatteryStorage_UI_IntermittentOn = AN
+
+    // Thermal View
+    // Flows panel
+    #LOC_DynamicBatteryStorage_UI_HeatFlowPanelTitle = Wärmefluss
+    #LOC_DynamicBatteryStorage_UI_HeatFlowPanelNotOk = <color=#fd6868> Die Wärmeableitung des Fahrzeuges ist unzureichend, Teil können überhitzen</color>
+    #LOC_DynamicBatteryStorage_UI_HeatFlowPanelOk = Die Wärmeableitung des Fahrzeuges ist ausreichend.
+    #LOC_DynamicBatteryStorage_UI_TotalHeatConsumptionTitle = Gesamtwärmeabgabe
+    #LOC_DynamicBatteryStorage_UI_TotalHeatGenerationTitle  = Gesamtwärmeproduktion
+
+    // UI Categories
+    #LOC_DynamicBatteryStorage_UI_Category_SolarPanels = Sonnenkollektorn
+    #LOC_DynamicBatteryStorage_UI_Category_Radiators = Radiatoren
+    #LOC_DynamicBatteryStorage_UI_Category_Converters = Konverter
+    #LOC_DynamicBatteryStorage_UI_Category_Harvesters = Maschinen
+    #LOC_DynamicBatteryStorage_UI_Category_Generators = Generatoren
+    #LOC_DynamicBatteryStorage_UI_Category_Reactors = Reaktoren
+    #LOC_DynamicBatteryStorage_UI_Category_FissionReactors = Spaltreaktoren
+    #LOC_DynamicBatteryStorage_UI_Category_FusionReactors = Fusionsreaktoren
+    #LOC_DynamicBatteryStorage_UI_Category_Batteries = Energiespeicher
+    #LOC_DynamicBatteryStorage_UI_Category_FuelTanks = Treibstofftanks
+    #LOC_DynamicBatteryStorage_UI_Category_Lights = Lichter
+    #LOC_DynamicBatteryStorage_UI_Category_Command = Kommandomodul
+    #LOC_DynamicBatteryStorage_UI_Category_Communication = Transmitter
+    #LOC_DynamicBatteryStorage_UI_Category_Habitation = Hab Module
+    #LOC_DynamicBatteryStorage_UI_Category_Engines = Triebwerke
+    #LOC_DynamicBatteryStorage_UI_Category_Science = Wissenschaft
+  }
+}

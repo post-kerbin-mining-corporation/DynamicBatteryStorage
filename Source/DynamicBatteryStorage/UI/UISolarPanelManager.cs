@@ -250,7 +250,7 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     protected float CalculatePanelScalar()
     {
-      return (float)((1d / sunRefOrbitHeight) *(refSunOrbitAlt) ) ;
+      return (float)((1d / (sunRefOrbitHeight*sunRefOrbitHeight)) *(refSunOrbitAlt) ) ;
     }
 
   }
