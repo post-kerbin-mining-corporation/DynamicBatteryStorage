@@ -43,7 +43,7 @@ namespace DynamicBatteryStorage
     public static bool DebugSettings = true;
     public static bool DebugUIMode = true;
     public static int UIUpdateInterval = 3;
-
+    public static bool DebugLoading = true;
 
     public static Dictionary<string, HandlerCategory> HandlerCategoryData;
     public static List<HandlerModuleData> HandlerPartModuleData;
@@ -68,11 +68,14 @@ namespace DynamicBatteryStorage
         settingsNode.TryGetValue("DebugMode", ref DebugMode);
         settingsNode.TryGetValue("DebugSettings", ref DebugMode);
         settingsNode.TryGetValue("DebugUIMode", ref DebugUIMode);
+        settingsNode.TryGetValue("DebugLoading", ref DebugLoading);
+
         settingsNode.TryGetValue("BufferScaling ", ref BufferScaling);
         settingsNode.TryGetValue("UIUpdateInterval ", ref UIUpdateInterval);
-		settingsNode.TryGetValue("Enabled", ref Enabled);
+		    settingsNode.TryGetValue("Enabled", ref Enabled);
 
-        Utils.Log("[Settings]: Loading handler categories");
+        if (Settings.DebugLoading)
+          Utils.Log("[Settings]: Loading handler categories");
         HandlerCategoryData = new Dictionary<string, HandlerCategory>();
         ConfigNode[] categoryNodes = settingsNode.GetNodes("HANDLERCATEGORY");
 
@@ -81,8 +84,8 @@ namespace DynamicBatteryStorage
           HandlerCategory newCat = new HandlerCategory(node);
           HandlerCategoryData.Add(newCat.name, newCat);
         }
-
-        Utils.Log("[Settings]: Loading handler modules");
+        if (Settings.DebugLoading)
+          Utils.Log("[Settings]: Loading handler modules");
         HandlerPartModuleData = new List<HandlerModuleData>();
         ConfigNode[] partModuleNodes = settingsNode.GetNodes("PARTMODULEHANDLER");
         foreach (ConfigNode node in partModuleNodes)
@@ -234,7 +237,8 @@ namespace DynamicBatteryStorage
       {
         config = new HandlerConfiguration(node.GetNode("HANDLER_CONFIG"));
       }
-      Utils.Log(String.Format("[Settings]: Loaded {0}", this.ToString()));
+      if (Settings.DebugLoading)
+        Utils.Log(String.Format("[Settings]: Loaded {0}", this.ToString()));
     }
 
     public string ToString()
