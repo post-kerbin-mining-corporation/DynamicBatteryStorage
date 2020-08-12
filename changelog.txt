@@ -1,3 +1,10 @@
+v2.1.8
+------
+- Added a new settings flag: DebugLoading, which decreases the number of messages emitted when loading (off by default)
+- Added support for FFT modules: ModuleAntimatterTank, FusionReactor, FusionEngine, ModuleChargeableEngine
+- Added support for SystemHeat modules: ModuleSystemHeatRadiator, ModuleSystemHeatHarvester, ModuleSystemHeatConverter, ModuleSystemHeatTemperatureAdjuster, ModuleSystemHeatConvector, ModuleSystemHeatFissionEngine, ModuleSystemHeatFissionReactor
+- Added support for SpaceDust modules: ModuleSpaceDustScanner, ModuleSpaceDustHarvester
+
 v2.1.7
 ------
 - KSP 1.10 compatibility
