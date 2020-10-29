@@ -1,3 +1,9 @@
+v2.1.10
+-------
+- Fixed a missing exponent in the Solar Panel UI planner
+- Some fixes for solar panel detection in old (pre 1.9) Kopernicus versions
+- Added support for ModuleSpaceDustTelescope
+
 v2.1.9
 ------
 - Compatibility with Kopernicus 1.9+
