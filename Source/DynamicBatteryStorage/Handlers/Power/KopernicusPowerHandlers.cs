@@ -19,7 +19,15 @@ namespace DynamicBatteryStorage
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
-      panel = (ModuleDeployableSolarPanel)pm;
+      try
+      {
+        panel = (ModuleDeployableSolarPanel)pm;
+      }
+      catch (InvalidCastException)
+      {
+        return false;
+      }
+
       return true;
     }
 
