@@ -1,7 +1,7 @@
 {
     "NAME":"DynamicBatteryStorage",
-    "URL":"https://raw.githubusercontent.com/ChrisAdderley/DynamicBatteryStorage/master/GameData/DynamicBatteryStorage/Versioning/DynamicBatteryStorage.version",
-    "DOWNLOAD":"https://github.com/ChrisAdderley/DynamicBatteryStorage/releases",
+    "URL":"https://raw.githubusercontent.com/post-kerbin-mining-corporation/DynamicBatteryStorage/master/GameData/DynamicBatteryStorage/Versioning/DynamicBatteryStorage.version",
+    "DOWNLOAD":"https://github.com/post-kerbin-mining-corporation/DynamicBatteryStorage/releases",
     "VERSION":
     {
         "MAJOR":2,
