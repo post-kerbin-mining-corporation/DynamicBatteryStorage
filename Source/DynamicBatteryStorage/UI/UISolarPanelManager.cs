@@ -121,8 +121,8 @@ namespace DynamicBatteryStorage.UI
 
         if (parsedAlt > selectedBody.sphereOfInfluence)
           bodyRefOrbitHeight = selectedBody.sphereOfInfluence;
-        if (parsedAlt <= 1d)
-          bodyRefOrbitHeight = 1d;
+        if (parsedAlt < 0d)
+          bodyRefOrbitHeight = 0d;
       }
       //bodyAltitude = String.Format("{0:F0}", bodyRefOrbitHeight);
       //bodyRefOrbitHeight = (double)GUILayout.HorizontalSlider((float)bodyRefOrbitHeight, 1f, (float)selectedBody.sphereOfInfluence/1000f, GUILayout.MaxWidth(120f));
@@ -232,15 +232,25 @@ namespace DynamicBatteryStorage.UI
       if (selectedBodyIndex == 0)
         return 0d;
 
-        // This is a gemetric approximation assuming a circular equatorial orbit and a cylindrical solar occlusion
-      // Note the scaling factors for KM here
-      double scaling = 1000.0d;
-      double bodyRadius = selectedBody.Radius / scaling;
-      double orbitDistance = (bodyRadius + bodyRefOrbitHeight);
+      if (bodyRefOrbitHeight == 0d)
 
-      double eclipseFraction = (1d / Math.PI) * Math.Acos(Math.Sqrt(Math.Pow(bodyRefOrbitHeight,2) + 2d* bodyRadius*bodyRefOrbitHeight)/(orbitDistance));
-      double period = (2 * Math.PI) / (Math.Sqrt((selectedBody.gravParameter/Math.Pow(scaling,3))/ Math.Pow(orbitDistance, 3)));
-      return period * eclipseFraction;
+      {
+        return selectedBody.rotationPeriod;
+
+      }
+      else
+      {
+
+        // This is a gemetric approximation assuming a circular equatorial orbit and a cylindrical solar occlusion
+        // Note the scaling factors for KM here
+        double scaling = 1000.0d;
+        double bodyRadius = selectedBody.Radius / scaling;
+        double orbitDistance = (bodyRadius + bodyRefOrbitHeight);
+
+        double eclipseFraction = (1d / Math.PI) * Math.Acos(Math.Sqrt(Math.Pow(bodyRefOrbitHeight, 2) + 2d * bodyRadius * bodyRefOrbitHeight) / (orbitDistance));
+        double period = (2 * Math.PI) / (Math.Sqrt((selectedBody.gravParameter / Math.Pow(scaling, 3)) / Math.Pow(orbitDistance, 3)));
+        return period * eclipseFraction;
+      }
       //double orb_vel = Math.Sqrt(selectedBody.gravParameter/Math.Pow(scaling, 3)/orbitDistance);
       //return (Math.Asin(bodyRadius / orbitDistance) * orbitDistance) / orb_vel;
     }
