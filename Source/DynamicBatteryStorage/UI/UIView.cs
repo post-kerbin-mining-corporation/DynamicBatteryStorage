@@ -39,7 +39,8 @@ namespace DynamicBatteryStorage.UI
     protected string totalProductionHeader = "";
     protected string totalConsumption = "";
     protected string totalProduction = "";
-
+    protected string additionalGeneration = "";
+    protected string additionalConsumption = "";
     protected string powerFlowUnits = "";
     protected string powerUnits = "";
     protected string heatFlowUnits = "";
@@ -89,6 +90,9 @@ namespace DynamicBatteryStorage.UI
       intermittentToggle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_IntermittentToggle");
       intermittentOn = Localizer.Format("#LOC_DynamicBatteryStorage_UI_IntermittentOn");
       intermittentOff  = Localizer.Format("#LOC_DynamicBatteryStorage_UI_IntermittentOff");
+
+      additionalGeneration = Localizer.Format("#LOC_DynamicBatteryStorage_UI_AdditionalGeneration");
+      additionalConsumption = Localizer.Format("#LOC_DynamicBatteryStorage_UI_AdditionalConsumption");
     }
 
     /// <summary>
@@ -129,6 +133,8 @@ namespace DynamicBatteryStorage.UI
         SetHandlerSimulationStates(false, false);
       GUILayout.EndHorizontal();
       GUILayout.EndVertical();
+
+
 
       GUILayout.BeginVertical(UIHost.GUIResources.GetStyle("block_background"));
       GUILayout.Label(intermittentHeader, UIHost.GUIResources.GetStyle("panel_header_centered"));
@@ -206,10 +212,43 @@ namespace DynamicBatteryStorage.UI
       GUILayout.EndHorizontal();
       GUILayout.FlexibleSpace();
       GUILayout.EndScrollView();
+
+        if (HighLogic.LoadedSceneIsEditor)
+        {
+          GUILayout.BeginHorizontal(GUILayout.Width(col_width * 2f - 40f));
+
+          GUILayout.BeginHorizontal();
+          GUILayout.Label(additionalGeneration, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
+          userGenerationString = GUILayout.TextField(userGenerationString, 25, GUILayout.MaxWidth(120f));
+          float parsedGen = 0f;
+          if (float.TryParse(userGenerationString, out parsedGen))
+          {
+            userGeneration = parsedGen;
+
+          }
+          GUILayout.Label(heatFlowUnits, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
+          GUILayout.EndHorizontal();
+
+          GUILayout.BeginHorizontal();
+          GUILayout.Label(additionalConsumption, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
+          userConsumptionString = GUILayout.TextField(userConsumptionString, 25, GUILayout.MaxWidth(120f));
+          float parsedCon = 0f;
+          if (float.TryParse(userConsumptionString, out parsedCon))
+          {
+            userConsumption = parsedCon;
+
+          }
+          GUILayout.Label(heatFlowUnits, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
+          GUILayout.EndHorizontal();
+          GUILayout.EndHorizontal();
+        }
       }
 
     }
-
+    protected float userGeneration = 0f;
+    protected float userConsumption = 0f;
+    protected string userGenerationString = "0";
+    protected string userConsumptionString = "0";
     /// <summary>
     /// Updates the data for drawing - strings and handler data caches
     /// </summary>
