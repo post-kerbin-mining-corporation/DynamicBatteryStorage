@@ -83,7 +83,10 @@ namespace DynamicBatteryStorage.UI
     protected override void DrawDetailPanel()
     {
       if (showDetails)
-        UIHost.windowPos.height = 230f + scrollHeight;
+        if (HighLogic.LoadedSceneIsEditor)
+          UIHost.windowPos.height = 230f + scrollHeight + 45f;
+        else
+          UIHost.windowPos.height = 230f + scrollHeight;
       else
         UIHost.windowPos.height = 230f;
       base.DrawDetailPanel();
@@ -108,7 +111,7 @@ namespace DynamicBatteryStorage.UI
     protected override void UpdateHeaderPanelData()
     {
 
-      double netHeat = dataHost.ThermalData.CurrentConsumption + dataHost.ThermalData.CurrentProduction;
+      double netHeat = dataHost.ThermalData.CurrentConsumption + dataHost.ThermalData.CurrentProduction + userGeneration - userConsumption;
 
       if (netHeat == 0d)
       {
@@ -131,10 +134,10 @@ namespace DynamicBatteryStorage.UI
       }
 
       totalConsumption = String.Format("▼ {0:F2} {1}",
-        Math.Abs(dataHost.ThermalData.CurrentConsumption),
+        Math.Abs(dataHost.ThermalData.CurrentConsumption - userConsumption),
         heatFlowUnits);
       totalProduction = String.Format("▲ {0:F2} {1}",
-        Math.Abs(dataHost.ThermalData.CurrentProduction),
+        Math.Abs(dataHost.ThermalData.CurrentProduction + userGeneration),
         heatFlowUnits);
 
     }

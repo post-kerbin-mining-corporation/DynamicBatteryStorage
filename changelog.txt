@@ -1,3 +1,9 @@
+v2.2.2
+------
+- Fixed a loading log message not being gated behind debug correctly
+- Fixed ModuleSystemHeatRadiator not showing legacy heat properties in the Thermal tab
+- Added a new VAB planning feature which allows manual entry of things into the simulation
+
 v2.2.1
 ------
 - Fix KSP version snafu

@@ -123,7 +123,10 @@ namespace DynamicBatteryStorage.UI
     protected override void DrawDetailPanel()
     {
       if (showDetails)
-        UIHost.windowPos.height = 310f + scrollHeight;
+        if (HighLogic.LoadedSceneIsEditor)
+        UIHost.windowPos.height = 310f + scrollHeight + 45f;
+        else
+          UIHost.windowPos.height = 310f + scrollHeight;
       else
         UIHost.windowPos.height = 310f;
 
@@ -155,7 +158,7 @@ namespace DynamicBatteryStorage.UI
     {
       double EC = 0d;
       double maxEC = 0d;
-      double netPower = dataHost.ElectricalData.CurrentConsumption + dataHost.ElectricalData.GetSimulatedElectricalProdution();
+      double netPower = dataHost.ElectricalData.CurrentConsumption + dataHost.ElectricalData.GetSimulatedElectricalProdution() + userGeneration - userConsumption;
 
       dataHost.ElectricalData.GetElectricalChargeLevels(out EC, out maxEC);
 
@@ -193,10 +196,10 @@ namespace DynamicBatteryStorage.UI
       }
 
       totalConsumption = String.Format("▼ {0:F2} {1}",
-        Math.Abs(dataHost.ElectricalData.CurrentConsumption),
+        Math.Abs(dataHost.ElectricalData.CurrentConsumption) - userConsumption,
         powerFlowUnits);
       totalProduction = String.Format("▲ {0:F2} {1}",
-        Math.Abs(dataHost.ElectricalData.GetSimulatedElectricalProdution()),
+        Math.Abs(dataHost.ElectricalData.GetSimulatedElectricalProdution()) + userGeneration,
         powerFlowUnits);
       availableBattery = String.Format("{0:F0} / {1:F0} ({2:F1}%)", EC, maxEC, EC/maxEC * 100d);
     }

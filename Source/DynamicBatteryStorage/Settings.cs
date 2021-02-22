@@ -188,7 +188,8 @@ namespace DynamicBatteryStorage
       title = Localizer.Format(node.GetValue("title"));
 
       handledModules = node.GetValuesList("module");
-      Utils.Log(String.Format("[Settings]: Loaded {0}", this.ToString()));
+      if (Settings.DebugLoading)
+        Utils.Log(String.Format("[Settings]: Loaded {0}", this.ToString()));
     }
 
     public string ToString()
