@@ -1,5 +1,5 @@
 ==============================
-Dynamic Battery Storage v2.2.2
+Dynamic Battery Storage v2.2.3
 ==============================
 
 A small utility mod for Kerbal Space Program, intended to support my other projects. Effectively required by Near Future Electrical, CryoEngines, KerballAtomics and CryoTanks.

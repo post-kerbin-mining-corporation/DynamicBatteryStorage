@@ -1,3 +1,8 @@
+v2.2.3
+------
+- Marked KSP 1.12
+- Added support for SCANSat 
+
 v2.2.2
 ------
 - Fixed a loading log message not being gated behind debug correctly
