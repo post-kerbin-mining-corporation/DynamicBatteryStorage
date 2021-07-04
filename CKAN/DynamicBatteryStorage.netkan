@@ -3,13 +3,13 @@
     "identifier":     "DynamicBatteryStorage",
     "name":           "Dynamic Battery Storage",
     "abstract":       "A mod for Kerbal Space Program, intended to ease vessel construction and solve problems related to power flow.",
-    "$kref":          "#/ckan/github/ChrisAdderley/DynamicBatteryStorage",
+    "$kref":          "#/ckan/github/post-kerbin-mining-corporation/DynamicBatteryStorage",
     "$vref":          "#/ckan/ksp-avc/DynamicBatteryStorage.version",
     "x_netkan_epoch": 2,
     "x_netkan_trust_version_file": true,
     "resources": {
-      "homepage": "https://github.com/ChrisAdderley/DynamicBatteryStorage/wiki",
-      "repository": "https://github.com/ChrisAdderley/DynamicBatteryStorage"
+      "homepage": "https://github.com/post-kerbin-mining-corporation/DynamicBatteryStorage/wiki",
+      "repository": "https://github.com/post-kerbin-mining-corporation/DynamicBatteryStorage"
     },
     "license":        "MIT",
     "install": [
