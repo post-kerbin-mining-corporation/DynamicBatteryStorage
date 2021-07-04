@@ -82,7 +82,7 @@ namespace DynamicBatteryStorage
     }
     protected override double GetValueFlight()
     {
-      if (pod != null)
+      if (pod != null && !pod.IsHibernating)
       {
         for (int i = 0; i < pod.resHandler.inputResources.Count; i++)
         {
