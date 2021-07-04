@@ -81,7 +81,6 @@
     <Compile Include="Handlers\Heat\StockHeatHandlers.cs" />
     <Compile Include="Handlers\ModuleDataHandler.cs" />
     <Compile Include="Handlers\Power\KopernicusPowerHandlers.cs" />
-    <Compile Include="Handlers\Power\CommNetAntennasConsumptorPowerHandler.cs" />
     <Compile Include="Handlers\Power\NFTPowerHandlers.cs" />
     <Compile Include="Handlers\Power\RealBatteryPowerHandlers.cs" />
     <Compile Include="Handlers\Power\RemoteTechPowerHandler.cs" />
