@@ -1,3 +1,9 @@
+v2.2.4
+------
+- Fixed ModuleCommand not changing its consumption model when the pod is hibernating
+- Fixed ModuleAlternator not changing its generation model when the engine is off
+- Added ModuleGeneratorAntenna support (CommNetAntennasConsumptor mod)
+
 v2.2.3
 ------
 - Marked KSP 1.12
