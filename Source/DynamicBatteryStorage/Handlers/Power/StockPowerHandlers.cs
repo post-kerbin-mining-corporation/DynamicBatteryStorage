@@ -82,7 +82,7 @@ namespace DynamicBatteryStorage
     }
     protected override double GetValueFlight()
     {
-      if (pod != null)
+      if (pod != null && !pod.IsHibernating)
       {
         for (int i = 0; i < pod.resHandler.inputResources.Count; i++)
         {
@@ -475,6 +475,7 @@ namespace DynamicBatteryStorage
   public class ModuleAlternatorPowerHandler : ModuleDataHandler
   {
     ModuleAlternator alternator;
+    ModuleEngines[] engines;
 
     public ModuleAlternatorPowerHandler(HandlerModuleData moduleData) : base(moduleData)
     { }
@@ -482,6 +483,7 @@ namespace DynamicBatteryStorage
     {
       base.Initialize(pm);
       alternator = (ModuleAlternator)pm;
+      engines = pm.part.GetComponents<ModuleEngines>();
 
       // Test to see if the ModuleCommand actually uses power
       for (int i = 0; i < alternator.resHandler.outputResources.Count; i++)
@@ -515,9 +517,30 @@ namespace DynamicBatteryStorage
 
     protected override double GetValueFlight()
     {
-      if (alternator != null)
+      if (alternator != null && engines != null)
       {
-        return alternator.outputRate;
+        if (alternator.preferMultiMode)
+        {
+          foreach (ModuleEngines e in engines)
+          {
+            if (e.isOperational)
+            {
+              return alternator.outputRate;
+            }
+          }
+        }
+        else
+        {
+          foreach (ModuleEngines e in engines)
+          {
+            if (e.isOperational)
+            {
+              return alternator.outputRate;
+            }
+            else
+              return 0f;
+          }
+        }
       }
       return 0d;
     }
