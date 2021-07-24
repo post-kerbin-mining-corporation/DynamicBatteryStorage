@@ -223,18 +223,14 @@ namespace DynamicBatteryStorage.UI
       }
       else
       {
-        if (selectedBody.referenceBody.referenceBody == sunBody && selectedBody.referenceBody != sunBody)
+        if (selectedBody.referenceBody.referenceBody == sunBody && selectedBody.referenceBody != sunBody) // Moons
         {
-          // Moons
-
-          double ApTime = selectedBody.referenceBody.orbit.GetNextApoapsisTime(0);
-          sunRefOrbitHeight = FlightGlobals.getAltitudeAtPos(selectedBody.referenceBody.getPositionAtUT(ApTime), sunBody) / 1000000d;
+          sunRefOrbitHeight = selectedBody.referenceBody.orbit.ApA / 1000000d;
           sunRefOrbitHeight += selectedBody.orbit.ApR/1000000d;
         }
         else
         {
-          double ApTime = selectedBody.orbit.GetNextApoapsisTime(0);
-          sunRefOrbitHeight = FlightGlobals.getAltitudeAtPos(selectedBody.getPositionAtUT(ApTime), sunBody) / 1000000d;
+          sunRefOrbitHeight = selectedBody.orbit.ApA / 1000000d;
         }
       }
       bodyRefOrbitHeight = (selectedBody.atmosphereDepth + 10000d)/1000d;
