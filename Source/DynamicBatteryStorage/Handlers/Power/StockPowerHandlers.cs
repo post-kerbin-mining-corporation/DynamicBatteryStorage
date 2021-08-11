@@ -140,6 +140,9 @@ namespace DynamicBatteryStorage
     {
       base.Initialize(pm);
       antenna = (ModuleDataTransmitter)pm;
+      if (antenna.antennaType == AntennaType.INTERNAL)
+        return false;
+
       return true;
     }
 
