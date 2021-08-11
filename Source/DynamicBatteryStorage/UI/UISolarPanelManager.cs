@@ -107,21 +107,30 @@ namespace DynamicBatteryStorage.UI
 
       GUILayout.BeginHorizontal();
       GUILayout.Label(solarAltitudeTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
-      sunRefOrbitHeight = (double)GUILayout.HorizontalSlider((float)sunRefOrbitHeight, 5f, 500000f, GUILayout.MaxWidth(120f));
-      GUILayout.Label(solarAltitude, UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
+      solarAltitude = GUILayout.TextField(solarAltitude, 25, GUILayout.MaxWidth(120f));// (double)GUILayout.HorizontalSlider((float)sunRefOrbitHeight, 5f, 500000f, GUILayout.MaxWidth(120f));
+
+      double parsedSolarAlt = 0d;
+      if (double.TryParse(solarAltitude, out parsedSolarAlt))
+      {
+        sunRefOrbitHeight = parsedSolarAlt;
+
+        if (parsedSolarAlt < 0d)
+          sunRefOrbitHeight = 0d;
+      }
+      GUILayout.Label("Mm", UIHost.GUIResources.GetStyle("data_field"), GUILayout.MinWidth(60f));
       GUILayout.EndHorizontal();
 
       GUILayout.BeginHorizontal();
       GUILayout.Label(bodyAltitudeTitle, UIHost.GUIResources.GetStyle("data_header"), GUILayout.MaxWidth(160f));
       bodyAltitude = GUILayout.TextField(bodyAltitude, 25, GUILayout.MaxWidth(120f));
-      double parsedAlt = 0d;
-      if (double.TryParse(bodyAltitude, out parsedAlt))
+      double parsedBodyAlt = 0d;
+      if (double.TryParse(bodyAltitude, out parsedBodyAlt))
       {
-        bodyRefOrbitHeight = parsedAlt;
+        bodyRefOrbitHeight = parsedBodyAlt;
 
-        if (parsedAlt > selectedBody.sphereOfInfluence)
+        if (parsedBodyAlt > selectedBody.sphereOfInfluence)
           bodyRefOrbitHeight = selectedBody.sphereOfInfluence;
-        if (parsedAlt < 0d)
+        if (parsedBodyAlt < 0d)
           bodyRefOrbitHeight = 0d;
       }
       //bodyAltitude = String.Format("{0:F0}", bodyRefOrbitHeight);
@@ -187,7 +196,7 @@ namespace DynamicBatteryStorage.UI
           bodyRefOrbitHeight = sunRefOrbitHeight;
         }
       }
-      solarAltitude = String.Format("{0}{1}", FormatUtils.ToSI(sunRefOrbitHeight * 1000* 1000, "F0"), distanceUnits);
+      solarAltitude = String.Format("{0:F0}", sunRefOrbitHeight);
       bodyAltitude = String.Format("{0:F0}", bodyRefOrbitHeight);
       panelEfficiency = String.Format("{0:F1}%", panelScalar*100f);
       darkTime = FormatUtils.FormatTimeString(occlusionTime);
@@ -210,15 +219,24 @@ namespace DynamicBatteryStorage.UI
       planetName = selectedBody.name;
       if (selectedBody == sunBody)
       {
-        
+
       }
       else
       {
-        sunRefOrbitHeight = FlightGlobals.getAltitudeAtPos(selectedBody.getPositionAtUT(0d), sunBody)/1000000d;
+        if (selectedBody.referenceBody.referenceBody == sunBody && selectedBody.referenceBody != sunBody) // Moons
+        {
+          sunRefOrbitHeight = selectedBody.referenceBody.orbit.ApA / 1000000d;
+          sunRefOrbitHeight += selectedBody.orbit.ApR/1000000d;
+        }
+        else
+        {
+          sunRefOrbitHeight = selectedBody.orbit.ApA / 1000000d;
+        }
       }
       bodyRefOrbitHeight = (selectedBody.atmosphereDepth + 10000d)/1000d;
- 
+
       bodyAltitude = String.Format("{0:F0}", bodyRefOrbitHeight);
+      solarAltitude = String.Format("{0:F0}", sunRefOrbitHeight);
 
       if (Settings.DebugUIMode)
         Utils.Log(String.Format("[UI Solar Manager] Selected {0}", selectedBody.name));
