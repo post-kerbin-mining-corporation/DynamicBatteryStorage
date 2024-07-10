@@ -6,14 +6,13 @@ using UnityEngine;
 
 namespace DynamicBatteryStorage
 {
-
   /// <summary>
   /// This Vessel Module calculates vessel energy production and consumption, and chooses a part to act as a 'battery buffer' at high time warp speeds
   ///
   /// </summary>
   public class ModuleDynamicBatteryStorage : VesselModule
   {
-    public bool AnalyticMode {get {return analyticMode;}}
+    public bool AnalyticMode { get { return analyticMode; } }
 
     public Part BufferPart { get { return bufferPart; } }
     public PartResource BufferResource { get { return bufferStorage; } }
@@ -51,16 +50,16 @@ namespace DynamicBatteryStorage
 
     protected override void OnAwake()
     {
-	  base.OnAwake();
-	  enabled = Settings.Enabled;
-	}
+      base.OnAwake();
+      enabled = Settings.Enabled;
+    }
 
-	protected override void  OnStart()
+    protected override void OnStart()
     {
       base.OnStart();
-	  if (!enabled) return;
+      if (!enabled) return;
 
-	  bufferScale = (double)Settings.BufferScaling;
+      bufferScale = (double)Settings.BufferScaling;
       timeWarpLimit = Settings.TimeWarpLimit;
 
       GameEvents.onVesselDestroy.Add(new EventData<Vessel>.OnEvent(CalculateElectricalData));
@@ -70,20 +69,20 @@ namespace DynamicBatteryStorage
       FindDataManager();
       if (Settings.DebugMode)
       {
-          Utils.Log(String.Format("Initialization completed with buffer scale {0} and timewarp limit {1}", bufferScale, timeWarpLimit));
+        Utils.Log(String.Format("Initialization completed with buffer scale {0} and timewarp limit {1}", bufferScale, timeWarpLimit));
       }
     }
 
     protected override void OnSave(ConfigNode node)
     {
-	  // Saving needs to trigger a buffer clear
-	  ClearBufferStorage();
+      // Saving needs to trigger a buffer clear
+      ClearBufferStorage();
       base.OnSave(node);
     }
 
     void OnDestroy()
     {
-	  GameEvents.onVesselDestroy.Remove(CalculateElectricalData);
+      GameEvents.onVesselDestroy.Remove(CalculateElectricalData);
       GameEvents.onVesselGoOnRails.Remove(CalculateElectricalData);
       GameEvents.onVesselWasModified.Remove(CalculateElectricalData);
     }
@@ -99,7 +98,7 @@ namespace DynamicBatteryStorage
 
     void FixedUpdate()
     {
-	  if (HighLogic.LoadedSceneIsFlight)
+      if (HighLogic.LoadedSceneIsFlight)
       {
 
         if (!vesselLoaded && FlightGlobals.ActiveVessel == vessel)
@@ -118,7 +117,8 @@ namespace DynamicBatteryStorage
           analyticMode = false;
           DoLowWarpSimulation();
 
-        } else
+        }
+        else
         {
           analyticMode = true;
           DoHighWarpSimulation();
@@ -142,7 +142,7 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void DoHighWarpSimulation()
     {
-	  if (vesselData != null && vesselData.ElectricalData != null)
+      if (vesselData != null && vesselData.ElectricalData != null)
       {
         double production = vesselData.ElectricalData.CurrentProduction;
         double consumption = vesselData.ElectricalData.CurrentConsumption;
@@ -179,7 +179,7 @@ namespace DynamicBatteryStorage
 
           if (Settings.DebugMode)
           {
-            Utils.Log(LogVessel(String.Format("Buffer needs {0:F2} EC space to reach target amount of {1:F2} EC", bufferDifference, originalMax + bufferDifference )));
+            Utils.Log(LogVessel(String.Format("Buffer needs {0:F2} EC space to reach target amount of {1:F2} EC", bufferDifference, originalMax + bufferDifference)));
           }
 
           // Apply the buffer
@@ -198,9 +198,9 @@ namespace DynamicBatteryStorage
         Utils.Log(LogVessel("Regenerating electrical data"));
       if (vessel == null || vessel.Parts == null)
       {
-          if (Settings.DebugMode)
-            Utils.Log(LogVessel("Refresh of electrical data failed for vessel, not initialized"));
-          return;
+        if (Settings.DebugMode)
+          Utils.Log(LogVessel("Refresh of electrical data failed for vessel, not initialized"));
+        return;
       }
       // If the buffer does not exist, create it
       if (bufferPart == null)
@@ -221,7 +221,7 @@ namespace DynamicBatteryStorage
     }
     protected void CalculateElectricalData(ConfigNode node)
     {
-        CalculateElectricalData();
+      CalculateElectricalData();
     }
 
     /// <summary>
@@ -239,7 +239,7 @@ namespace DynamicBatteryStorage
         bufferStorage.maxAmount = originalMax;
 
         // Also do this to tbe ProtoResource
-        foreach(ProtoPartResourceSnapshot proto in bufferPart.protoPartSnapshot.resources)
+        foreach (ProtoPartResourceSnapshot proto in bufferPart.protoPartSnapshot.resources)
         {
           if (proto.resourceName == "ElectricCharge")
           {
@@ -262,7 +262,7 @@ namespace DynamicBatteryStorage
         return;
       }
       // Find a part containing electricity and set it as the buffer
-      for (int i = 0; i < vessel.parts.Count; i++ )
+      for (int i = 0; i < vessel.parts.Count; i++)
       {
         if (vessel.parts[i].Resources.Contains("ElectricCharge"))
         {
@@ -285,7 +285,7 @@ namespace DynamicBatteryStorage
     protected string LogVessel(string msg)
     {
       if (vessel)
-        return String.Format("[Controller] [{0}]: {1}",  vessel.name,msg);
+        return String.Format("[Controller] [{0}]: {1}", vessel.name, msg);
       else
         return String.Format("[Controller] [{0}]: {1}", "No vessel", msg);
     }

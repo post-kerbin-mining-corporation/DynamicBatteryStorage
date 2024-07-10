@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-
 
 namespace DynamicBatteryStorage
 {
@@ -36,34 +31,34 @@ namespace DynamicBatteryStorage
     }
     public bool Simulated
     {
-      get {return simulated;}
-      set {simulated = value;}
+      get { return simulated; }
+      set { simulated = value; }
     }
     public bool Visible
     {
-      get {return visible;}
-      set {visible = value;}
+      get { return visible; }
+      set { visible = value; }
     }
     public bool TimewarpFunctional
     {
-      get {return timewarpFunctional;}
+      get { return timewarpFunctional; }
     }
     public bool Producer
     {
-      get {return producer;}
+      get { return producer; }
     }
     public bool Consumer
     {
-      get {return consumer;}
+      get { return consumer; }
     }
     public bool AffectedBySunDistance
     {
-      get {return solarEfficiencyEffects;}
+      get { return solarEfficiencyEffects; }
     }
     public float SolarEfficiency
     {
-      get {return solarEfficiency;}
-      set {solarEfficiency = value;}
+      get { return solarEfficiency; }
+      set { solarEfficiency = value; }
     }
     #endregion Accessors
 
@@ -142,7 +137,7 @@ namespace DynamicBatteryStorage
     /// <summary>
     /// Returns a string representation of the module
     /// </summary>
-    public virtual string ToString()
+    public override string ToString()
     {
       string pState = "Consuming";
       if (Producer)

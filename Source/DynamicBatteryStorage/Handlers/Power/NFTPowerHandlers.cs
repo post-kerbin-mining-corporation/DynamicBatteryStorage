@@ -9,10 +9,10 @@ namespace DynamicBatteryStorage
 {
 
   // Curved Solar Panel
-  public class ModuleCurvedSolarPanelPowerHandler: ModuleDataHandler
+  public class ModuleCurvedSolarPanelPowerHandler : ModuleDataHandler
   {
-    public ModuleCurvedSolarPanelPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleCurvedSolarPanelPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
     protected override double GetValueEditor()
     {
       double results = 0d;
@@ -28,17 +28,17 @@ namespace DynamicBatteryStorage
   }
 
   // Fission Reactor
-  public class FissionGeneratorPowerHandler: ModuleDataHandler
+  public class FissionGeneratorPowerHandler : ModuleDataHandler
   {
-    public FissionGeneratorPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public FissionGeneratorPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
 
     PartModule core;
 
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
-      for (int i = 0;i<pm.part.Modules.Count;  i++)
+      for (int i = 0; i < pm.part.Modules.Count; i++)
       {
         if (pm.part.Modules[i].moduleName == "FissionReactor")
         {
@@ -68,10 +68,10 @@ namespace DynamicBatteryStorage
   }
 
   // RTG
-  public class ModuleRadioisotopeGeneratorPowerHandler: ModuleDataHandler
+  public class ModuleRadioisotopeGeneratorPowerHandler : ModuleDataHandler
   {
-    public ModuleRadioisotopeGeneratorPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleRadioisotopeGeneratorPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
     protected override double GetValueEditor()
     {
       double results = 0d;
@@ -87,13 +87,13 @@ namespace DynamicBatteryStorage
   }
 
   // CryoTank
-  public class ModuleCryoTankPowerHandler: ModuleDataHandler
+  public class ModuleCryoTankPowerHandler : ModuleDataHandler
   {
 
     string[] fuels;
 
-    public ModuleCryoTankPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleCryoTankPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
 
     public override bool Initialize(PartModule pm)
     {
@@ -121,7 +121,7 @@ namespace DynamicBatteryStorage
       {
         if (pNode.name.Replace("_", ".") == pm.part.partInfo.name)
         {
-          List<ConfigNode> cryoNodes = pNode.config.GetNodes("MODULE").ToList().FindAll(n => n.GetValue("name") ==  data.handledModule);
+          List<ConfigNode> cryoNodes = pNode.config.GetNodes("MODULE").ToList().FindAll(n => n.GetValue("name") == data.handledModule);
           if (cryoNodes.Count > 1)
           {
             try
@@ -139,7 +139,8 @@ namespace DynamicBatteryStorage
               // Thrown if ModuleCryoTank is not found (a Large Problem (tm))
               Debug.Log(String.Format("[ModuleCryoTankPowerHandler]: Critical configuration error: No ModuleCryoTank nodes found in part"));
             }
-          } else
+          }
+          else
           {
             cfg = cryoNodes[0];
           }
@@ -202,32 +203,32 @@ namespace DynamicBatteryStorage
   }
 
   // Antimatter Tank
-  public class ModuleAntimatterTankPowerHandler: ModuleDataHandler
+  public class ModuleAntimatterTankPowerHandler : ModuleDataHandler
   {
-    public ModuleAntimatterTankPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleAntimatterTankPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
     protected override double GetValueEditor()
     {
       double results = 0d;
       double.TryParse(pm.Fields.GetValue("ContainmentCost").ToString(), out results);
-      return results* -1.0d;
+      return results * -1.0d;
     }
     protected override double GetValueFlight()
     {
       double results = 0d;
       double.TryParse(pm.Fields.GetValue("ContainmentCostCurrent").ToString(), out results);
-      return results* -1.0d;
+      return results * -1.0d;
     }
   }
 
   // Chargeable Engine
-  public class ModuleChargeableEnginePowerHandler: ModuleDataHandler
+  public class ModuleChargeableEnginePowerHandler : ModuleDataHandler
   {
 
     bool hasOfflineGenerator = false;
     double offlineBaseRate = 0d;
-    public ModuleChargeableEnginePowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleChargeableEnginePowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
     public override bool Initialize(PartModule pm)
     {
       bool.TryParse(pm.Fields.GetValue("PowerGeneratedOffline").ToString(), out hasOfflineGenerator);
@@ -257,7 +258,7 @@ namespace DynamicBatteryStorage
       {
         float genRate = 100f;
         float.TryParse(pm.Fields.GetValue("GeneratorRate").ToString(), out genRate);
-        results = offlineBaseRate * genRate/100f;
+        results = offlineBaseRate * genRate / 100f;
       }
       return results;
     }
@@ -270,9 +271,10 @@ namespace DynamicBatteryStorage
 
       if (charging)
       {
-          double.TryParse(pm.Fields.GetValue("ChargeRate").ToString(), out results);
-          results *= -1d;
-      }  else
+        double.TryParse(pm.Fields.GetValue("ChargeRate").ToString(), out results);
+        results *= -1d;
+      }
+      else
       {
         double.TryParse(pm.Fields.GetValue("PowerGenerationTotal").ToString(), out results);
         return results;
@@ -282,8 +284,8 @@ namespace DynamicBatteryStorage
   }
   public class DischargeCapacitorPowerHandler : ModuleDataHandler
   {
-    public DischargeCapacitorPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public DischargeCapacitorPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
@@ -313,7 +315,8 @@ namespace DynamicBatteryStorage
       {
         double.TryParse(pm.Fields.GetValue("ChargeRate").ToString(), out results);
         results *= -1d;
-      } else
+      }
+      else
         double.TryParse(pm.Fields.GetValue("dischargeActual").ToString(), out results);
 
       if (charging)
@@ -337,7 +340,7 @@ namespace DynamicBatteryStorage
         double.TryParse(pm.Fields.GetValue("ChargeRate").ToString(), out results);
         results *= -1d;
       }
-       if (discharging)
+      if (discharging)
 
         double.TryParse(pm.Fields.GetValue("dischargeActual").ToString(), out results);
 
@@ -351,8 +354,8 @@ namespace DynamicBatteryStorage
   // Centrifuge
   public class ModuleDeployableCentrifugePowerHandler : ModuleDataHandler
   {
-    public ModuleDeployableCentrifugePowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public ModuleDeployableCentrifugePowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
 
     public override bool Initialize(PartModule pm)
     {

@@ -66,7 +66,7 @@ namespace DynamicBatteryStorage.UI
       categoryNames = Settings.HandlerCategories;
 
 
-      foreach (KeyValuePair<string, HandlerCategory> categoryEntry in Settings.HandlerCategoryData)
+      foreach (KeyValuePair<string, UIHandlerCategory> categoryEntry in Settings.HandlerCategoryData)
       {
         consumerCats.Add(categoryEntry.Key, new List<ModuleDataHandler>());
         producerCats.Add(categoryEntry.Key, new List<ModuleDataHandler>());
@@ -294,7 +294,7 @@ namespace DynamicBatteryStorage.UI
 
       // Rebuild the blank dictionary
 
-      foreach (KeyValuePair<string, HandlerCategory> categoryEntry in Settings.HandlerCategoryData)
+      foreach (KeyValuePair<string, UIHandlerCategory> categoryEntry in Settings.HandlerCategoryData)
       {
         consumerCats[categoryEntry.Key] = new List<ModuleDataHandler>();
         producerCats[categoryEntry.Key] = new List<ModuleDataHandler>();
@@ -303,7 +303,7 @@ namespace DynamicBatteryStorage.UI
       // Sort through all handlers found and add to the appropriate category
       for (int i = 0; i < handlers.Count; i++)
       {
-        foreach(KeyValuePair<string, HandlerCategory> categoryEntry in Settings.HandlerCategoryData)
+        foreach(KeyValuePair<string, UIHandlerCategory> categoryEntry in Settings.HandlerCategoryData)
         {
           if (categoryEntry.Value.handledModules.FindAll(module => module == handlers[i].ModuleName()).Count > 0)
           {

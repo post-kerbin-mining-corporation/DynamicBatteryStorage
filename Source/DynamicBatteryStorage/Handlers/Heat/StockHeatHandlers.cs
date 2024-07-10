@@ -1,14 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-
 
 namespace DynamicBatteryStorage
 {
-
-  // Active Radiator
+  /// <summary>
+  /// ModuleActiveRadiator
+  /// </summary>
   public class ModuleActiveRadiatorHeatHandler : ModuleDataHandler
   {
     ModuleActiveRadiator radiator;
@@ -41,7 +37,9 @@ namespace DynamicBatteryStorage
     }
   }
 
-  // Resource Harvester
+  /// <summary>
+  /// ModuleResourceHarvester
+  /// </summary>
   public class ModuleResourceHarvesterHeatHandler : ModuleDataHandler
   {
 
@@ -84,7 +82,9 @@ namespace DynamicBatteryStorage
     }
   }
 
-  // Resource Converter
+  /// <summary>
+  /// ModuleResourceConverter
+  /// </summary>
   public class ModuleResourceConverterHeatHandler : ModuleDataHandler
   {
     ModuleResourceConverter converter;
@@ -100,7 +100,6 @@ namespace DynamicBatteryStorage
       core = pm.GetComponent<ModuleCoreHeat>();
       return converter.GeneratesHeat;
     }
-
     protected override double GetValueEditor()
     {
       if (converter != null)
@@ -126,6 +125,9 @@ namespace DynamicBatteryStorage
     }
   }
 
+  /// <summary>
+  /// ModuleCoreHeat (only)
+  /// </summary>
   public class ModuleCoreHeatHeatHandler : ModuleDataHandler
   {
     ModuleCoreHeat core;

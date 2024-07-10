@@ -9,12 +9,12 @@ namespace DynamicBatteryStorage
 {
 
   // Special power handler for Kopernicus's replaced panels
-  public class KopernicusSolarPanelPowerHandler: ModuleDataHandler
+  public class KopernicusSolarPanelPowerHandler : ModuleDataHandler
   {
     ModuleDeployableSolarPanel panel;
 
-    public KopernicusSolarPanelPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public KopernicusSolarPanelPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
 
     public override bool Initialize(PartModule pm)
     {

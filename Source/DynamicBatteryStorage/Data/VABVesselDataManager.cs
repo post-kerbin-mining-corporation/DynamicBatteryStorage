@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace DynamicBatteryStorage
@@ -11,15 +9,15 @@ namespace DynamicBatteryStorage
   /// This version of the VesselDataManager runs in the VAB
   /// </summary>
   [KSPAddon(KSPAddon.Startup.EditorAny, false)]
-  public class EditorVesselDataManager: MonoBehaviour
+  public class EditorVesselDataManager : MonoBehaviour
   {
     #region Accessors
 
     public static EditorVesselDataManager Instance { get; private set; }
-    public VesselElectricalData ElectricalData { get {return electricalData; }}
-    public VesselThermalData HeatData { get {return heatData; }}
+    public VesselElectricalData ElectricalData { get { return electricalData; } }
+    public VesselThermalData HeatData { get { return heatData; } }
 
-    public bool Ready { get {return dataReady; }}
+    public bool Ready { get { return dataReady; } }
 
     #endregion
 
@@ -33,7 +31,7 @@ namespace DynamicBatteryStorage
 
     protected void Awake()
     {
-	  enabled = Settings.Enabled;
+      enabled = Settings.Enabled;
       Instance = this;
     }
     protected void Start()
@@ -61,7 +59,7 @@ namespace DynamicBatteryStorage
         GameEvents.onEditorRestart.Remove(new EventVoid.OnEvent(onEditorVesselReset));
         GameEvents.onEditorStarted.Remove(new EventVoid.OnEvent(onEditorVesselStart));
         GameEvents.onEditorPodDeleted.Remove(new EventVoid.OnEvent(onEditorVesselReset));
-       GameEvents.onEditorPartDeleted.Remove(new EventData<Part>.OnEvent(onEditorPartDeleted));
+        GameEvents.onEditorPartDeleted.Remove(new EventData<Part>.OnEvent(onEditorPartDeleted));
         GameEvents.onEditorLoad.Remove(new EventData<ShipConstruct, KSP.UI.Screens.CraftBrowserDialog.LoadType>.OnEvent(onEditorVesselLoad));
         GameEvents.onPartRemove.Remove(new EventData<GameEvents.HostTargetAction<Part, Part>>.OnEvent(onEditorVesselPartRemoved));
       }
@@ -102,10 +100,10 @@ namespace DynamicBatteryStorage
 
     protected void RemovePart(Part p)
     {
-      
+
       electricalData.RemoveHandlersForPart(p);
       heatData.RemoveHandlersForPart(p);
-      
+
     }
     #endregion
 
@@ -145,7 +143,7 @@ namespace DynamicBatteryStorage
       if (Settings.DebugMode)
         Utils.Log("[VAB VesselDataManager][Editor]: Vessel PART REMOVE");
       if (!HighLogic.LoadedSceneIsEditor) { return; }
-     
+
       if (electricalData == null || heatData == null)
         InitializeEditorConstruct(EditorLogic.fetch.ship, false);
       else

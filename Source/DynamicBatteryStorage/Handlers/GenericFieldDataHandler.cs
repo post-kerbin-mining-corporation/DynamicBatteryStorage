@@ -1,22 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-
-
 namespace DynamicBatteryStorage
 {
-  // This is a generic handler that parses a KSPField
-  public class GenericFieldDataHandler: ModuleDataHandler
+  /// <summary>
+  /// This is a generic handler that parses a KSPField
+  /// Ideally this field is populated by another mod then read by this
+  /// </summary>
+  public class GenericFieldDataHandler : ModuleDataHandler
   {
-    string editorFieldName;
-    string flightFieldName;
+    private string editorFieldName;
+    private string flightFieldName;
 
-    double editorValueScalar = 1.0d;
-    double flightValueScalar = 1.0d;
+    private double editorValueScalar = 1.0d;
+    private double flightValueScalar = 1.0d;
 
-    public GenericFieldDataHandler(HandlerModuleData moduleData):base(moduleData)
+    public GenericFieldDataHandler(HandlerModuleData moduleData) : base(moduleData)
     {
       editorFieldName = moduleData.config.editorFieldName;
       flightFieldName = moduleData.config.flightFieldName;
@@ -31,15 +27,13 @@ namespace DynamicBatteryStorage
     }
     protected override double GetValueEditor()
     {
-      double results = 0d;
-      double.TryParse(pm.Fields.GetValue(editorFieldName).ToString(), out results);
-      return results* editorValueScalar;
+      double.TryParse(pm.Fields.GetValue(editorFieldName).ToString(), out double results);
+      return results * editorValueScalar;
     }
     protected override double GetValueFlight()
     {
-      double results = 0d;
-      double.TryParse(pm.Fields.GetValue(flightFieldName).ToString(), out results);
-      return results* flightValueScalar;
+      double.TryParse(pm.Fields.GetValue(flightFieldName).ToString(), out double results);
+      return results * flightValueScalar;
     }
   }
 }

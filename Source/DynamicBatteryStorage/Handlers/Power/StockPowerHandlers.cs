@@ -115,7 +115,7 @@ namespace DynamicBatteryStorage
     protected override double GetValueFlight()
     {
       if (light != null)
-        return -1.0d*light.resourceAmount;
+        return -1.0d * light.resourceAmount;
       return 0d;
     }
     protected override double GetValueEditor()
@@ -578,7 +578,7 @@ namespace DynamicBatteryStorage
         {
           if (lab.processResources[i].name == "ElectricCharge")
           {
-            processRate = -1.0d* lab.processResources[i].amount;
+            processRate = -1.0d * lab.processResources[i].amount;
             return processRate;
           }
         }

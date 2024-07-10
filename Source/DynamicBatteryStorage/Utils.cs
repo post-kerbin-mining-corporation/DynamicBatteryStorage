@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace DynamicBatteryStorage
@@ -42,5 +40,46 @@ namespace DynamicBatteryStorage
       }
       return false;
     }
+    /// <summary>
+    /// Get a reference in a child of a type
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="name"></param>
+    /// <param name="parent"></param>
+    /// <returns></returns>
+    public static T FindChildOfType<T>(string name, Transform parent)
+    {
+      T result = default(T);
+      try
+      {
+        result = parent.FindDeepChild(name).GetComponent<T>();
+      }
+      catch (NullReferenceException e)
+      {
+        Debug.LogError($"Couldn't find {name} in children of {parent.name}");
+      }
+      return result;
+    }
   }
 }
+
+public static class TransformDeepChildExtension
+{
+  //Breadth-first search
+  public static Transform FindDeepChild(this Transform aParent, string aName)
+  {
+    Queue<Transform> queue = new Queue<Transform>();
+    queue.Enqueue(aParent);
+    while (queue.Count > 0)
+    {
+      var c = queue.Dequeue();
+      if (c.name == aName)
+        return c;
+      foreach (Transform t in c)
+        queue.Enqueue(t);
+    }
+    return null;
+  }
+}
+
+

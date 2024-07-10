@@ -9,12 +9,12 @@ namespace DynamicBatteryStorage
   /// <summary>
   /// This  class holds a model of the vessel's thermal data
   /// </summary>
-  public class VesselThermalData: VesselData
+  public class VesselThermalData : VesselData
   {
 
     /// <param name="vesselParts">Th elist of parts comprising a vessel</param>
     public VesselThermalData(List<Part> vesselParts) : base(vesselParts)
-    {}
+    { }
 
     /// <summary>
     /// Set up the appropriate HeatHandler component for a PartModule which polls the underlying PartModule for relevant properties
@@ -27,7 +27,7 @@ namespace DynamicBatteryStorage
         HandlerModuleData data = Settings.GetPartModuleData(pm.moduleName, ResourcesSupported.Heat);
         if (Settings.DebugMode)
         {
-          Utils.Log(String.Format("[{0}]: Detected supported heat handler for {1}: {2}",  this.GetType().Name, pm.moduleName, data.handlerModuleName));
+          Utils.Log(String.Format("[{0}]: Detected supported heat handler for {1}: {2}", this.GetType().Name, pm.moduleName, data.handlerModuleName));
         }
 
         string typeName = this.GetType().AssemblyQualifiedName;
@@ -54,7 +54,7 @@ namespace DynamicBatteryStorage
       List<string> handlerStates = new List<string>();
       if (handlers != null)
       {
-        for (int i=0; i < handlers.Count; i++)
+        for (int i = 0; i < handlers.Count; i++)
         {
           handlerStates.Add(handlers[i].ToString());
         }

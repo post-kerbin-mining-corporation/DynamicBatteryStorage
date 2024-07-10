@@ -14,10 +14,10 @@ namespace DynamicBatteryStorage
         {
           return -(float)pm.resHandler.inputResources[i].rate;
 
-          
+
         }
       }
-      
+
       return 0f;
     }
     protected override double GetValueFlight()
