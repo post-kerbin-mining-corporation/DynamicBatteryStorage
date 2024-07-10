@@ -53,8 +53,7 @@ namespace DynamicBatteryStorage
       {
         config = new HandlerConfiguration(node.GetNode(HANDLER_CONFIG_NODE_NAME));
       }
-      if (Settings.DebugLoading)
-        Utils.Log(String.Format("[Settings]: Loaded {0}", this.ToString()));
+      Utils.Log(String.Format("[Settings]: Loaded {0}", this.ToString()), Utils.LogType.Settings);
     }
 
     public override string ToString()

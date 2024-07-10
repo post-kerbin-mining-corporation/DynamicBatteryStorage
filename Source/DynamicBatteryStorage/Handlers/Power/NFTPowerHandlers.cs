@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 
 
@@ -132,12 +131,12 @@ namespace DynamicBatteryStorage
             catch (InvalidOperationException)
             {
               // Thrown if predicate is not fulfilled, ie moduleName is not unqiue
-              Utils.Log(String.Format("[ModuleCryoTankPowerHandler]: Critical configuration error: Multiple ModuleCryoTank nodes found with identical or no moduleName"));
+              Utils.Log(String.Format("[ModuleCryoTankPowerHandler]: Critical configuration error: Multiple ModuleCryoTank nodes found with identical or no moduleName"), Utils.LogType.Handlers);
             }
             catch (ArgumentNullException)
             {
               // Thrown if ModuleCryoTank is not found (a Large Problem (tm))
-              Debug.Log(String.Format("[ModuleCryoTankPowerHandler]: Critical configuration error: No ModuleCryoTank nodes found in part"));
+              Utils.Log(String.Format("[ModuleCryoTankPowerHandler]: Critical configuration error: No ModuleCryoTank nodes found in part"), Utils.LogType.Handlers);
             }
           }
           else
@@ -167,16 +166,6 @@ namespace DynamicBatteryStorage
       return results * -1.0d;
 
 
-      //{
-      //  double.TryParse(pm.Fields.GetValue("CoolingCost").ToString(), out results);
-      //  visible = true;
-      //  return results * (resAmt / 1000d) * -1d;
-
-      //} else
-      //{
-      //  visible = false;
-      //}
-      //return results;
     }
     protected override double GetValueFlight()
     {

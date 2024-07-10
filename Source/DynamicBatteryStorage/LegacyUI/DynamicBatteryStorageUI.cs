@@ -14,10 +14,9 @@ namespace DynamicBatteryStorage.UI
   /// </summary>
   enum WindowMode
   {
-      Thermal, Electrical
+    Thermal, Electrical
   }
 
-  [KSPAddon(KSPAddon.Startup.FlightAndEditor, false)]
   public class DynamicBatteryStorageUI : UIBaseWindow
   {
 
@@ -25,7 +24,7 @@ namespace DynamicBatteryStorage.UI
     private string windowTitle = "";
 
     int modeFlag = 0;
-    string[] modeStrings = new string[] { "ELECTRICAL", "THERMAL"};
+    string[] modeStrings = new string[] { "ELECTRICAL", "THERMAL" };
     static WindowMode windowMode = WindowMode.Electrical;
     #endregion
 
@@ -54,14 +53,15 @@ namespace DynamicBatteryStorage.UI
 
     public VesselElectricalData ElectricalData
     {
-      get {
+      get
+      {
         if (HighLogic.LoadedSceneIsFlight)
           return vesselData.ElectricalData;
         else
           if (editorVesselData)
-            return editorVesselData.ElectricalData;
+          return editorVesselData.ElectricalData;
         return null;
-       }
+      }
     }
 
     /// <summary>
@@ -74,13 +74,13 @@ namespace DynamicBatteryStorage.UI
         activeVessel = FlightGlobals.ActiveVessel;
         vesselData = activeVessel.GetComponent<VesselDataManager>();
         partCount = activeVessel.Parts.Count;
-        if (Settings.DebugUIMode)
+        if (Settings.DebugUI)
           Utils.Log("[UI]: Located Flight data");
       }
       if (HighLogic.LoadedSceneIsEditor)
       {
         editorVesselData = EditorVesselDataManager.Instance;
-        if (Settings.DebugUIMode)
+        if (Settings.DebugUI)
           Utils.Log("[UI]: Located Editor data");
       }
     }
@@ -91,7 +91,7 @@ namespace DynamicBatteryStorage.UI
     protected override void InitUI()
     {
       windowTitle = Localizer.Format("#LOC_DynamicBatteryStorage_UI_WindowName");
-      modeStrings = new string[] { Localizer.Format("#LOC_DynamicBatteryStorage_UI_ElectricalModeName"), Localizer.Format("#LOC_DynamicBatteryStorage_UI_ThermalModeName")};
+      modeStrings = new string[] { Localizer.Format("#LOC_DynamicBatteryStorage_UI_ElectricalModeName"), Localizer.Format("#LOC_DynamicBatteryStorage_UI_ThermalModeName") };
 
       thermalView = new UIThermalView(this);
       electricalView = new UIElectricalView(this);
@@ -190,7 +190,7 @@ namespace DynamicBatteryStorage.UI
     void Update()
     {
       // Perform updates of the two views
-      if (showWindow && (vesselData != null && activeVessel != null) || editorVesselData != null )
+      if (showWindow && (vesselData != null && activeVessel != null) || editorVesselData != null)
       {
         if (ticker >= Settings.UIUpdateInterval)
         {
@@ -219,7 +219,7 @@ namespace DynamicBatteryStorage.UI
           {
             if (partCount != activeVessel.parts.Count || activeVessel != FlightGlobals.ActiveVessel)
             {
-                ResetAppLauncher();
+              ResetAppLauncher();
             }
           }
           else
@@ -241,7 +241,7 @@ namespace DynamicBatteryStorage.UI
     void ResetAppLauncher()
     {
       if (!Settings.Enabled) return;
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: Reset App Launcher");
       FindData();
       if (stockToolbarButton == null)

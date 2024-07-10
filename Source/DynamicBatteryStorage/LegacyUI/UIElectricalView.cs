@@ -59,7 +59,7 @@ namespace DynamicBatteryStorage.UI
         consumerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, (col_width - 10f), powerFlowUnits));
       }
 
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: [ElectricalView]: New instance created");
     }
 
@@ -219,7 +219,7 @@ namespace DynamicBatteryStorage.UI
       var secondNotFirst = cachedHandlers.Except(dataHost.ElectricalData.AllHandlers).ToList();
       if ( firstNotSecond.Any() || secondNotFirst.Any())
       {
-        if (Settings.DebugUIMode)
+        if (Settings.DebugUI)
         {
           Utils.Log("[UI]: [ElectricalView]: Cached handler list does not appear to match the current handler list");
         }

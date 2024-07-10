@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DynamicBatteryStorage
+﻿namespace DynamicBatteryStorage
 {
   public class SCANsatPowerHandler : ModuleDataHandler
   {

@@ -289,7 +289,7 @@ namespace DynamicBatteryStorage.UI
     /// <param name="handlers">The list of data handlers to build the draw list from</param>
     protected void RebuildCachedList(List<ModuleDataHandler> handlers)
     {
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: [UIView]: Rebuilding  handler category map");
 
       // Rebuild the blank dictionary
@@ -312,7 +312,7 @@ namespace DynamicBatteryStorage.UI
             if (handlers[i].Consumer)
               consumerCats[categoryEntry.Key].Add(handlers[i]);
 
-            if (Settings.DebugUIMode)
+            if (Settings.DebugUI)
               Utils.Log(String.Format("[UI]: [UIView]: Added {0} (Producer = {1}, Consumer = {2} ) to category {3}",
                 handlers[i].PartTitle(), handlers[i].Producer, handlers[i].Consumer, categoryEntry.Key));
           }

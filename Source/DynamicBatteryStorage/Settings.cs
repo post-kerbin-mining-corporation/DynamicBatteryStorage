@@ -36,14 +36,23 @@ namespace DynamicBatteryStorage
     public static bool Enabled = true;
     public static float TimeWarpLimit = 100f;
     public static float BufferScaling = 1.75f;
-    public static bool DebugMode = true;
-    public static bool DebugSettings = true;
-    public static bool DebugUIMode = true;
+   
     public static int UIUpdateInterval = 3;
+
+    public static bool DebugUI = true;
+    public static bool DebugSettings = true;
+    public static bool DebugModules = true;
+    public static bool DebugHandlers = true;
+    public static bool DebugDynamicStorage = true;
+    public static bool DebugVesselData = true;
     public static bool DebugLoading = true;
 
     public static Dictionary<string, UIHandlerCategory> HandlerCategoryData;
     public static List<HandlerModuleData> HandlerPartModuleData;
+
+    private static string CONFIG_NODE_NAME = "DynamicBatteryStorage/DYNAMICBATTERYSTORAGE";
+    private static string UI_HANDLER_NODE_NAME = "HANDLERCATEGORY";
+    private static string MODULE_HANDLER_NODE_NAME = "PARTMODULEHANDLER";
 
     /// <summary>
     /// Load data from configuration
@@ -54,17 +63,22 @@ namespace DynamicBatteryStorage
 
       Enabled = CheckForConflictingMods();
 
-      Utils.Log("[Settings]: Started loading");
-      if (GameDatabase.Instance.ExistsConfigNode("DynamicBatteryStorage/DYNAMICBATTERYSTORAGE"))
+      Utils.Log("[Settings]: Started loading", Utils.LogType.Settings);
+      if (GameDatabase.Instance.ExistsConfigNode(CONFIG_NODE_NAME))
       {
-        Utils.Log("[Settings]: Located settings file");
+        Utils.Log("[Settings]: Located settings file", Utils.LogType.Settings);
 
-        settingsNode = GameDatabase.Instance.GetConfigNode("DynamicBatteryStorage/DYNAMICBATTERYSTORAGE");
+        settingsNode = GameDatabase.Instance.GetConfigNode(CONFIG_NODE_NAME);
 
         settingsNode.TryGetValue("MinimumWarpFactor", ref TimeWarpLimit);
-        settingsNode.TryGetValue("DebugMode", ref DebugMode);
-        settingsNode.TryGetValue("DebugSettings", ref DebugMode);
-        settingsNode.TryGetValue("DebugUIMode", ref DebugUIMode);
+
+        settingsNode.TryGetValue("DebugVesselData", ref DebugVesselData);
+        settingsNode.TryGetValue("DebugModules", ref DebugModules);
+        settingsNode.TryGetValue("DebugHandlers", ref DebugHandlers);
+        settingsNode.TryGetValue("DebugDynamicStorage", ref DebugDynamicStorage);
+
+        settingsNode.TryGetValue("DebugSettings", ref DebugSettings);
+        settingsNode.TryGetValue("DebugUI", ref DebugUI);
         settingsNode.TryGetValue("DebugLoading", ref DebugLoading);
 
         settingsNode.TryGetValue("BufferScaling ", ref BufferScaling);
@@ -73,10 +87,10 @@ namespace DynamicBatteryStorage
 
         if (Settings.DebugLoading)
         {
-          Utils.Log("[Settings]: Loading handler categories");
+          Utils.Log("[Settings]: Loading handler categories", Utils.LogType.Settings);
         }
         HandlerCategoryData = new Dictionary<string, UIHandlerCategory>();
-        ConfigNode[] categoryNodes = settingsNode.GetNodes("HANDLERCATEGORY");
+        ConfigNode[] categoryNodes = settingsNode.GetNodes(UI_HANDLER_NODE_NAME);
 
         foreach (ConfigNode node in categoryNodes)
         {
@@ -85,10 +99,10 @@ namespace DynamicBatteryStorage
         }
         if (Settings.DebugLoading)
         {
-          Utils.Log("[Settings]: Loading handler modules");
+          Utils.Log("[Settings]: Loading handler modules", Utils.LogType.Settings);
         }
         HandlerPartModuleData = new List<HandlerModuleData>();
-        ConfigNode[] partModuleNodes = settingsNode.GetNodes("PARTMODULEHANDLER");
+        ConfigNode[] partModuleNodes = settingsNode.GetNodes(MODULE_HANDLER_NODE_NAME);
         foreach (ConfigNode node in partModuleNodes)
         {
           HandlerModuleData newDat = new HandlerModuleData(node);
@@ -98,9 +112,9 @@ namespace DynamicBatteryStorage
       }
       else
       {
-        Utils.Log("[Settings]: Couldn't find settings file, using defaults");
+        Utils.Log("[Settings]: Couldn't find settings file, using defaults", Utils.LogType.Settings);
       }
-      Utils.Log("[Settings]: Finished loading");
+      Utils.Log("[Settings]: Finished loading", Utils.LogType.Settings);
     }
 
     /// <summary>
@@ -114,7 +128,7 @@ namespace DynamicBatteryStorage
         // search for conflicting mods
         if (a.name.StartsWith("Kerbalism", StringComparison.Ordinal))
         {
-          Utils.Log("[Settings]: Kerbalism detected. DBS will disable itself.");
+          Utils.Log("[Settings]: Kerbalism detected. DBS will disable itself.", Utils.LogType.Any);
           return false;
         }
       }

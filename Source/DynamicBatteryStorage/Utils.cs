@@ -6,7 +6,37 @@ namespace DynamicBatteryStorage
 {
   public static class Utils
   {
+    public enum LogType
+    {
+      UI,
+      Settings,
+      Modules,
+      Handlers,
+      DynamicStorage,
+      VesselData,
+      Loading,
+      Any
+    }
     public static string logTag = "Dynamic Battery Storage";
+    /// <summary>
+    /// Log a message with the mod name tag prefixed
+    /// </summary>
+    /// <param name="str">message string </param>
+    public static void Log(string str, LogType logType)
+    {
+      bool doLog = false;
+      if (logType == LogType.Settings && Settings.DebugSettings) doLog = true;
+      if (logType == LogType.UI && Settings.DebugUI) doLog = true;
+      if (logType == LogType.Loading && Settings.DebugLoading) doLog = true;
+      if (logType == LogType.Modules && Settings.DebugModules) doLog = true;
+      if (logType == LogType.Handlers && Settings.DebugHandlers) doLog = true;
+      if (logType == LogType.DynamicStorage && Settings.DebugDynamicStorage) doLog = true;
+      if (logType == LogType.VesselData && Settings.DebugVesselData) doLog = true;
+      if (logType == LogType.Any) doLog = true;
+
+      if (doLog)
+        Debug.Log(String.Format("[{0}]{1}", logTag, str));
+    }
 
     public static void Log(string toLog)
     {

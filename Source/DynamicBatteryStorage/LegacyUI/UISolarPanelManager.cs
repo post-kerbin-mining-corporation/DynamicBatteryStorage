@@ -58,10 +58,10 @@ namespace DynamicBatteryStorage.UI
 
       refSunOrbitAlt = FlightGlobals.getAltitudeAtPos(homeBody.getPositionAtUT(0d), sunBody)/1000000d;
 
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log(String.Format("[UI Solar Manager] Set home body to {0} (alt {1}), sun body to {2}", homeBody.name, FormatUtils.ToSI(refSunOrbitAlt, "F2"), sunBody.name));
 
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log(String.Format("[UI Solar Manager] Created"));
     }
 
@@ -238,7 +238,7 @@ namespace DynamicBatteryStorage.UI
       bodyAltitude = String.Format("{0:F0}", bodyRefOrbitHeight);
       solarAltitude = String.Format("{0:F0}", sunRefOrbitHeight);
 
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log(String.Format("[UI Solar Manager] Selected {0}", selectedBody.name));
     }
 

@@ -34,7 +34,7 @@ namespace DynamicBatteryStorage.UI
         // Currently always generated with Show = false
         consumerCategoryUIItems.Add(entry.Key, new UIExpandableItem(entry.Key, entry.Value, dataHost, false, (col_width - 10f), heatFlowUnits));
       }
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: [ThermalView]: New instance created");
     }
 
@@ -157,7 +157,7 @@ namespace DynamicBatteryStorage.UI
       var secondNotFirst = cachedHandlers.Except(dataHost.ThermalData.AllHandlers).ToList();
       if ( firstNotSecond.Any() || secondNotFirst.Any())
       {
-        if (Settings.DebugUIMode)
+        if (Settings.DebugUI)
         {
           Utils.Log("[UI]: [ThermalView]: Cached handler list does not appear to match the current handler list");
         }

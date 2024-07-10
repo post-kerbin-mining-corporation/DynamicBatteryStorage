@@ -45,7 +45,7 @@ namespace DynamicBatteryStorage.UI
       CreateIconList();
       CreateStyleList();
       CreateColorList();
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: Loaded Assets");
     }
 

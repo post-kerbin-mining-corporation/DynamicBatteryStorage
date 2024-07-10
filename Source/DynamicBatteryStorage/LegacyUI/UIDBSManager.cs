@@ -40,7 +40,7 @@ namespace DynamicBatteryStorage.UI
     {
       electricalView = view;
 
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log(String.Format("[UI DBS Manager] Created"));
     }
 

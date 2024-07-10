@@ -43,7 +43,7 @@ namespace DynamicBatteryStorage.UI
 
       RefreshHandlers(catHandlers);
 
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log(String.Format("[UI]: [UIExpandableItem]: building UI element for category {0}", catName));
     }
 

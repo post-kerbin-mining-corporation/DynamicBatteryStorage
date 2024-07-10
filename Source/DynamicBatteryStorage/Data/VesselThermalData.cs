@@ -25,10 +25,7 @@ namespace DynamicBatteryStorage
       if (Settings.IsSupportedPartModule(pm.moduleName, ResourcesSupported.Heat))
       {
         HandlerModuleData data = Settings.GetPartModuleData(pm.moduleName, ResourcesSupported.Heat);
-        if (Settings.DebugMode)
-        {
-          Utils.Log(String.Format("[{0}]: Detected supported heat handler for {1}: {2}", this.GetType().Name, pm.moduleName, data.handlerModuleName));
-        }
+        Utils.Log(String.Format("[{0}]: Detected supported heat handler for {1}: {2}", this.GetType().Name, pm.moduleName, data.handlerModuleName), Utils.LogType.VesselData);
 
         string typeName = this.GetType().AssemblyQualifiedName;
         typeName = typeName.Replace("VesselThermalData", data.handlerModuleName);

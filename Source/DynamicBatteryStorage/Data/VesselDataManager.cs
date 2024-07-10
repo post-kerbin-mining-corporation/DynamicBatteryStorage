@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
 
 namespace DynamicBatteryStorage
 {
@@ -66,8 +62,7 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void RefreshVesselData(Vessel eventVessel)
     {
-      if (Settings.DebugMode)
-        Utils.Log(String.Format("[{0}]: Refreshing VesselData from Vessel event", this.GetType().Name));
+      Utils.Log(String.Format("[{0}]: Refreshing VesselData from Vessel event", this.GetType().Name), Utils.LogType.VesselData);
       RefreshVesselData();
     }
     /// <summary>
@@ -75,8 +70,7 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void RefreshVesselData(ConfigNode node)
     {
-      if (Settings.DebugMode)
-        Utils.Log(String.Format("[{0}]: Refreshing VesselData from save node event", this.GetType().Name));
+      Utils.Log(String.Format("[{0}]: Refreshing VesselData from save node event", this.GetType().Name), Utils.LogType.VesselData);
       RefreshVesselData();
     }
 
@@ -93,11 +87,9 @@ namespace DynamicBatteryStorage
 
       dataReady = true;
 
-      if (Settings.DebugMode)
-      {
-        Utils.Log(String.Format("Dumping electrical database: \n{0}", electricalData.ToString()));
-        Utils.Log(String.Format("Dumping thermal database: \n{0}", heatData.ToString()));
-      }
+      Utils.Log(String.Format("Dumping electrical database: \n{0}", electricalData.ToString()), Utils.LogType.VesselData);
+      Utils.Log(String.Format("Dumping thermal database: \n{0}", heatData.ToString()), Utils.LogType.VesselData);
+
     }
   }
 }

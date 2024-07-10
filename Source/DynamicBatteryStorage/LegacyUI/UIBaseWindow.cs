@@ -35,7 +35,7 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     public static void ToggleWindow()
     {
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: Toggle Window");
       showWindow = !showWindow;
     }
@@ -45,7 +45,7 @@ namespace DynamicBatteryStorage.UI
     /// </summary>
     protected virtual void InitUI()
     {
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: Initializing");
 
       resources = new UIResources();
@@ -56,7 +56,7 @@ namespace DynamicBatteryStorage.UI
     {
 	  enabled = Settings.Enabled;
 	  if (!enabled) return;
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: Awake fired");
       GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
       GameEvents.onGUIApplicationLauncherDestroyed.Add(OnGUIAppLauncherDestroyed);
@@ -64,7 +64,7 @@ namespace DynamicBatteryStorage.UI
 
     protected virtual void Start()
     {
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: Start fired");
 
       if (ApplicationLauncher.Ready)
@@ -103,7 +103,7 @@ namespace DynamicBatteryStorage.UI
     // Stock toolbar handling methods
     public void OnDestroy()
     {
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: OnDestroy Fired");
       // Remove the stock toolbar button
       GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
@@ -115,7 +115,7 @@ namespace DynamicBatteryStorage.UI
 
     protected void OnToolbarButtonToggle()
     {
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: Toolbar Button Toggled");
       ToggleWindow();
       stockToolbarButton.SetTexture((Texture)GameDatabase.Instance.GetTexture(showWindow ? toolbarUIIconURLOn : toolbarUIIconURLOff, false));
@@ -124,7 +124,7 @@ namespace DynamicBatteryStorage.UI
 
     protected void OnGUIAppLauncherReady()
     {
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: App Launcher Ready");
       if (ApplicationLauncher.Ready && stockToolbarButton == null)
       {
@@ -142,7 +142,7 @@ namespace DynamicBatteryStorage.UI
 
     protected void OnGUIAppLauncherDestroyed()
     {
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: App Launcher Destroyed");
       if (stockToolbarButton != null)
       {
@@ -153,7 +153,7 @@ namespace DynamicBatteryStorage.UI
 
     protected void onAppLaunchToggleOff()
     {
-      if (Settings.DebugUIMode)
+      if (Settings.DebugUI)
         Utils.Log("[UI]: App Launcher Toggle Off");
       stockToolbarButton.SetTexture((Texture)GameDatabase.Instance.GetTexture(toolbarUIIconURLOff, false));
     }

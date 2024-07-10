@@ -30,7 +30,7 @@
 
       if (editorFieldName == "" && flightFieldName == "")
       {
-        Utils.Log("At least one of editorFieldName or flightFieldName must be specified in HANDLER_CONFIG for GenericFieldDataHandler");
+        Utils.Log("[Settings] At least one of editorFieldName or flightFieldName must be specified in HANDLER_CONFIG for GenericFieldDataHandler", Utils.LogType.Settings);
       }
       else if (editorFieldName == "")
       {
