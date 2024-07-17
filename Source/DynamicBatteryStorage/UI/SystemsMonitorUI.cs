@@ -14,9 +14,36 @@ namespace DynamicBatteryStorage.UI
   {
 
     public static SystemsMonitorUI Instance { get; private set; }
-
-
     public bool WindowState { get { return showWindow; } }
+
+
+    private Vessel activeVessel;
+    private VesselDataManager vesselData;
+    private EditorVesselDataManager editorVesselData;
+
+    public VesselThermalData ThermalData
+    {
+      get
+      {
+        if (HighLogic.LoadedSceneIsFlight)
+          return vesselData.HeatData;
+        else
+          return editorVesselData.HeatData;
+      }
+    }
+
+    public VesselElectricalData ElectricalData
+    {
+      get
+      {
+        if (HighLogic.LoadedSceneIsFlight)
+          return vesselData.ElectricalData;
+        else
+          if (editorVesselData)
+          return editorVesselData.ElectricalData;
+        return null;
+      }
+    }
 
     // Control Vars
     protected static bool showWindow = false;
@@ -47,8 +74,8 @@ namespace DynamicBatteryStorage.UI
     {
       if (ApplicationLauncher.Ready)
         OnGUIAppLauncherReady();
-
-
+      if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedSceneIsEditor)
+        FindData();
     }
 
     protected void CreateToolbarPanel()
@@ -97,20 +124,47 @@ namespace DynamicBatteryStorage.UI
 
     void Update()
     {
+      if (HighLogic.LoadedSceneIsFlight)
+      {
+        if (FlightGlobals.ActiveVessel != null)
+        {
+          if (vesselData == null)
+          {
+            FindData();
+          }
+        }
+      }
+      if (HighLogic.LoadedSceneIsEditor)
+      {
+        if (editorVesselData == null)
+        {
+          FindData();
+        }
+      }
+      if (ElectricalData != null)
+      {
+        toolbarPanel.SetElectricalData(ElectricalData);
+      }
+      if (ThermalData != null)
+      {
+        toolbarPanel.SetThermalData(ThermalData);
+      }
+
+      /// Set the window position
       if (showWindow)
       {
         if (HighLogic.LoadedSceneIsFlight)
-        {
+        { 
           if (toolbarPanel != null && stockToolbarButton != null)
           {
-            toolbarPanel.SetToolbarPosition(stockToolbarButton.GetAnchorUL());
+            toolbarPanel.SetToolbarPosition(stockToolbarButton.GetAnchorUL(), new Vector2(1,1));
           }
         }
         if (HighLogic.LoadedSceneIsEditor)
         {
           if (stockToolbarButton != null)
           {
-            toolbarPanel.SetToolbarPosition(stockToolbarButton.GetAnchorUR());
+            toolbarPanel.SetToolbarPosition(stockToolbarButton.GetAnchorUR(), new Vector2(1, 1));
           }
         }
       }
@@ -124,11 +178,26 @@ namespace DynamicBatteryStorage.UI
       Utils.Log($"[SystemsMonitorUI]: OnVesselChanged Fired to {v.vesselName}", Utils.LogType.UI);
       ResetToolbarPanel();
     }
-
+    public void FindData()
+    {
+      if (HighLogic.LoadedSceneIsFlight)
+      {
+        activeVessel = FlightGlobals.ActiveVessel;
+        vesselData = activeVessel.GetComponent<VesselDataManager>();
+        if (Settings.DebugUI)
+          Utils.Log("[UI]: Located Flight data");
+      }
+      if (HighLogic.LoadedSceneIsEditor)
+      {
+        editorVesselData = EditorVesselDataManager.Instance;
+        if (Settings.DebugUI)
+          Utils.Log("[UI]: Located Editor data");
+      }
+    }
 
     void ResetToolbarPanel()
     {
-
+      FindData();
     }
     #region Stock Toolbar Methods
     public void OnDestroy()
@@ -236,6 +305,7 @@ namespace DynamicBatteryStorage.UI
     {
 
       Utils.Log("[SystemsMonitorUI]: Reset App Launcher", Utils.LogType.UI);
+      FindData();
       if (stockToolbarButton == null)
       {
         stockToolbarButton = ApplicationLauncher.Instance.AddModApplication(

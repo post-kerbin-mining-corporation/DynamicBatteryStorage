@@ -10,11 +10,10 @@ namespace DynamicBatteryStorage.UI
   [KSPAddon(KSPAddon.Startup.Instantly, true)]
   public class SystemsMonitorAssets : MonoBehaviour
   {
-    public static GameObject OverlayPanelPrefab { get; private set; }
     public static GameObject ToolbarPanelPrefab { get; private set; }
-    public static GameObject ToolbarPanelLoopPrefab { get; private set; }
-    public static GameObject ReactorWidgetPrefab { get; private set; }
-    public static GameObject ReactorToolbarPanelPrefab { get; private set; }
+    public static GameObject CategoryItemPrefab { get; private set; }
+    public static GameObject PartItemPrefab { get; private set; }
+
     public static Dictionary<string, Sprite> Sprites { get; private set; }
 
 
@@ -26,7 +25,9 @@ namespace DynamicBatteryStorage.UI
       AssetBundle prefabs = AssetBundle.LoadFromFile(Path.Combine(KSPUtil.ApplicationRootPath, ASSET_PATH));
 
       /// Get the Prefabs
-      OverlayPanelPrefab = prefabs.LoadAsset("SystemInfo") as GameObject;
+      ToolbarPanelPrefab = prefabs.LoadAsset("DBSToolbar") as GameObject;
+      CategoryItemPrefab = prefabs.LoadAsset("DBSCategoryData") as GameObject;
+      PartItemPrefab = prefabs.LoadAsset("DBSPartDataRow") as GameObject;
 
       Utils.Log("[SystemsMonitorAssets]: Loaded UI Prefabs");
       /// Get the Sprite Atlas

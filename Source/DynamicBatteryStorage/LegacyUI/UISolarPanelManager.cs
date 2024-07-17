@@ -269,8 +269,6 @@ namespace DynamicBatteryStorage.UI
         double period = (2 * Math.PI) / (Math.Sqrt((selectedBody.gravParameter / Math.Pow(scaling, 3)) / Math.Pow(orbitDistance, 3)));
         return period * eclipseFraction;
       }
-      //double orb_vel = Math.Sqrt(selectedBody.gravParameter/Math.Pow(scaling, 3)/orbitDistance);
-      //return (Math.Asin(bodyRadius / orbitDistance) * orbitDistance) / orb_vel;
     }
 
     /// <summary>

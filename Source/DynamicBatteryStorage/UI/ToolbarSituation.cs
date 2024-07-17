@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using KSP.Localization;
@@ -19,18 +20,29 @@ namespace DynamicBatteryStorage.UI
     {
       get { return solarAltitudeSlider.value; }
     }
+    public float SimSituationPanelScale
+    {
+      get { return panelScalar; }
+    }
+    public double SimSituationEclipseTime
+    {
+      get { return darkTime; }
+    }
     protected GameObject situationPanel;
     protected RectTransform situationData;
 
     protected Text situationTitle;
     protected Text bodyTitle;
-    protected Dropdown bodyDopdown;
+    protected Dropdown bodyDropdown;
 
+    protected GameObject altitudeObj;
+    protected GameObject altitudeSliderObj;
     protected Text altitudeTitle;
     protected Slider altitudeSlider;
     protected Text altitudeLabel;
     protected InputField altitudeTextArea;
 
+    
     protected Text solarAltitudeTitle;
     protected Slider solarAltitudeSlider;
     protected Text solarAltitudeLabel;
@@ -40,48 +52,73 @@ namespace DynamicBatteryStorage.UI
     protected GameObject situationHeaderObj;
 
     protected CelestialBody currentBody;
+    protected CelestialBody homeBody;
+    protected CelestialBody sunBody;
 
-    public void Initialize(Transform root)
+    protected double referenceSolarAltitude = 0d;
+    protected double referenceFurthestCBAltitude = 0d;
+    protected float panelScalar;
+    protected double darkTime;
+
+    protected ToolbarPanel toolbar;
+
+    public void Initialize(Transform root, ToolbarPanel parentPanel)
     {
-
+      toolbar = parentPanel;
       situationHeaderObj = root.FindDeepChild("SituationHeader").gameObject;
       situationDataObj = root.FindDeepChild("SituationData").gameObject;
       situationTitle = root.FindDeepChild("SituationHeaderText").GetComponent<Text>();
       bodyTitle = root.FindDeepChild("BodyLabel").GetComponent<Text>();
-      bodyDopdown = root.FindDeepChild("BodyDropdown").GetComponent<Dropdown>();
+      bodyDropdown = root.FindDeepChild("BodyDropdown").GetComponent<Dropdown>();
 
-      altitudeTitle = root.FindDeepChild("AltLabel").GetComponent<Text>();
-      altitudeSlider = root.FindDeepChild("AltSlider").GetComponent<Slider>();
-      altitudeLabel = root.FindDeepChild("AltUnits").GetComponent<Text>();
-      altitudeTextArea = root.FindDeepChild("AltInput").GetComponent<InputField>();
+      altitudeObj = root.FindDeepChild("BodyAltRow").gameObject;
+      altitudeSliderObj = root.FindDeepChild("BodyAltSliderRow").gameObject;
 
-      solarAltitudeTitle = root.FindDeepChild("VelLabel").GetComponent<Text>();
-      solarAltitudeSlider = root.FindDeepChild("VelSlider").GetComponent<Slider>();
-      solarAltitudeLabel = root.FindDeepChild("VelUnits").GetComponent<Text>();
-      solarAltitudeTextArea = root.FindDeepChild("VelInput").GetComponent<InputField>();
+      altitudeTitle = root.FindDeepChild("BodyAltLabel").GetComponent<Text>();
+      altitudeSlider = root.FindDeepChild("BodyAltSlider").GetComponent<Slider>();
+      altitudeLabel = root.FindDeepChild("BodyAltUnits").GetComponent<Text>();
+      altitudeTextArea = root.FindDeepChild("BodyAltInput").GetComponent<InputField>();
 
+      solarAltitudeTitle = root.FindDeepChild("AltLabel").GetComponent<Text>();
+      solarAltitudeSlider = root.FindDeepChild("AltSlider").GetComponent<Slider>();
+      solarAltitudeLabel = root.FindDeepChild("AltUnits").GetComponent<Text>();
+      solarAltitudeTextArea = root.FindDeepChild("AltInput").GetComponent<InputField>();
 
       situationData = situationDataObj.GetComponent<RectTransform>();
 
       if (HighLogic.LoadedSceneIsEditor)
       {
-        currentBody = FlightGlobals.GetHomeBody();
-        bodyDopdown.AddOptions(FlightGlobals.Bodies.Select(x => x.name).ToList());
-        for (int i = 0; i < bodyDopdown.options.Count; i++)
+        homeBody = FlightGlobals.GetHomeBody();
+        currentBody = homeBody;
+        sunBody = FlightGlobals.Bodies[0];
+        referenceSolarAltitude = FlightGlobals.getAltitudeAtPos(homeBody.getPositionAtUT(0d), sunBody) / 1000000d;
+        referenceFurthestCBAltitude = 0d;
+        for (int i = 0; i < FlightGlobals.Bodies.Count; i++)
         {
-          if (bodyDopdown.options[i].text == currentBody.name)
-            bodyDopdown.SetValueWithoutNotify(i);
+          if (FlightGlobals.Bodies[i] != sunBody)
+          {
+            referenceFurthestCBAltitude = UtilMath.Max(
+              FlightGlobals.Bodies[i].orbit.ApA + FlightGlobals.Bodies[i].sphereOfInfluence, 
+              FlightGlobals.Bodies[i].orbit.PeA + FlightGlobals.Bodies[i].sphereOfInfluence, 
+              referenceFurthestCBAltitude);
+          }
         }
+
+        bodyDropdown.AddOptions(FlightGlobals.Bodies.Select(x => x.name).ToList());
+        for (int i = 0; i < bodyDropdown.options.Count; i++)
+        {
+          if (bodyDropdown.options[i].text == currentBody.name)
+            bodyDropdown.SetValueWithoutNotify(i);
+        }
+
+        bodyDropdown.onValueChanged.AddListener(delegate { OnBodyDropdownChange(); });
+        solarAltitudeSlider.onValueChanged.AddListener(delegate { OnSolarAltSliderChange(); });
+        solarAltitudeTextArea.onValueChanged.AddListener(delegate { OnSolarAltInputChange(); });
+        altitudeSlider.onValueChanged.AddListener(delegate { OnAltSliderChange(); });
+        altitudeTextArea.onValueChanged.AddListener(delegate { OnAltInputChange(); });
 
         SetBody(currentBody);
 
-        bodyDopdown.onValueChanged.AddListener(delegate { OnBodyDropdownChange(); });
-
-        solarAltitudeSlider.onValueChanged.AddListener(delegate { OnSolarAltSliderChange(); });
-        solarAltitudeTextArea.onValueChanged.AddListener(delegate { OnSolarAltInputChange(); });
-
-        altitudeSlider.onValueChanged.AddListener(delegate { OnAltSliderChange(); });
-        altitudeTextArea.onValueChanged.AddListener(delegate { OnAltInputChange(); });
         SetVisible(true);
       }
       else
@@ -91,28 +128,52 @@ namespace DynamicBatteryStorage.UI
     }
     protected void Localize()
     {
-      situationTitle.text = Localizer.Format("#LOC_SystemHeat_ToolbarPanel_SituationTitle");
-      bodyTitle.text = Localizer.Format("#LOC_SystemHeat_ToolbarPanel_SituationBody");
-      altitudeTitle.text = Localizer.Format("#LOC_SystemHeat_ToolbarPanel_AltitudeTitle");
-      altitudeLabel.text = Localizer.Format("#LOC_SystemHeat_ToolbarPanel_AltitudeUnits");
-      solarAltitudeTitle.text = Localizer.Format("#LOC_SystemHeat_ToolbarPanel_VelocityTitle");
-      solarAltitudeLabel.text = Localizer.Format("#LOC_SystemHeat_ToolbarPanel_VelocityUnits");
+      situationTitle.text = Localizer.Format("#LOC_DynamicBatteryStorage_SituationPanel_SituationTitle");
+      bodyTitle.text = Localizer.Format("#LOC_DynamicBatteryStorage_SituationPanel_SituationBody");
+      altitudeTitle.text = Localizer.Format("#LOC_DynamicBatteryStorage_SituationPanel_AltitudeTitle");
+      altitudeLabel.text = Localizer.Format("#LOC_DynamicBatteryStorage_SituationPanel_AltitudeUnits");
+      solarAltitudeTitle.text = Localizer.Format("#LOC_DynamicBatteryStorage_SituationPanel_SolarAltitudeTitle");
+      solarAltitudeLabel.text = Localizer.Format("#LOC_DynamicBatteryStorage_SituationPanel_SolarAltitudeUnits");
     }
 
+    double bodySolarAltitude = 10000000d;
 
     void SetBody(CelestialBody b)
     {
+      double defaultHeightAboveAtmo = 10000d;
+      double mToKmScale = 1000d;
+      double mToMmScale = 1000000d;
+      if (currentBody != sunBody)
+      {
+        if (b.referenceBody.referenceBody == sunBody && b.referenceBody != sunBody) // Moons
+        {
+          bodySolarAltitude = b.referenceBody.orbit.ApA;
+          bodySolarAltitude += b.orbit.ApR;
+        }
+        else
+        {
+          bodySolarAltitude = b.orbit.ApA;
+        }
+        altitudeSliderObj.SetActive(true);
+        altitudeObj.SetActive(true);
+      }
+      else
+      {
+        altitudeSliderObj.SetActive(false);
+        altitudeObj.SetActive(false);
+      }
 
-      altitudeSlider.maxValue = (float)b.atmosphereDepth / 1000f;
+      altitudeSlider.maxValue = (float)(b.sphereOfInfluence / mToKmScale);
       altitudeSlider.minValue = 0;
-      altitudeSlider.SetValueWithoutNotify((float)b.atmosphereDepth / 1000f);
+      altitudeSlider.SetValueWithoutNotify((float)((b.atmosphereDepth + defaultHeightAboveAtmo) / mToKmScale));
       altitudeTextArea.SetTextWithoutNotify(altitudeSlider.value.ToString("F0"));
 
-      solarAltitudeSlider.maxValue = b.GetObtVelocity().magnitude;
-      solarAltitudeSlider.minValue = 0f;
-      solarAltitudeSlider.SetValueWithoutNotify(0f);
-      solarAltitudeTextArea.SetTextWithoutNotify("0");
+      solarAltitudeSlider.maxValue = (float)(referenceFurthestCBAltitude/mToMmScale);
+      solarAltitudeSlider.minValue = 0.0001f;
+      solarAltitudeSlider.SetValueWithoutNotify((float)(bodySolarAltitude / mToMmScale));
+      solarAltitudeTextArea.SetTextWithoutNotify(solarAltitudeSlider.value.ToString("F0"));
 
+      RecalculateSolarParameters();
     }
     public void SetVisible(bool visibility)
     {
@@ -124,10 +185,10 @@ namespace DynamicBatteryStorage.UI
 
     public void OnBodyDropdownChange()
     {
-      Utils.Log($"[ToolbarPanel]: Selected body {bodyDopdown.options[bodyDopdown.value].text}", Utils.LogType.UI);
+      Utils.Log($"[ToolbarPanel]: Selected body {bodyDropdown.options[bodyDropdown.value].text}", Utils.LogType.UI);
       foreach (CelestialBody body in FlightGlobals.Bodies)
       {
-        if (body.name == bodyDopdown.options[bodyDopdown.value].text)
+        if (body.name == bodyDropdown.options[bodyDropdown.value].text)
         {
           currentBody = body;
           SetBody(currentBody);
@@ -137,31 +198,64 @@ namespace DynamicBatteryStorage.UI
     public void OnSolarAltSliderChange()
     {
       solarAltitudeTextArea.SetTextWithoutNotify(solarAltitudeSlider.value.ToString("F0"));
+      RecalculateSolarParameters();
     }
     public void OnAltSliderChange()
     {
       altitudeTextArea.SetTextWithoutNotify(altitudeSlider.value.ToString("F0"));
+      RecalculateSolarParameters();
     }
     public void OnSolarAltInputChange()
     {
       solarAltitudeSlider.SetValueWithoutNotify(float.Parse(solarAltitudeTextArea.text));
+      RecalculateSolarParameters();
     }
 
     public void OnAltInputChange()
     {
       altitudeSlider.SetValueWithoutNotify(float.Parse(altitudeTextArea.text));
+      RecalculateSolarParameters();
     }
 
-    public void OnSeaLevelButtonClicked()
+    protected void RecalculateSolarParameters()
     {
-      altitudeSlider.value = 0f;
+      darkTime = CalculateOcclusionTime(currentBody, altitudeSlider.value);
+      panelScalar = CalculatePanelScalar(solarAltitudeSlider.value );
+      toolbar.UpdateSolarHandlerData();
     }
-    public void OnVacButtonClicked()
+
+
+    /// <summary>
+    /// Calculates a simulated eclipse time for orbit around a specific body
+    /// </summary>
+    protected double CalculateOcclusionTime(CelestialBody body, double bodyOrbitHeight)
     {
-      altitudeSlider.value = (float)currentBody.atmosphereDepth / 1000f;
+      if (bodyOrbitHeight == 0d)
+      {
+        return body.rotationPeriod;
+
+      }
+      else
+      {
+        // This is a geometric approximation assuming a circular equatorial orbit and a cylindrical solar occlusion
+        // Note the scaling factors for KM here
+        double scaling = 1000.0d;
+        double bodyRadius = body.Radius / scaling;
+        double orbitDistance = (bodyRadius + bodyOrbitHeight);
+
+        double eclipseFraction = (1d / Math.PI) * Math.Acos(Math.Sqrt(Math.Pow(bodyOrbitHeight, 2) + 2d * bodyRadius * bodyOrbitHeight) / (orbitDistance));
+        double period = (2 * Math.PI) / (Math.Sqrt((body.gravParameter / Math.Pow(scaling, 3)) / Math.Pow(orbitDistance, 3)));
+        return period * eclipseFraction;
+      }
     }
-    public void OnAltitudeButtonClicked()
-    { }
+
+    /// <summary>
+    /// Calculates the scaling factor for solar panel power at this solar altitude
+    /// </summary>
+    protected float CalculatePanelScalar(double solarAltitude)
+    {
+      return (float)((1d / (solarAltitude * solarAltitude)) * (referenceSolarAltitude * referenceSolarAltitude));
+    }
   }
 }
 

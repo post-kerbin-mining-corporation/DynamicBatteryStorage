@@ -25,15 +25,22 @@ namespace DynamicBatteryStorage.UI
     {
       get { return situationUI.SimSituationBody; }
     }
-
-    public void SetToolbarPosition(Vector2 newPos)
+    public float SimSolarScale
     {
+      get { return situationUI.SimSituationPanelScale; }
+    }
+
+    public void SetToolbarPosition(Vector2 newPos, Vector2 pivot)
+    {
+      rect.pivot = pivot;
       rect.position = newPos;
     }
     public ToolbarDetailPanel DetailUI
     {
       get { return detailUI; }
     }
+    protected VesselElectricalData electricalData;
+    protected VesselThermalData thermalData;
 
     protected ToolbarSituation situationUI;
     protected ToolbarPower powerUI;
@@ -61,8 +68,7 @@ namespace DynamicBatteryStorage.UI
 
       // Situation
       situationUI = new ToolbarSituation();
-      situationUI.Initialize(transform);
-
+      situationUI.Initialize(transform, this);
 
       Localize();
     }
@@ -73,13 +79,34 @@ namespace DynamicBatteryStorage.UI
 
     protected void Update()
     {
+      if (electricalData != null)
+      {
+        if (powerUI != null)
+        {
+          powerUI.Update(electricalData);
+        }
+        if (detailUI != null)
+        {
+          detailUI.Update(electricalData, thermalData);
+        }
+      }
+    }
+
+    public void UpdateSolarHandlerData()
+    {
       if (powerUI != null)
       {
-        powerUI.Update();
+        powerUI.UpdateSolarFields(situationUI.SimSituationPanelScale, situationUI.SimSituationEclipseTime);
       }
-      if (detailUI != null)
+      if (electricalData != null)
       {
-        detailUI.Update();
+        for (int i = 0; i < electricalData.AllHandlers.Count; i++)
+        {
+          if (electricalData.AllHandlers[i].AffectedBySunDistance)
+          {
+            electricalData.AllHandlers[i].SolarEfficiency = situationUI.SimSituationPanelScale;
+          }
+        }
       }
     }
 
@@ -87,6 +114,15 @@ namespace DynamicBatteryStorage.UI
     {
       active = state;
       rect.gameObject.SetActive(state);
+    }
+
+    public void SetElectricalData(VesselElectricalData data)
+    {
+      electricalData = data;
+    }
+    public void SetThermalData(VesselThermalData data)
+    {
+      thermalData = data;
     }
   }
 }

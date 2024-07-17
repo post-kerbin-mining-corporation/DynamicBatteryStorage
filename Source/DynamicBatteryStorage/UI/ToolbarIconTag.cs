@@ -53,8 +53,8 @@ namespace DynamicBatteryStorage.UI
       alertToolbarGlowRect = glowObj.GetComponent<RectTransform>();
 
       alertToolbarBackground.color = new Color(0.67f, 0.12f, 0.0039f, 0.9f);
-      alertToolbarIcon.sprite = SystemsMonitorAssets.Sprites["icon_info"];
-      alertToolbarGlow.sprite = SystemsMonitorAssets.Sprites["icon_glow"];
+      //alertToolbarIcon.sprite = SystemsMonitorAssets.Sprites["icon_info"];
+      //alertToolbarGlow.sprite = SystemsMonitorAssets.Sprites["icon_glow"];
       alertToolbarGlow.color = new Color(0.996f, 0.083f, 0.0039f, 0.0f);
     }
   }
