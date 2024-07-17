@@ -141,11 +141,11 @@ namespace DynamicBatteryStorage.UI
           FindData();
         }
       }
-      if (ElectricalData != null)
+      if (ElectricalData != null && toolbarPanel != null)
       {
         toolbarPanel.SetElectricalData(ElectricalData);
       }
-      if (ThermalData != null)
+      if (ThermalData != null && toolbarPanel != null)
       {
         toolbarPanel.SetThermalData(ThermalData);
       }
@@ -154,17 +154,17 @@ namespace DynamicBatteryStorage.UI
       if (showWindow)
       {
         if (HighLogic.LoadedSceneIsFlight)
-        { 
+        {
           if (toolbarPanel != null && stockToolbarButton != null)
           {
-            toolbarPanel.SetToolbarPosition(stockToolbarButton.GetAnchorUL(), new Vector2(1,1));
+            toolbarPanel.SetToolbarPosition(stockToolbarButton.GetAnchorUL(), new Vector2(1, 0.5f));
           }
         }
         if (HighLogic.LoadedSceneIsEditor)
         {
           if (stockToolbarButton != null)
           {
-            toolbarPanel.SetToolbarPosition(stockToolbarButton.GetAnchorUR(), new Vector2(1, 1));
+            toolbarPanel.SetToolbarPosition(stockToolbarButton.GetAnchorUR(), new Vector2(1, 0));
           }
         }
       }
@@ -230,8 +230,8 @@ namespace DynamicBatteryStorage.UI
     }
     protected void OnToolbarButtonOn()
     {
-        Utils.Log("[SystemsMonitorUI]: Toolbar Button  On", Utils.LogType.UI);
-      
+      Utils.Log("[SystemsMonitorUI]: Toolbar Button  On", Utils.LogType.UI);
+
       stockToolbarButton.SetTexture((Texture)GameDatabase.Instance.GetTexture(showWindow ? toolbarUIIconURLOn : toolbarUIIconURLOff, false));
       SetClickedState(true);
     }

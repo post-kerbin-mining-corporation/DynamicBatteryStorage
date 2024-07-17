@@ -57,6 +57,11 @@ namespace DynamicBatteryStorage.UI
       if (PartVisible)
       {
         partValue.text = String.Format("{0:F2} {1}", handler.GetValue(), powerFlowUnits);
+
+        if (simToggle.isOn != handler.Simulated)
+        {
+          simToggle.SetIsOnWithoutNotify(handler.Simulated);
+        }
       }
     }
 

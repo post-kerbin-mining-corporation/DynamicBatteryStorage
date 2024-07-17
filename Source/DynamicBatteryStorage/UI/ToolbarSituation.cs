@@ -3,6 +3,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using KSP.Localization;
+using KSP.UI;
+using KSP.UI.TooltipTypes;
 
 namespace DynamicBatteryStorage.UI
 {
@@ -125,6 +127,9 @@ namespace DynamicBatteryStorage.UI
       {
         SetVisible(false);
       }
+      Localize();
+
+      SetupTooltips(root, Tooltips.FindTextTooltipPrefab());
     }
     protected void Localize()
     {
@@ -136,6 +141,12 @@ namespace DynamicBatteryStorage.UI
       solarAltitudeLabel.text = Localizer.Format("#LOC_DynamicBatteryStorage_SituationPanel_SolarAltitudeUnits");
     }
 
+    protected void SetupTooltips(Transform root, Tooltip_Text prefab)
+    {
+      Tooltips.AddTooltip(root.FindDeepChild("BodyLabel").gameObject, prefab, "Space object to orbit around");
+      Tooltips.AddTooltip(root.FindDeepChild("AltLabel").gameObject, prefab, "Distance to the local star");
+      Tooltips.AddTooltip(root.FindDeepChild("BodyAltLabel").gameObject, prefab, "Distance above the current planet");
+    }
     double bodySolarAltitude = 10000000d;
 
     void SetBody(CelestialBody b)

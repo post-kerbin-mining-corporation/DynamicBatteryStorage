@@ -109,6 +109,7 @@
     <Compile Include="LegacyUI\UIWidget.cs" />
     <Compile Include="UI\SystemsMonitorUI.cs" />
     <Compile Include="UI\SystemsMonitorAssets.cs" />
+    <Compile Include="UI\ToolbarAdvanced.cs" />
     <Compile Include="UI\ToolbarDetailCategory.cs" />
     <Compile Include="UI\ToolbarDetailPanel.cs" />
     <Compile Include="UI\ToolbarDetailPart.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="UI\ToolbarPanel.cs" />
     <Compile Include="UI\ToolbarPower.cs" />
     <Compile Include="UI\ToolbarSituation.cs" />
+    <Compile Include="UI\Tooltips.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup />

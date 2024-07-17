@@ -119,8 +119,8 @@ namespace DynamicBatteryStorage.UI
       partWidgets = new List<ToolbarDetailPart>();
       for (int i = 0; i < partHandlers.Count; i++)
       {
-        Utils.Log("[UI]: Generating a new category widget", Utils.LogType.UI);
-        GameObject newObj = (GameObject)GameObject.Instantiate(SystemsMonitorAssets.PartItemPrefab, Vector3.zero, Quaternion.identity);
+        Utils.Log($"[UI]: Generating a new part widget for {partHandlers[i].PartTitle()}, managing {partHandlers[i].ModuleName()}", Utils.LogType.UI);
+        GameObject newObj = GameObject.Instantiate(SystemsMonitorAssets.PartItemPrefab, Vector3.zero, Quaternion.identity);
         newObj.transform.SetParent(categoryArea, false);
 
         ToolbarDetailPart newWidget = newObj.AddComponent<ToolbarDetailPart>();

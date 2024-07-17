@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using KSP.Localization;
+using System.Collections;
 
 namespace DynamicBatteryStorage.UI
 {
@@ -15,7 +16,7 @@ namespace DynamicBatteryStorage.UI
     ProducerThermal,
     None
   }
-  public class ToolbarDetailPanel
+  public class ToolbarDetailPanel: MonoBehaviour
   {
     public GameObject detailPanel;
 
@@ -35,6 +36,7 @@ namespace DynamicBatteryStorage.UI
     protected Dictionary<string, ToolbarDetailCategory> detailPanelCategoryWidgets;
 
     protected bool shown = false;
+    private RectTransform storedButtonRect;
     protected DetailPanelMode mode = DetailPanelMode.None;
 
     protected Dictionary<string, List<ModuleDataHandler>> categories;
@@ -74,7 +76,7 @@ namespace DynamicBatteryStorage.UI
       detailPanelScrollRect.scrollSensitivity = 20f;
     }
 
-    public void Update(VesselElectricalData electricalData, VesselThermalData thermalData)
+    public void UpdateData(VesselElectricalData electricalData, VesselThermalData thermalData)
     {
       UpdateHandlerList(electricalData, thermalData);
     }
@@ -114,11 +116,9 @@ namespace DynamicBatteryStorage.UI
     }
     protected void RebuildCachedList(List<ModuleDataHandler> handlers)
     {
-
       Utils.Log("[ToolbarDetailPanel]: Rebuilding handler category map", Utils.LogType.UI);
 
       // Rebuild the blank dictionary
-
       foreach (KeyValuePair<string, UIHandlerCategory> categoryEntry in Settings.HandlerCategoryData)
       {
         categories[categoryEntry.Key] = new List<ModuleDataHandler>();
@@ -138,7 +138,6 @@ namespace DynamicBatteryStorage.UI
           }
         }
       }
-
       for (int i = 0; i < categoryNames.Count; i++)
       {
         detailPanelCategoryWidgets[categoryNames[i]].RefreshWithNewHandlers(categories[categoryNames[i]], this);
@@ -150,7 +149,7 @@ namespace DynamicBatteryStorage.UI
 
     protected void CreateNewCategoryWidget(UIHandlerCategory associatedCategory)
     {
-      Utils.Log("[ToolbarDetailPanel]: Generating a new category widget", Utils.LogType.UI);
+      Utils.Log($"[ToolbarDetailPanel]: Generating a new category widget for {associatedCategory.title}", Utils.LogType.UI);
       GameObject newObj = (GameObject)GameObject.Instantiate(SystemsMonitorAssets.CategoryItemPrefab, Vector3.zero, Quaternion.identity);
       newObj.transform.SetParent(detailPanelScrollRoot.transform, false);
 
@@ -161,32 +160,21 @@ namespace DynamicBatteryStorage.UI
       detailPanelCategoryWidgets.Add(associatedCategory.name, newWidget);
       RecalculatePanelPositionData();
     }
-
-    private Vector3 storedButtonPosition;
     public void RecalculatePanelPositionData()
     {
-      RecalculatePanelPositionData(storedButtonPosition);
+      StartCoroutine(RecalculatePanelPositionData(storedButtonRect));
     }
-    public void RecalculatePanelPositionData(Vector3 buttonPosition)
-    {
-      storedButtonPosition = buttonPosition;
-      LayoutRebuilder.ForceRebuildLayoutImmediate((detailPanelRootRect));
 
+    public IEnumerator RecalculatePanelPositionData(RectTransform buttonRect)
+    {
+      storedButtonRect = buttonRect;
+      LayoutRebuilder.ForceRebuildLayoutImmediate((detailPanelRootRect));
+      yield return 0f;
       // Maximum height of the panel
       float mainPanelMaxHeight = 400f;
       // minimum height (e.g. with 1 member)
       float mainPanelMinHeight = 30f;
 
-      // Calculate the button's y-offset from the top. This depends where the button is. It is the TOP of the button
-      float buttonYOffsetFromTop;
-      if (mode == DetailPanelMode.ConsumerPower || mode == DetailPanelMode.ConsumerThermal)
-      {
-        buttonYOffsetFromTop = -230f;
-      }
-      else
-      {
-        buttonYOffsetFromTop = -207f;
-      }
       // Calculate the total height of the widgets in the categories
       float widgetTotalHeight = 0f;
       int visibleCount = 0;
@@ -209,19 +197,19 @@ namespace DynamicBatteryStorage.UI
         noDataObject.SetActive(false);
       }
       Utils.Log($"{visibleCount} visible widgets, size is {widgetTotalHeight}", Utils.LogType.UI);
-      float calculatedButtonMiddleFromBottom = detailPanel.transform.InverseTransformPoint(buttonPosition).y;
-      // Utils.Log($"Source data: buttonYOffsetFromTop={buttonYOffsetFromTop }, loopPanelMaxHeight={mainPanelMaxHeight} widgetTotalHeight={widgetTotalHeight}", Utils.LogType.UI);
-      //loopPanelWidgets.Count * 68f + vlg.padding.top+vlg.padding.bottom+ 3f+7.5f*(loopPanelWidgets.Count-1);
+      if (buttonRect == null)
+      {
+        Utils.Log($"[DetailPanel] button rect is not set up yet", Utils.LogType.UI);
+        yield break;
+      }
+      float calculatedButtonMiddleFromBottom = detailPanel.transform.InverseTransformPoint(storedButtonRect.position).y;
+      Utils.Log($"Source data: buttonYOffsetFromTop={calculatedButtonMiddleFromBottom }, loopPanelMaxHeight={mainPanelMaxHeight} widgetTotalHeight={widgetTotalHeight}", Utils.LogType.UI);
 
       detailPanelRootRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, mainPanelMaxHeight);
-      detailPanelScrollViewportRect.anchorMin = detailPanelScrollBackground.anchorMin = new Vector2(0, 0);
-      detailPanelScrollViewportRect.anchorMax = detailPanelScrollBackground.anchorMax = new Vector2(1, 0);
+      detailPanelScrollViewportRect.anchorMin = detailPanelScrollBackground.anchorMin = detailPanelScrollCarat.anchorMin = new Vector2(0, 0);
+      detailPanelScrollViewportRect.anchorMax = detailPanelScrollBackground.anchorMax = detailPanelScrollCarat.anchorMax = new Vector2(1, 0);
 
-
-      //detailPanelScrollCarat.anchorMin = new Vector2(0, 1);
-      //detailPanelScrollCarat.anchorMax = new Vector2(0, 1);
-      //detailPanelScrollCarat.sizeDelta = new Vector2(17, 17);
-      detailPanelScrollCarat.anchoredPosition = new Vector2(256, buttonYOffsetFromTop);
+      detailPanelScrollCarat.anchoredPosition = new Vector2(0, calculatedButtonMiddleFromBottom + 9f);
 
       if (widgetTotalHeight < mainPanelMaxHeight)
       {
@@ -241,7 +229,6 @@ namespace DynamicBatteryStorage.UI
         detailPanelScrollViewportRect.anchoredPosition = new Vector2(0, mainPanelMaxHeight);
         detailPanelScrollViewportRect.sizeDelta = new Vector2(4f, mainPanelMaxHeight);
         detailPanelScrollBackground.anchoredPosition = new Vector2(0, mainPanelMaxHeight);
-
         detailPanelScrollBackground.sizeDelta = new Vector2(4.5f, mainPanelMaxHeight);
       }
     }
@@ -250,7 +237,7 @@ namespace DynamicBatteryStorage.UI
     {
       detailPanel.SetActive(visibility);
     }
-    public void SetMode(DetailPanelMode newMode, Vector3 buttonWorldPosition)
+    public void SetMode(DetailPanelMode newMode, RectTransform buttonRect)
     {
       mode = newMode;
       if (mode == DetailPanelMode.ConsumerPower || mode == DetailPanelMode.ConsumerThermal)
@@ -261,14 +248,14 @@ namespace DynamicBatteryStorage.UI
       {
         noDataText.text = Localizer.Format("#LOC_DynamicBatteryStorage_DetailPanel_NoGenerators");
       }
-      RecalculatePanelPositionData(buttonWorldPosition);
+      StartCoroutine(RecalculatePanelPositionData(buttonRect));
     }
-    public void SetPanelMode(DetailPanelMode newMode, Vector3 buttonWorldPosition)
+    public void SetPanelMode(DetailPanelMode newMode, RectTransform buttonRect)
     {
-      Utils.Log($"[DetailPanel] Setting mode from {mode} to {newMode}, {buttonWorldPosition}", Utils.LogType.UI);
+      Utils.Log($"[DetailPanel] Setting mode from {mode} to {newMode}, {buttonRect.position}", Utils.LogType.UI);
       if (newMode != mode)
       {
-        SetMode(newMode, buttonWorldPosition);
+        SetMode(newMode, buttonRect);
         if (!shown)
         {
           shown = true;

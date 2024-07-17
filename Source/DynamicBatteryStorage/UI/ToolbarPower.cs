@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using KSP.Localization;
+using KSP.UI;
+using KSP.UI.TooltipTypes;
 
 namespace DynamicBatteryStorage.UI
 {
@@ -29,6 +31,8 @@ namespace DynamicBatteryStorage.UI
     protected Text powerConsumedValueText;
     protected Button powerConsumedButton;
 
+    protected float userGeneration;
+    protected float userConsumption;
 
     private Color32 colorGoodText;
     private Color32 colorBadText;
@@ -65,30 +69,42 @@ namespace DynamicBatteryStorage.UI
       powerGeneratedButton = Utils.FindChildOfType<Button>("GenerationDetailButton", root);
       powerConsumedTitleText = Utils.FindChildOfType<Text>("ConsumptionTitle", root);
       powerConsumedValueText = Utils.FindChildOfType<Text>("ConsumptionValue", root);
-      powerConsumedButton = Utils.FindChildOfType<Button>("ConsumptionDetailButton", root);     
+      powerConsumedButton = Utils.FindChildOfType<Button>("ConsumptionDetailButton", root);
+
 
       HexColorField.HexToColor("B4D455", out colorGoodText);
       HexColorField.HexToColor("FE4901", out colorBadText);
       HexColorField.HexToColor("FEA601", out colorWarningText);
+
       if (!HighLogic.LoadedSceneIsEditor)
       {
         eclipseTimeObject.SetActive(false);
         solarEfficiencyObject.SetActive(false);
       }
-
-
-
-      powerGeneratedButton.onClick.AddListener(delegate { detailPanel.SetPanelMode(DetailPanelMode.ProducerPower, powerGeneratedButton.GetComponent<RectTransform>().position); });
-      powerConsumedButton.onClick.AddListener(delegate { detailPanel.SetPanelMode(DetailPanelMode.ConsumerPower, powerConsumedButton.GetComponent<RectTransform>().position); });
+      powerGeneratedButton.onClick.AddListener(delegate { detailPanel.SetPanelMode(DetailPanelMode.ProducerPower, powerGeneratedButton.GetComponent<RectTransform>()); });
+      powerConsumedButton.onClick.AddListener(delegate { detailPanel.SetPanelMode(DetailPanelMode.ConsumerPower, powerConsumedButton.GetComponent<RectTransform>()); });
 
       Localize();
+
+      SetupTooltips(root, Tooltips.FindTextTooltipPrefab());
       SetNoVesselValues();
     }
+    protected void SetupTooltips(Transform root, Tooltip_Text prefab)
+    {
+      Tooltips.AddTooltip(root.FindDeepChild("PowerFlow").gameObject, prefab, "Net vessel power flow");
+      Tooltips.AddTooltip(root.FindDeepChild("BatteryData").gameObject, prefab, "Vessel battery charge");
+      Tooltips.AddTooltip(root.FindDeepChild("ChargeTimeData").gameObject, prefab, "Time to battery depletion or charge");
+      Tooltips.AddTooltip(root.FindDeepChild("EfficiencyData").gameObject, prefab, "Solar panel effectiveness");
+      Tooltips.AddTooltip(root.FindDeepChild("EclipseData").gameObject, prefab, "Time in darkness");
+      Tooltips.AddTooltip(powerGeneratedButton.gameObject, prefab, "Show detailed generation information");
+      Tooltips.AddTooltip(powerConsumedButton.gameObject, prefab, "Show detailed consumption information");
+    }
+
     protected void SetNoVesselValues()
     {
       powerText.text = "-";
       batteryText.text = "-";
-      
+
       chargeTimeText.text = "-";
       powerConsumedValueText.text = "-";
       powerGeneratedValueText.text = "-";
@@ -117,7 +133,7 @@ namespace DynamicBatteryStorage.UI
     }
     protected void UpdatePowerFlowAndBatteryFields(VesselElectricalData data)
     {
-      double netPower = data.CurrentConsumption + data.GetSimulatedElectricalProdution();// + userGeneration - userConsumption;
+      double netPower = data.CurrentConsumption + data.GetSimulatedElectricalProdution() + userGeneration - userConsumption;
       data.GetElectricalChargeLevels(out double EC, out double maxEC);
 
 
@@ -139,15 +155,15 @@ namespace DynamicBatteryStorage.UI
       {
         /// no power - hide flow icon, set charge metrics to say no change
         chargeTimeText.text = String.Format("{0}", batteryNoChangeSlug);
-        
-        powerFlowIconUp.color = new Color (0.3f,0.3f,0.3f);
+
+        powerFlowIconUp.color = new Color(0.3f, 0.3f, 0.3f);
         powerFlowIconDown.color = new Color(0.3f, 0.3f, 0.3f);
         powerText.color = colorGoodText;
       }
       else if (netPower > 0d)
       {
         /// positive power - flow icon up, set charge metrics to charging or full
-        
+
         powerFlowIconUp.color = colorGoodText;
         powerFlowIconDown.color = new Color(0.3f, 0.3f, 0.3f);
         powerText.color = colorGoodText;
@@ -190,11 +206,17 @@ namespace DynamicBatteryStorage.UI
         }
       }
       powerConsumedValueText.text = String.Format("▼ {0:F2} {1}",
-        Math.Abs(data.CurrentConsumption),
+        Math.Abs(data.CurrentConsumption) + userConsumption,
         powerFlowUnits);
       powerGeneratedValueText.text = String.Format("▲ {0:F2} {1}",
-        Math.Abs(data.GetSimulatedElectricalProdution()),
+        Math.Abs(data.GetSimulatedElectricalProdution()) + userGeneration,
         powerFlowUnits);
+    }
+
+    public void SetManualPowerInputs(float input, float output)
+    {
+      userConsumption = output;
+      userGeneration = input;
     }
     public void UpdateSolarFields(double panelScale, double timeInDark)
     {

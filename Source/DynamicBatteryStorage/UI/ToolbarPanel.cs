@@ -17,18 +17,6 @@ namespace DynamicBatteryStorage.UI
     {
       get { return situationUI.SimSituationAltitude; }
     }
-    public float SimSituationSolarAltitude
-    {
-      get { return situationUI.SimSituationSolarAltitude; }
-    }
-    public CelestialBody SimSituationBody
-    {
-      get { return situationUI.SimSituationBody; }
-    }
-    public float SimSolarScale
-    {
-      get { return situationUI.SimSituationPanelScale; }
-    }
 
     public void SetToolbarPosition(Vector2 newPos, Vector2 pivot)
     {
@@ -39,12 +27,17 @@ namespace DynamicBatteryStorage.UI
     {
       get { return detailUI; }
     }
+    public ToolbarPower PowerUI
+    {
+      get { return powerUI; }
+    }
     protected VesselElectricalData electricalData;
     protected VesselThermalData thermalData;
 
     protected ToolbarSituation situationUI;
     protected ToolbarPower powerUI;
     protected ToolbarDetailPanel detailUI;
+    protected ToolbarAdvanced advancedUI;
 
     protected bool active = true;
     protected bool panelOpen = false;
@@ -59,7 +52,7 @@ namespace DynamicBatteryStorage.UI
       panelTitle = Utils.FindChildOfType<Text>("PanelTitleText", transform);
 
       // Loop Panel
-      detailUI = new ToolbarDetailPanel();
+      detailUI = gameObject.AddComponent<ToolbarDetailPanel>();
       detailUI.Initialize(transform);
 
       // Craft Stats
@@ -69,6 +62,10 @@ namespace DynamicBatteryStorage.UI
       // Situation
       situationUI = new ToolbarSituation();
       situationUI.Initialize(transform, this);
+
+      // Advanced
+      advancedUI = new ToolbarAdvanced();
+      advancedUI.Initialize(transform, this);
 
       Localize();
     }
@@ -87,7 +84,11 @@ namespace DynamicBatteryStorage.UI
         }
         if (detailUI != null)
         {
-          detailUI.Update(electricalData, thermalData);
+          detailUI.UpdateData(electricalData, thermalData);
+        }
+        if (advancedUI != null)
+        {
+          advancedUI.Update(electricalData);
         }
       }
     }
@@ -105,6 +106,32 @@ namespace DynamicBatteryStorage.UI
           if (electricalData.AllHandlers[i].AffectedBySunDistance)
           {
             electricalData.AllHandlers[i].SolarEfficiency = situationUI.SimSituationPanelScale;
+          }
+        }
+      }
+    }
+    public void SetVariableHandlers(bool state)
+    {
+      if (electricalData != null)
+      {
+        for (int i = 0; i < electricalData.AllHandlers.Count; i++)
+        {
+          if (!electricalData.AllHandlers[i].TimewarpFunctional)
+          {
+            electricalData.AllHandlers[i].Simulated = state;
+          }
+        }
+      }
+    }
+    public void SetConstantHandlers(bool state)
+    {
+      if (electricalData != null)
+      {
+        for (int i = 0; i < electricalData.AllHandlers.Count; i++)
+        {
+          if (electricalData.AllHandlers[i].TimewarpFunctional)
+          {
+            electricalData.AllHandlers[i].Simulated = state;
           }
         }
       }
