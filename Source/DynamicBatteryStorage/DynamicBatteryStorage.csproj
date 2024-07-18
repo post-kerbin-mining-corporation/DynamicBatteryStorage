@@ -96,17 +96,6 @@
     <Compile Include="Handlers\Power\StockPowerHandlers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="LegacyUI\DynamicBatteryStorageUI.cs" />
-    <Compile Include="LegacyUI\UIBaseWindow.cs" />
-    <Compile Include="LegacyUI\UIDBSManager.cs" />
-    <Compile Include="LegacyUI\UIElectricalView.cs" />
-    <Compile Include="LegacyUI\UIExpandableItem.cs" />
-    <Compile Include="LegacyUI\UIResources.cs" />
-    <Compile Include="LegacyUI\UISolarPanelManager.cs" />
-    <Compile Include="LegacyUI\UIThermalView.cs" />
-    <Compile Include="LegacyUI\UIUtils.cs" />
-    <Compile Include="LegacyUI\UIView.cs" />
-    <Compile Include="LegacyUI\UIWidget.cs" />
     <Compile Include="UI\SystemsMonitorUI.cs" />
     <Compile Include="UI\SystemsMonitorAssets.cs" />
     <Compile Include="UI\ToolbarAdvanced.cs" />

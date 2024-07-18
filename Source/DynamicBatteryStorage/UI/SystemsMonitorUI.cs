@@ -184,14 +184,12 @@ namespace DynamicBatteryStorage.UI
       {
         activeVessel = FlightGlobals.ActiveVessel;
         vesselData = activeVessel.GetComponent<VesselDataManager>();
-        if (Settings.DebugUI)
-          Utils.Log("[UI]: Located Flight data");
+        Utils.Log("[SystemsMonitorUI]: Located Flight data", Utils.LogType.UI);
       }
       if (HighLogic.LoadedSceneIsEditor)
       {
         editorVesselData = EditorVesselDataManager.Instance;
-        if (Settings.DebugUI)
-          Utils.Log("[UI]: Located Editor data");
+        Utils.Log("[SystemsMonitorUI]: Located Editor data", Utils.LogType.UI);
       }
     }
 

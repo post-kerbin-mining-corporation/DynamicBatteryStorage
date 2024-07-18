@@ -17,7 +17,7 @@ namespace DynamicBatteryStorage
       Loading,
       Any
     }
-    public static string logTag = "Dynamic Battery Storage";
+    public static string logTag = "DBS";
     /// <summary>
     /// Log a message with the mod name tag prefixed
     /// </summary>
@@ -38,10 +38,6 @@ namespace DynamicBatteryStorage
         Debug.Log(String.Format("[{0}]{1}", logTag, str));
     }
 
-    public static void Log(string toLog)
-    {
-      Debug.Log(String.Format("[{0}]: {1}", logTag, toLog));
-    }
     public static void Warn(string toLog)
     {
       Debug.LogWarning(String.Format("[{0}]: {1}", logTag, toLog));

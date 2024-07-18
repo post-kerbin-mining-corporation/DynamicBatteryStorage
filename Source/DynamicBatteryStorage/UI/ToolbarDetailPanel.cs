@@ -215,7 +215,7 @@ namespace DynamicBatteryStorage.UI
       {
         //float topY = Mathf.Min(mainPanelMaxHeight + buttonYOffsetFromTop + widgetTotalHeight / 2f, mainPanelMaxHeight);
         float topY = Mathf.Min(calculatedButtonMiddleFromBottom + widgetTotalHeight / 2f, mainPanelMaxHeight);
-        Utils.Log($"Setting scroll viewport rect position anchors to {new Vector2(0, topY) }");
+        Utils.Log($"Setting scroll viewport rect position anchors to {new Vector2(0, topY) }", Utils.LogType.UI);
         /// there will be no scrolling, set the position of the scroll rect to the top and have fun
         detailPanelScrollViewportRect.anchoredPosition = new Vector2(0, topY);
         detailPanelScrollViewportRect.sizeDelta = new Vector2(4f, widgetTotalHeight);

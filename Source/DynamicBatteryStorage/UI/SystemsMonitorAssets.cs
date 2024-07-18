@@ -21,7 +21,7 @@ namespace DynamicBatteryStorage.UI
     internal static string SPRITE_ATLAS_NAME = "systems-monitor-sprites-1";
     private void Awake()
     {
-      Utils.Log("[SystemsMonitorAssets]: Loading Assets");
+      Utils.Log("[SystemsMonitorAssets]: Loading Assets", Utils.LogType.Loading);
       AssetBundle prefabs = AssetBundle.LoadFromFile(Path.Combine(KSPUtil.ApplicationRootPath, ASSET_PATH));
 
       /// Get the Prefabs
@@ -29,7 +29,7 @@ namespace DynamicBatteryStorage.UI
       CategoryItemPrefab = prefabs.LoadAsset("DBSCategoryData") as GameObject;
       PartItemPrefab = prefabs.LoadAsset("DBSPartDataRow") as GameObject;
 
-      Utils.Log("[SystemsMonitorAssets]: Loaded UI Prefabs");
+      Utils.Log("[SystemsMonitorAssets]: Loaded UI Prefabs", Utils.LogType.Loading);
       /// Get the Sprite Atlas
       Sprite[] spriteSheet = prefabs.LoadAssetWithSubAssets<Sprite>(SPRITE_ATLAS_NAME);
       Sprites = new Dictionary<string, Sprite>();
@@ -37,7 +37,7 @@ namespace DynamicBatteryStorage.UI
       {
         Sprites.Add(subSprite.name, subSprite);
       }
-      Utils.Log($"[SystemsMonitorAssets]: Loaded {Sprites.Count} sprites");
+      Utils.Log($"[SystemsMonitorAssets]: Loaded {Sprites.Count} sprites", Utils.LogType.Loading);
     }
   }
 }

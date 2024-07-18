@@ -37,7 +37,7 @@ namespace DynamicBatteryStorage
         }
         catch (ArgumentNullException)
         {
-          Utils.Log(String.Format("Failed to instantiate {0} (config as {1}) when trying to configure a handler for {2}", typeName, data.handlerModuleName, pm.moduleName));
+          Utils.Log(String.Format("Failed to instantiate {0} (config as {1}) when trying to configure a handler for {2}", typeName, data.handlerModuleName, pm.moduleName), Utils.LogType.VesselData);
         }
       }
     }
