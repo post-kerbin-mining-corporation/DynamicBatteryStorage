@@ -36,7 +36,9 @@ namespace DynamicBatteryStorage
     public static bool Enabled = true;
     public static float TimeWarpLimit = 100f;
     public static float BufferScaling = 1.75f;
-   
+
+    public static float UIIconAlertLevel = 0.5f;
+    public static float UIIconCriticalLevel = 0.1f;
     public static int UIUpdateInterval = 3;
 
     public static bool DebugUI = true;
@@ -83,6 +85,8 @@ namespace DynamicBatteryStorage
 
         settingsNode.TryGetValue("BufferScaling ", ref BufferScaling);
         settingsNode.TryGetValue("UIUpdateInterval ", ref UIUpdateInterval);
+        settingsNode.TryGetValue("UIIconAlertLevel ", ref UIIconAlertLevel);
+        settingsNode.TryGetValue("UIIconCriticalLevel ", ref UIIconCriticalLevel);
         settingsNode.TryGetValue("Enabled", ref Enabled);
 
         if (Settings.DebugLoading)

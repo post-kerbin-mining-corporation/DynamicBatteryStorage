@@ -13,7 +13,6 @@ namespace DynamicBatteryStorage
   public class ModuleDynamicBatteryStorage : VesselModule
   {
     public bool AnalyticMode { get { return analyticMode; } }
-
     public Part BufferPart { get { return bufferPart; } }
     public PartResource BufferResource { get { return bufferStorage; } }
 
@@ -24,15 +23,11 @@ namespace DynamicBatteryStorage
     public double SavedMaxEC { get { return originalMax; } }
     public double SavedVesselMaxEC { get { return totalEcMax; } }
 
-    #region PrivateVariables
-
     float timeWarpLimit = 100f;
     double bufferScale = 1.5d;
 
     bool vesselLoaded = false;
     bool analyticMode = false;
-    bool dataReady = false;
-    bool hasBuffer = false;
     double bufferSize = 0d;
 
     // The base, non-buffered EC total of the buffer part
@@ -46,20 +41,25 @@ namespace DynamicBatteryStorage
     PartResource bufferStorage;
     Part bufferPart;
 
-    #endregion
-
     protected override void OnAwake()
     {
       base.OnAwake();
       enabled = Settings.Enabled;
     }
-
+    public override Activation GetActivation()
+    {
+      if (Settings.Enabled)
+        return Activation.LoadedVessels;
+      else
+        return Activation.Never;
+    }
     protected override void OnStart()
     {
       base.OnStart();
+
       if (!enabled) return;
 
-      bufferScale = (double)Settings.BufferScaling;
+      bufferScale = Settings.BufferScaling;
       timeWarpLimit = Settings.TimeWarpLimit;
 
       GameEvents.onVesselDestroy.Add(new EventData<Vessel>.OnEvent(CalculateElectricalData));
@@ -98,7 +98,6 @@ namespace DynamicBatteryStorage
     {
       if (HighLogic.LoadedSceneIsFlight)
       {
-
         if (!vesselLoaded && FlightGlobals.ActiveVessel == vessel)
         {
           FindDataManager();
@@ -114,7 +113,6 @@ namespace DynamicBatteryStorage
         {
           analyticMode = false;
           DoLowWarpSimulation();
-
         }
         else
         {
@@ -160,7 +158,7 @@ namespace DynamicBatteryStorage
         // In this case, power generation is too low to handle draw, so no buffer is required
         if (bufferStorage != null)
         {
-            Utils.Log(CreateVesselLogString("Power production too low, clearing buffer"), Utils.LogType.DynamicStorage);
+          Utils.Log(CreateVesselLogString("Power production too low, clearing buffer"), Utils.LogType.DynamicStorage);
           ClearBufferStorage();
         }
       }
@@ -172,8 +170,8 @@ namespace DynamicBatteryStorage
         if (bufferStorage != null)
         {
           // Calculate the difference between a required buffer size and the vessel maximum EC
-          bufferDifference = (double)Mathf.Clamp((float)(bufferSize - totalEcMax), 0f, 9999999f);          
-            Utils.Log(CreateVesselLogString(String.Format("Buffer needs {0:F2} EC space to reach target amount of {1:F2} EC", bufferDifference, originalMax + bufferDifference)), Utils.LogType.DynamicStorage);
+          bufferDifference = (double)Mathf.Clamp((float)(bufferSize - totalEcMax), 0f, 9999999f);
+          Utils.Log(CreateVesselLogString(String.Format("Buffer needs {0:F2} EC space to reach target amount of {1:F2} EC", bufferDifference, originalMax + bufferDifference)), Utils.LogType.DynamicStorage);
 
           // Apply the buffer
           bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax + bufferDifference));
@@ -202,7 +200,6 @@ namespace DynamicBatteryStorage
         totalEcMax = maxAmount;
         CreateBufferStorage();
       }
-      dataReady = true;
     }
 
 

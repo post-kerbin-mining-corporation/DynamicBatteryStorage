@@ -22,14 +22,6 @@ The mod provides a vessel monitoring user interface to assist in looking at your
 * Can drill down to turn individual parts on or off for simulation purposes
 * The VAB interface has a tool to simulate distance effects on solar panel efficiency
 
-A similar interface can be applied to thermal flows - specifically, core heat, as used in resource converters, resource harvesters and radiators, plus mod parts like fission/fusion reactors. This thermal UI ...
-
-* Shows whole-vessel core heat flows, separated into consumption and generation, in flight or in the VAB
-* Can drill down to part categories (eg. Radiators, Harvesters, etc.)
-* Can drill down to turn individual parts on or off for simulation purposes
-* **NOTE:** does not handle non-core heat (eg. re-entry, engines, solar)
-* **NOTE:** does not make a distinction between adjacent-only radiators and full-vessel radiators
-
 ### Electrical Timewarp Compensation
 
 This mod dynamically adjusts ElectricCharge (EC) storage to combat the game's awful handling of resource generation/draw mechanics at high timewarp. It should dramatically reduce instances of bad ship consequences due to apparent EC loss at these times.
@@ -67,14 +59,6 @@ At the moment, DBS needs to be made aware of modules so it can get data from the
 * **ModuleKerbalHealth** (Kerbal Health)
 * **ModuleSignalDelay** (Signal Delay)
 * **ModuleRTAntenna** (RemoteTech)
-
-### Supported Heat Modules
-
-* **ModuleResourceConverter** (Stock)
-* **ModuleActiveRadiator** (Stock)
-* **ModuleResourceHarvester** (Stock)
-* **FissionGenerator** (Near Future Electrical)
-* **FissionFlowRadiator** (Near Future Electrical)
 
 Adding support for your mod is not difficult - contact me if you wish to do so and we can figure it out.
 

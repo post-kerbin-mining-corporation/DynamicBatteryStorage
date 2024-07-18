@@ -89,7 +89,7 @@ namespace DynamicBatteryStorage.UI
       toolbarPanel = newUIPanel.AddComponent<ToolbarPanel>();
       toolbarPanel.SetVisible(false);
       toolbarTag = new ToolbarIconTag();
-      toolbarTag.Initialize();
+      toolbarTag.Initialize(this);
       toolbarTag.Position(stockToolbarButton);
     }
     protected void DestroyToolbarPanel()
@@ -168,9 +168,9 @@ namespace DynamicBatteryStorage.UI
           }
         }
       }
-      if (toolbarTag != null)
+      if (toolbarTag != null && ElectricalData != null)
       {
-        //udpate the tag
+        toolbarTag.Update(ElectricalData);
       }
     }
     public void OnVesselChanged(Vessel v)

@@ -110,7 +110,8 @@ namespace DynamicBatteryStorage
     protected override double GetValueFlight()
     {
       if (light != null)
-        return -1.0d * light.resourceAmount;
+        if (light.isOn)
+          return -1.0d * light.resourceAmount;
       return 0d;
     }
     protected override double GetValueEditor()

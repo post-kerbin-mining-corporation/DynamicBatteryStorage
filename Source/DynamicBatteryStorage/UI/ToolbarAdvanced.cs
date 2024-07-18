@@ -60,6 +60,7 @@ namespace DynamicBatteryStorage.UI
     string messageErrorNoController;
     string messageOfflineLowTimewarp;
     string messageEnabled;
+    string messageDisabled;
 
     ToolbarPanel mainPanel;
     ModuleDynamicBatteryStorage controller;
@@ -159,6 +160,7 @@ namespace DynamicBatteryStorage.UI
       messageOfflineLowTimewarp = Localizer.Format("#LOC_DynamicBatteryStorage_AdvancedPanel_Vessel_SystemStatus_Offline", Settings.TimeWarpLimit);
       messageErrorNoController = Localizer.Format("#LOC_DynamicBatteryStorage_AdvancedPanel_Vessel_SystemStatus_NoController");
       messageEnabled = Localizer.Format("#LOC_DynamicBatteryStorage_AdvancedPanel_Vessel_SystemStatus_Enabled");
+      messageDisabled = Localizer.Format("#LOC_DynamicBatteryStorage_AdvancedPanel_Vessel_SystemStatus_Disabled");
 
     }
     protected void SetupTooltips(Transform root, Tooltip_Text prefab)
@@ -190,6 +192,15 @@ namespace DynamicBatteryStorage.UI
     }
     protected void UpdateDBS()
     {
+      if (!Settings.Enabled)
+      {
+        vesselStatusValue.text = messageDisabled;
+        bufferSizeValue.text = "-";
+        bufferPartValue.text = "-";
+        bufferSavedECValue.text = "-";
+        vesselSavedECValue.text = "-";
+        return;
+      }
       if (controller == null)
       {
         vesselStatusValue.text = messageErrorNoController;

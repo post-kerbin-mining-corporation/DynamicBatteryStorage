@@ -18,7 +18,7 @@ namespace DynamicBatteryStorage.UI
 
 
     internal static string ASSET_PATH = "GameData/DynamicBatteryStorage/UI/systemsmonitor.dat";
-    internal static string SPRITE_ATLAS_NAME = "system-heat-sprites-1";
+    internal static string SPRITE_ATLAS_NAME = "systems-monitor-sprites-1";
     private void Awake()
     {
       Utils.Log("[SystemsMonitorAssets]: Loading Assets");

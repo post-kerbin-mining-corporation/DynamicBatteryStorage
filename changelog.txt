@@ -1,3 +1,17 @@
+v2.3.0
+------
+- Complete UI rebuild
+-- NOTE: deprecated the Core Heat UI
+-- No longer IMGUI (various benefits, including better performance, better look, less clickthrough issues)
+-- Now a Toolbar App
+-- Clearer telegraphing of power states
+-- Responds to UI scaling correctly
+-- Better interface for specifying situation in the VAB
+-- Tooltips for most fields in the UI
+-- New carat on the Toolbar App icon that indicates when power is decreasing or exhausted
+- Fixed an issue where the mod would not disable itself correctly when Kerbalism was installed
+- Fixed an issue where Lights would always be counted as 'on' in flight regardless of their actual state
+
 v2.2.5
 ------
 - Improvements to solar altitude fields (yalov)
