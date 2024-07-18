@@ -24,7 +24,7 @@ namespace DynamicBatteryStorage
 
       handledModules = node.GetValuesList("module");
 
-      Utils.Log(String.Format("[Settings]: Loaded {0}", this.ToString()), Utils.LogType.UI);
+      Utils.Log(String.Format("[UIHandlerCategory]: Loaded {0}", this.ToString()), Utils.LogType.UI);
     }
 
     public override string ToString()

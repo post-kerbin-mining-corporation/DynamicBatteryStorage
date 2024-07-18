@@ -73,6 +73,7 @@ namespace DynamicBatteryStorage.UI
         CreateNewCategoryWidget(categoryEntry.Value);
       }
       SetVisible(shown);
+      RecalculatePanelPositionData();
       detailPanelScrollRect.scrollSensitivity = 20f;
     }
 
@@ -133,7 +134,7 @@ namespace DynamicBatteryStorage.UI
           {
 
             categories[categoryEntry.Key].Add(handlers[i]);
-            Utils.Log(String.Format("[UI]: [UIView]: Added {0} (Producer = {1}, Consumer = {2} ) to category {3}",
+            Utils.Log(String.Format("[ToolbarDetailPanel]: [UIView]: Added {0} (Producer = {1}, Consumer = {2} ) to category {3}",
               handlers[i].PartTitle(), handlers[i].Producer, handlers[i].Consumer, categoryEntry.Key), Utils.LogType.UI);
           }
         }
@@ -142,7 +143,7 @@ namespace DynamicBatteryStorage.UI
       {
         detailPanelCategoryWidgets[categoryNames[i]].RefreshWithNewHandlers(categories[categoryNames[i]], this);
       }
-
+      RecalculatePanelPositionData();
       // cache the list of handlers to detect changes
       cachedHandlers = new List<ModuleDataHandler>(handlers);
     }
@@ -158,7 +159,6 @@ namespace DynamicBatteryStorage.UI
       newWidget.SetVisible(false);
 
       detailPanelCategoryWidgets.Add(associatedCategory.name, newWidget);
-      RecalculatePanelPositionData();
     }
     public void RecalculatePanelPositionData()
     {
@@ -180,7 +180,6 @@ namespace DynamicBatteryStorage.UI
       int visibleCount = 0;
       foreach (KeyValuePair<string, ToolbarDetailCategory> kvp in detailPanelCategoryWidgets)
       {
-
         if (kvp.Value.Visible)
         {
           widgetTotalHeight += kvp.Value.GetHeight() + 4f;
@@ -196,14 +195,14 @@ namespace DynamicBatteryStorage.UI
       {
         noDataObject.SetActive(false);
       }
-      Utils.Log($"{visibleCount} visible widgets, size is {widgetTotalHeight}", Utils.LogType.UI);
+      Utils.Log($"[ToolbarDetailPanel] {visibleCount} visible widgets, size is {widgetTotalHeight}", Utils.LogType.UI);
       if (buttonRect == null)
       {
-        Utils.Log($"[DetailPanel] button rect is not set up yet", Utils.LogType.UI);
+        Utils.Log($"[ToolbarDetailPanel] button rect is not set up yet", Utils.LogType.UI);
         yield break;
       }
       float calculatedButtonMiddleFromBottom = detailPanel.transform.InverseTransformPoint(storedButtonRect.position).y;
-      Utils.Log($"Source data: buttonYOffsetFromTop={calculatedButtonMiddleFromBottom }, loopPanelMaxHeight={mainPanelMaxHeight} widgetTotalHeight={widgetTotalHeight}", Utils.LogType.UI);
+     // Utils.Log($"[ToolbarDetailPanel] Source data: buttonYOffsetFromTop={calculatedButtonMiddleFromBottom }, loopPanelMaxHeight={mainPanelMaxHeight} widgetTotalHeight={widgetTotalHeight}", Utils.LogType.UI);
 
       detailPanelRootRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, mainPanelMaxHeight);
       detailPanelScrollViewportRect.anchorMin = detailPanelScrollBackground.anchorMin = detailPanelScrollCarat.anchorMin = new Vector2(0, 0);
@@ -215,7 +214,7 @@ namespace DynamicBatteryStorage.UI
       {
         //float topY = Mathf.Min(mainPanelMaxHeight + buttonYOffsetFromTop + widgetTotalHeight / 2f, mainPanelMaxHeight);
         float topY = Mathf.Min(calculatedButtonMiddleFromBottom + widgetTotalHeight / 2f, mainPanelMaxHeight);
-        Utils.Log($"Setting scroll viewport rect position anchors to {new Vector2(0, topY) }", Utils.LogType.UI);
+        Utils.Log($"[ToolbarDetailPanel] Setting scroll viewport rect position anchors to {new Vector2(0, topY) }", Utils.LogType.UI);
         /// there will be no scrolling, set the position of the scroll rect to the top and have fun
         detailPanelScrollViewportRect.anchoredPosition = new Vector2(0, topY);
         detailPanelScrollViewportRect.sizeDelta = new Vector2(4f, widgetTotalHeight);
@@ -252,7 +251,7 @@ namespace DynamicBatteryStorage.UI
     }
     public void SetPanelMode(DetailPanelMode newMode, RectTransform buttonRect)
     {
-      Utils.Log($"[DetailPanel] Setting mode from {mode} to {newMode}, {buttonRect.position}", Utils.LogType.UI);
+      Utils.Log($"[ToolbarDetailPanel] Setting mode from {mode} to {newMode}, {buttonRect.position}", Utils.LogType.UI);
       if (newMode != mode)
       {
         SetMode(newMode, buttonRect);

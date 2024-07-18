@@ -47,8 +47,10 @@ namespace DynamicBatteryStorage.UI
       expandButton = Utils.FindChildOfType<Button>("CategoryHeader", transform);
       categoryArea = transform.FindDeepChild("CategoryBody");
       categoryAreaObj = categoryArea.gameObject;
-      expandButton.onClick.AddListener(delegate { TogglePartList(); });
+      categoryAreaObj.SetActive(false);
 
+      expandButton.onClick.AddListener(delegate { TogglePartList(); });
+      
       powerFlowUnits = Localizer.Format("#LOC_DynamicBatteryStorage_UI_ElectricalFlowUnits");
     }
     protected void TogglePartList()
@@ -101,7 +103,6 @@ namespace DynamicBatteryStorage.UI
       SetVisible(partHandlers.Count > 0);
       DestroyPartWidgets();
       CreatePartWidgets();
-      panel.RecalculatePanelPositionData();
     }
     private void DestroyPartWidgets()
     {
@@ -119,7 +120,7 @@ namespace DynamicBatteryStorage.UI
       partWidgets = new List<ToolbarDetailPart>();
       for (int i = 0; i < partHandlers.Count; i++)
       {
-        Utils.Log($"[UI]: Generating a new part widget for {partHandlers[i].PartTitle()}, managing {partHandlers[i].ModuleName()}", Utils.LogType.UI);
+        Utils.Log($"[ToolbarDetailCategory]: Generating a new part widget for {partHandlers[i].PartTitle()}, managing {partHandlers[i].ModuleName()}", Utils.LogType.UI);
         GameObject newObj = GameObject.Instantiate(SystemsMonitorAssets.PartItemPrefab, Vector3.zero, Quaternion.identity);
         newObj.transform.SetParent(categoryArea, false);
 
@@ -140,7 +141,9 @@ namespace DynamicBatteryStorage.UI
         for (int i = 0; i < partHandlers.Count; i++)
         {
           if (partHandlers[i].Simulated)
+          {
             totalValue += partHandlers[i].GetValue();
+          }
         }
         if (totalValue > 0f)
         {

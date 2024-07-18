@@ -196,7 +196,7 @@ namespace DynamicBatteryStorage.UI
 
     public void OnBodyDropdownChange()
     {
-      Utils.Log($"[ToolbarPanel]: Selected body {bodyDropdown.options[bodyDropdown.value].text}", Utils.LogType.UI);
+      Utils.Log($"[ToolbarSituation]: Selected body {bodyDropdown.options[bodyDropdown.value].text}", Utils.LogType.UI);
       foreach (CelestialBody body in FlightGlobals.Bodies)
       {
         if (body.name == bodyDropdown.options[bodyDropdown.value].text)
