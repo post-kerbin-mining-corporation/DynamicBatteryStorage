@@ -91,13 +91,13 @@ namespace DynamicBatteryStorage.UI
     }
     protected void SetupTooltips(Transform root, Tooltip_Text prefab)
     {
-      Tooltips.AddTooltip(root.FindDeepChild("PowerFlow").gameObject, prefab, "Net vessel power flow");
-      Tooltips.AddTooltip(root.FindDeepChild("BatteryData").gameObject, prefab, "Vessel battery charge");
-      Tooltips.AddTooltip(root.FindDeepChild("ChargeTimeData").gameObject, prefab, "Time to battery depletion or charge");
-      Tooltips.AddTooltip(root.FindDeepChild("EfficiencyData").gameObject, prefab, "Solar panel effectiveness");
-      Tooltips.AddTooltip(root.FindDeepChild("EclipseData").gameObject, prefab, "Time in darkness");
-      Tooltips.AddTooltip(powerGeneratedButton.gameObject, prefab, "Show detailed generation information");
-      Tooltips.AddTooltip(powerConsumedButton.gameObject, prefab, "Show detailed consumption information");
+      Tooltips.AddTooltip(root.FindDeepChild("PowerFlow").gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_PowerFlow"));
+      Tooltips.AddTooltip(root.FindDeepChild("BatteryData").gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_BatteryInfo"));
+      Tooltips.AddTooltip(root.FindDeepChild("ChargeTimeData").gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_ChargeTimeInfo"));
+      Tooltips.AddTooltip(root.FindDeepChild("EfficiencyData").gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_SolarEfficiency"));
+      Tooltips.AddTooltip(root.FindDeepChild("EclipseData").gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_EclipseTime"));
+      Tooltips.AddTooltip(powerGeneratedButton.gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_GenerationDetail"));
+      Tooltips.AddTooltip(powerConsumedButton.gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_ConsumptionDetail"));
     }
 
     protected void SetNoVesselValues()

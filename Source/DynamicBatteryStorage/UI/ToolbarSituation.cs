@@ -143,9 +143,9 @@ namespace DynamicBatteryStorage.UI
 
     protected void SetupTooltips(Transform root, Tooltip_Text prefab)
     {
-      Tooltips.AddTooltip(root.FindDeepChild("BodyLabel").gameObject, prefab, "Space object to orbit around");
-      Tooltips.AddTooltip(root.FindDeepChild("AltLabel").gameObject, prefab, "Distance to the local star");
-      Tooltips.AddTooltip(root.FindDeepChild("BodyAltLabel").gameObject, prefab, "Distance above the current planet");
+      Tooltips.AddTooltip(root.FindDeepChild("BodyLabel").gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_SituationBody"));
+      Tooltips.AddTooltip(root.FindDeepChild("AltLabel").gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_SolarAlt"));
+      Tooltips.AddTooltip(root.FindDeepChild("BodyAltLabel").gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_BodyAlt"));
     }
     double bodySolarAltitude = 10000000d;
 

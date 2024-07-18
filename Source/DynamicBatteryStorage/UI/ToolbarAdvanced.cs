@@ -165,12 +165,12 @@ namespace DynamicBatteryStorage.UI
     }
     protected void SetupTooltips(Transform root, Tooltip_Text prefab)
     {
-      Tooltips.AddTooltip(userConsumptionText.gameObject, prefab, "Manually add power consumption to the simulation");
-      Tooltips.AddTooltip(userGenerationText.gameObject, prefab, "Manually add power generation to the simulation");
-      Tooltips.AddTooltip(constantOnButton.gameObject, prefab, "Turn on all constant generators and consumers, e.g solar panels");
-      Tooltips.AddTooltip(constantOffButton.gameObject, prefab, "Turn off all constant generators and consumers, e.g solar panels");
-      Tooltips.AddTooltip(variableOffButton.gameObject, prefab, "Turn off all intermittent generators and consumers, e.g. engines");
-      Tooltips.AddTooltip(variableOnButton.gameObject, prefab, "Turn on all intermittent generators and consumers, e.g. engines");
+      Tooltips.AddTooltip(userConsumptionText.gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_UserConsumption"));
+      Tooltips.AddTooltip(userGenerationText.gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_UserGeneration"));
+      Tooltips.AddTooltip(constantOnButton.gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_ConstantOn"));
+      Tooltips.AddTooltip(constantOffButton.gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_ConstantOff"));
+      Tooltips.AddTooltip(variableOffButton.gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_VariableOn"));
+      Tooltips.AddTooltip(variableOnButton.gameObject, prefab, Localizer.Format("#LOC_DynamicBatteryStorage_Tooltips_VariableOff"));
 
     }
 
