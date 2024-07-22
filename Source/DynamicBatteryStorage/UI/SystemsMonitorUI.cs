@@ -20,10 +20,18 @@ namespace DynamicBatteryStorage.UI
     {
       get
       {
-        if (HighLogic.LoadedSceneIsFlight)
+        if (HighLogic.LoadedSceneIsFlight && vesselData)
+        {
           return vesselData.HeatData;
+        }
         else
-          return editorVesselData.HeatData;
+        {
+          if (editorVesselData)
+          {
+            return editorVesselData.HeatData;
+          }
+        }
+        return null;
       }
     }
 
@@ -31,11 +39,17 @@ namespace DynamicBatteryStorage.UI
     {
       get
       {
-        if (HighLogic.LoadedSceneIsFlight)
+        if (HighLogic.LoadedSceneIsFlight && vesselData)
+        {
           return vesselData.ElectricalData;
+        }
         else
+        {
           if (editorVesselData)
-          return editorVesselData.ElectricalData;
+          {
+            return editorVesselData.ElectricalData;
+          }
+        }
         return null;
       }
     }
@@ -178,8 +192,11 @@ namespace DynamicBatteryStorage.UI
       if (HighLogic.LoadedSceneIsFlight)
       {
         activeVessel = FlightGlobals.ActiveVessel;
-        vesselData = activeVessel.GetComponent<VesselDataManager>();
-        Utils.Log("[SystemsMonitorUI]: Located Flight data", Utils.LogType.UI);
+        if (activeVessel != null)
+        {
+          vesselData = activeVessel.GetComponent<VesselDataManager>();
+          Utils.Log("[SystemsMonitorUI]: Located Flight data", Utils.LogType.UI);
+        }
       }
       if (HighLogic.LoadedSceneIsEditor)
       {
