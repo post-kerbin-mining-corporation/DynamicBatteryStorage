@@ -9,6 +9,9 @@ v2.3.0
 -- Better interface for specifying situation in the VAB
 -- Tooltips for most fields in the UI
 -- New carat on the Toolbar App icon that indicates when power is decreasing or exhausted
+- Supported new Kopernicus implementation of ModuleCurvedSolarPanel (NFS)
+- First pass support at multiple star system support for Kopernicus - if a planet around another star is selected it should use that star's distance and insolation
+- Supported more edge cases for solar panels (curved and sphere panels in VAB planner, alternate config method used by some mods)
 - Fixed an issue where the mod would not disable itself correctly when Kerbalism was installed
 - Fixed an issue where Lights would always be counted as 'on' in flight regardless of their actual state
 

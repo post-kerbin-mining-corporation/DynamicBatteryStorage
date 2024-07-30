@@ -34,6 +34,7 @@ namespace DynamicBatteryStorage
   {
 
     public static bool Enabled = true;
+    public static bool Kopernicus = false;
     public static float TimeWarpLimit = 100f;
     public static float BufferScaling = 1.75f;
 
@@ -63,7 +64,7 @@ namespace DynamicBatteryStorage
     {
       ConfigNode settingsNode;
 
-      Enabled = CheckForConflictingMods();
+      DetectMods();
 
       Utils.Log("[Settings]: Started loading", Utils.LogType.Settings);
       if (GameDatabase.Instance.ExistsConfigNode(CONFIG_NODE_NAME))
@@ -125,7 +126,7 @@ namespace DynamicBatteryStorage
     /// Find any conflicting mods, return false if there are any.
     /// The result of this will be overridden by the Enable setting in the plugin configuration.
     /// </summary>
-    private static bool CheckForConflictingMods()
+    private static void DetectMods()
     {
       foreach (var a in AssemblyLoader.loadedAssemblies)
       {
@@ -133,11 +134,17 @@ namespace DynamicBatteryStorage
         if (a.name.StartsWith("Kerbalism", StringComparison.Ordinal))
         {
           Utils.Log("[Settings]: Kerbalism detected. DBS will disable itself.", Utils.LogType.Any);
-          return false;
+          Settings.Enabled = false;
+        }
+        if (a.name.StartsWith("Kopernicus", StringComparison.Ordinal))
+        {
+          Utils.Log("[Settings]: Kopernicus detected", Utils.LogType.Any);
+          Settings.Kopernicus = true;
         }
       }
-      return true;
     }
+
+
 
     /// <summary>
     /// Returns a list of handler categories currently in the mod
