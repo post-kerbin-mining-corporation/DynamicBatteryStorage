@@ -1,47 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-
 
 namespace DynamicBatteryStorage
 {
 
   // Special power handler for Kopernicus's replaced panels
-  public class KopernicusSolarPanelPowerHandler: ModuleDataHandler
+  public class KopernicusSolarPanelPowerHandler : ModuleDeployableSolarPanelPowerHandler
   {
-    ModuleDeployableSolarPanel panel;
-
-    public KopernicusSolarPanelPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+   
+    public KopernicusSolarPanelPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
 
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
-      try
-      {
-        panel = (ModuleDeployableSolarPanel)pm;
-      }
-      catch (InvalidCastException)
-      {
-        return false;
-      }
-
+     
       return true;
     }
+  }
+  public class KopernicusCurvedSolarPanelPowerHandler : ModuleCurvedSolarPanelPowerHandler
+  {
 
-    protected override double GetValueEditor()
+    public KopernicusCurvedSolarPanelPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
+
+    public override bool Initialize(PartModule pm)
     {
-      if (panel != null)
-        return (double)panel.chargeRate * solarEfficiency;
-      return 0d;
-    }
-    protected override double GetValueFlight()
-    {
-      if (panel != null)
-        return (double)panel.flowRate;
-      return 0d;
+      base.Initialize(pm);
+      return true;
     }
   }
 

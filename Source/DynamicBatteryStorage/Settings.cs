@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
-using KSP.Localization;
 
 namespace DynamicBatteryStorage
 {
@@ -15,11 +12,11 @@ namespace DynamicBatteryStorage
     protected void Awake()
     {
       Instance = this;
-	}
+    }
     protected void Start()
     {
       Settings.Load();
-	  enabled = Settings.Enabled;
+      enabled = Settings.Enabled;
     }
   }
 
@@ -36,17 +33,29 @@ namespace DynamicBatteryStorage
   public static class Settings
   {
 
-	public static bool Enabled = true;
-	public static float TimeWarpLimit = 100f;
+    public static bool Enabled = true;
+    public static bool Kopernicus = false;
+    public static float TimeWarpLimit = 100f;
     public static float BufferScaling = 1.75f;
-    public static bool DebugMode = true;
-    public static bool DebugSettings = true;
-    public static bool DebugUIMode = true;
+
+    public static float UIIconAlertLevel = 0.5f;
+    public static float UIIconCriticalLevel = 0.1f;
     public static int UIUpdateInterval = 3;
+
+    public static bool DebugUI = true;
+    public static bool DebugSettings = true;
+    public static bool DebugModules = true;
+    public static bool DebugHandlers = true;
+    public static bool DebugDynamicStorage = true;
+    public static bool DebugVesselData = true;
     public static bool DebugLoading = true;
 
-    public static Dictionary<string, HandlerCategory> HandlerCategoryData;
+    public static Dictionary<string, UIHandlerCategory> HandlerCategoryData;
     public static List<HandlerModuleData> HandlerPartModuleData;
+
+    private static string CONFIG_NODE_NAME = "DynamicBatteryStorage/DYNAMICBATTERYSTORAGE";
+    private static string UI_HANDLER_NODE_NAME = "HANDLERCATEGORY";
+    private static string MODULE_HANDLER_NODE_NAME = "PARTMODULEHANDLER";
 
     /// <summary>
     /// Load data from configuration
@@ -55,75 +64,93 @@ namespace DynamicBatteryStorage
     {
       ConfigNode settingsNode;
 
-	  Enabled = CheckForConflictingMods();
+      DetectMods();
 
-      Utils.Log("[Settings]: Started loading");
-      if (GameDatabase.Instance.ExistsConfigNode("DynamicBatteryStorage/DYNAMICBATTERYSTORAGE"))
+      Utils.Log("[Settings]: Started loading", Utils.LogType.Settings);
+      if (GameDatabase.Instance.ExistsConfigNode(CONFIG_NODE_NAME))
       {
-        Utils.Log("[Settings]: Located settings file");
+        Utils.Log("[Settings]: Located settings file", Utils.LogType.Settings);
 
-        settingsNode = GameDatabase.Instance.GetConfigNode("DynamicBatteryStorage/DYNAMICBATTERYSTORAGE");
+        settingsNode = GameDatabase.Instance.GetConfigNode(CONFIG_NODE_NAME);
 
         settingsNode.TryGetValue("MinimumWarpFactor", ref TimeWarpLimit);
-        settingsNode.TryGetValue("DebugMode", ref DebugMode);
-        settingsNode.TryGetValue("DebugSettings", ref DebugMode);
-        settingsNode.TryGetValue("DebugUIMode", ref DebugUIMode);
+
+        settingsNode.TryGetValue("DebugVesselData", ref DebugVesselData);
+        settingsNode.TryGetValue("DebugModules", ref DebugModules);
+        settingsNode.TryGetValue("DebugHandlers", ref DebugHandlers);
+        settingsNode.TryGetValue("DebugDynamicStorage", ref DebugDynamicStorage);
+
+        settingsNode.TryGetValue("DebugSettings", ref DebugSettings);
+        settingsNode.TryGetValue("DebugUI", ref DebugUI);
         settingsNode.TryGetValue("DebugLoading", ref DebugLoading);
 
         settingsNode.TryGetValue("BufferScaling ", ref BufferScaling);
         settingsNode.TryGetValue("UIUpdateInterval ", ref UIUpdateInterval);
-		    settingsNode.TryGetValue("Enabled", ref Enabled);
+        settingsNode.TryGetValue("UIIconAlertLevel ", ref UIIconAlertLevel);
+        settingsNode.TryGetValue("UIIconCriticalLevel ", ref UIIconCriticalLevel);
+        settingsNode.TryGetValue("Enabled", ref Enabled);
 
         if (Settings.DebugLoading)
-          Utils.Log("[Settings]: Loading handler categories");
-        HandlerCategoryData = new Dictionary<string, HandlerCategory>();
-        ConfigNode[] categoryNodes = settingsNode.GetNodes("HANDLERCATEGORY");
+        {
+          Utils.Log("[Settings]: Loading handler categories", Utils.LogType.Settings);
+        }
+        HandlerCategoryData = new Dictionary<string, UIHandlerCategory>();
+        ConfigNode[] categoryNodes = settingsNode.GetNodes(UI_HANDLER_NODE_NAME);
 
         foreach (ConfigNode node in categoryNodes)
         {
-          HandlerCategory newCat = new HandlerCategory(node);
+          UIHandlerCategory newCat = new UIHandlerCategory(node);
           HandlerCategoryData.Add(newCat.name, newCat);
         }
         if (Settings.DebugLoading)
-          Utils.Log("[Settings]: Loading handler modules");
+        {
+          Utils.Log("[Settings]: Loading handler modules", Utils.LogType.Settings);
+        }
         HandlerPartModuleData = new List<HandlerModuleData>();
-        ConfigNode[] partModuleNodes = settingsNode.GetNodes("PARTMODULEHANDLER");
+        ConfigNode[] partModuleNodes = settingsNode.GetNodes(MODULE_HANDLER_NODE_NAME);
         foreach (ConfigNode node in partModuleNodes)
         {
           HandlerModuleData newDat = new HandlerModuleData(node);
           HandlerPartModuleData.Add(newDat);
         }
-        
+
       }
       else
       {
-        Utils.Log("[Settings]: Couldn't find settings file, using defaults");
+        Utils.Log("[Settings]: Couldn't find settings file, using defaults", Utils.LogType.Settings);
       }
-      Utils.Log("[Settings]: Finished loading");
+      Utils.Log("[Settings]: Finished loading", Utils.LogType.Settings);
     }
 
-	/// <summary>
-	/// Find any conflicting mods, return false if there are any.
-	/// The result of this will be overridden by the Enable setting in the plugin configuration.
-	/// </summary>
-	private static bool CheckForConflictingMods()
-	{
-	  foreach (var a in AssemblyLoader.loadedAssemblies)
-	  {
-	    // search for conflicting mods
-		if (a.name.StartsWith("Kerbalism", StringComparison.Ordinal))
-		{
-		  Utils.Log("[Settings]: Kerbalism detected. DBS will disable itself.");
-		  return false;
-		}
-	  }
-	  return true;
-	}
+    /// <summary>
+    /// Find any conflicting mods, return false if there are any.
+    /// The result of this will be overridden by the Enable setting in the plugin configuration.
+    /// </summary>
+    private static void DetectMods()
+    {
+      foreach (var a in AssemblyLoader.loadedAssemblies)
+      {
+        // search for conflicting mods
+        if (a.name.StartsWith("Kerbalism", StringComparison.Ordinal))
+        {
+          Utils.Log("[Settings]: Kerbalism detected. DBS will disable itself.", Utils.LogType.Any);
+          Settings.Enabled = false;
+        }
+        if (a.name.StartsWith("Kopernicus", StringComparison.Ordinal))
+        {
+          Utils.Log("[Settings]: Kopernicus detected", Utils.LogType.Any);
+          Settings.Kopernicus = true;
+        }
+      }
+    }
 
-	/// <summary>
-	/// Returns a list of handler categories currently in the mod
-	/// </summary>
-	public static List<String> HandlerCategories {
+
+
+    /// <summary>
+    /// Returns a list of handler categories currently in the mod
+    /// </summary>
+    public static List<String> HandlerCategories
+    {
       get { return new List<string>(Settings.HandlerCategoryData.Keys); }
     }
 
@@ -158,7 +185,8 @@ namespace DynamicBatteryStorage
     /// Gets a list of supported part modules
     /// </summary>
     /// <param name="resourceType">The type of ResourcesSupported to support</param>
-    public static List<String> SupportedModules(ResourcesSupported resourceType) {
+    public static List<String> SupportedModules(ResourcesSupported resourceType)
+    {
       List<string> supportedModules = new List<string>();
       for (int i = 0; i < HandlerPartModuleData.Count; i++)
       {
@@ -167,122 +195,5 @@ namespace DynamicBatteryStorage
       }
       return supportedModules;
     }
-  }
-
-  /// <summary>
-  /// Defines a part module category for the UI
-  /// </summary>
-  public class HandlerCategory
-  {
-    public string name ;
-    public List<string> handledModules;
-    public string title;
-
-    public HandlerCategory(ConfigNode node)
-    {
-      Load(node);
-    }
-    public void Load(ConfigNode node)
-    {
-      name = node.GetValue("name");
-      title = Localizer.Format(node.GetValue("title"));
-
-      handledModules = node.GetValuesList("module");
-      if (Settings.DebugLoading)
-        Utils.Log(String.Format("[Settings]: Loaded {0}", this.ToString()));
-    }
-
-    public string ToString()
-    {
-      return String.Format("{0}", name);
-    }
-  }
-
-  /// <summary>
-  /// Defines a set of data for a part module handler to be set up with
-  /// </summary>
-  public class HandlerModuleData
-  {
-    public string handledModule;
-    public string handlerModuleName;
-    public ResourcesSupported resourceType;
-
-    public bool consumer = false;
-    public bool producer = false;
-    public bool solarEfficiencyEffects = false;
-    public bool visible = true;
-    public bool continuous = true;
-    public bool simulated = true;
-
-    public HandlerConfiguration config;
-
-    public HandlerModuleData(ConfigNode node)
-    {
-      Load(node);
-    }
-
-    public void Load(ConfigNode node)
-    {
-      handledModule = node.GetValue("name");
-      Utils.TryParseEnum<ResourcesSupported>(node.GetValue("type"), false, out resourceType);
-      node.TryGetValue("handlerModuleName", ref handlerModuleName);
-
-      node.TryGetValue("consumer", ref consumer);
-      node.TryGetValue("producer", ref producer);
-      node.TryGetValue("visible", ref visible);
-      node.TryGetValue("solarEfficiencyEffects", ref solarEfficiencyEffects);
-      node.TryGetValue("simulated", ref simulated);
-      node.TryGetValue("continuous", ref continuous);
-
-      if (handlerModuleName == "GenericFieldDataHandler")
-      {
-        config = new HandlerConfiguration(node.GetNode("HANDLER_CONFIG"));
-      }
-      if (Settings.DebugLoading)
-        Utils.Log(String.Format("[Settings]: Loaded {0}", this.ToString()));
-    }
-
-    public string ToString()
-    {
-      return String.Format("Type {0} ({1})", handledModule, resourceType);
-    }
-  }
-
-
-  /// <summary>
-  /// Defines data for a sepecific type of handler
-  /// </summary>
-  public class HandlerConfiguration
-  {
-    public string editorFieldName = "";
-    public string flightFieldName = "";
-
-    public double editorValueScalar = 1.0d;
-    public double flightValueScalar = 1.0d;
-
-    public HandlerConfiguration(ConfigNode node)
-    {
-      Load(node);
-    }
-
-    public void Load(ConfigNode node)
-    {
-      node.TryGetValue("editorFieldName", ref editorFieldName);
-      node.TryGetValue("flightFieldName", ref flightFieldName);
-      node.TryGetValue("flightValueScalar", ref flightValueScalar);
-      node.TryGetValue("editorValueScalar", ref editorValueScalar);
-
-      if (editorFieldName == "" && flightFieldName == "")
-      {
-        Utils.Log("At least one of editorFieldName or flightFieldName must be specified in HANDLER_CONFIG for GenericFieldDataHandler");
-      } else if (editorFieldName == "")
-      {
-        editorFieldName = flightFieldName;
-      } else if (flightFieldName == "")
-      {
-        flightFieldName = editorFieldName;
-      }
-    }
-
   }
 }

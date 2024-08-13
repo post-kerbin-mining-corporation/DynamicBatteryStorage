@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace DynamicBatteryStorage
@@ -11,15 +9,15 @@ namespace DynamicBatteryStorage
   /// This version of the VesselDataManager runs in the VAB
   /// </summary>
   [KSPAddon(KSPAddon.Startup.EditorAny, false)]
-  public class EditorVesselDataManager: MonoBehaviour
+  public class EditorVesselDataManager : MonoBehaviour
   {
     #region Accessors
 
     public static EditorVesselDataManager Instance { get; private set; }
-    public VesselElectricalData ElectricalData { get {return electricalData; }}
-    public VesselThermalData HeatData { get {return heatData; }}
+    public VesselElectricalData ElectricalData { get { return electricalData; } }
+    public VesselThermalData HeatData { get { return heatData; } }
 
-    public bool Ready { get {return dataReady; }}
+    public bool Ready { get { return dataReady; } }
 
     #endregion
 
@@ -33,7 +31,7 @@ namespace DynamicBatteryStorage
 
     protected void Awake()
     {
-	  enabled = Settings.Enabled;
+      enabled = Settings.Enabled;
       Instance = this;
     }
     protected void Start()
@@ -61,7 +59,7 @@ namespace DynamicBatteryStorage
         GameEvents.onEditorRestart.Remove(new EventVoid.OnEvent(onEditorVesselReset));
         GameEvents.onEditorStarted.Remove(new EventVoid.OnEvent(onEditorVesselStart));
         GameEvents.onEditorPodDeleted.Remove(new EventVoid.OnEvent(onEditorVesselReset));
-       GameEvents.onEditorPartDeleted.Remove(new EventData<Part>.OnEvent(onEditorPartDeleted));
+        GameEvents.onEditorPartDeleted.Remove(new EventData<Part>.OnEvent(onEditorPartDeleted));
         GameEvents.onEditorLoad.Remove(new EventData<ShipConstruct, KSP.UI.Screens.CraftBrowserDialog.LoadType>.OnEvent(onEditorVesselLoad));
         GameEvents.onPartRemove.Remove(new EventData<GameEvents.HostTargetAction<Part, Part>>.OnEvent(onEditorVesselPartRemoved));
       }
@@ -82,19 +80,15 @@ namespace DynamicBatteryStorage
         else
           heatData.RefreshData(false, ship.Parts);
 
-        if (Settings.DebugMode)
-        {
-          Utils.Log(String.Format("Dumping electrical database: \n{0}", electricalData.ToString()));
-          Utils.Log(String.Format("Dumping thermal database: \n{0}", heatData.ToString()));
-        }
+
+        Utils.Log(String.Format("Dumping electrical database: \n{0}", electricalData.ToString()), Utils.LogType.VesselData);
+        Utils.Log(String.Format("Dumping thermal database: \n{0}", heatData.ToString()), Utils.LogType.VesselData);
+
         dataReady = true;
       }
       else
       {
-        if (Settings.DebugMode)
-        {
-          Utils.Log(String.Format("Ship is null"));
-        }
+        Utils.Log(String.Format("Ship is null"), Utils.LogType.VesselData);
         electricalData = new VesselElectricalData(new List<Part>());
         heatData = new VesselThermalData(new List<Part>());
       }
@@ -102,10 +96,10 @@ namespace DynamicBatteryStorage
 
     protected void RemovePart(Part p)
     {
-      
+
       electricalData.RemoveHandlersForPart(p);
       heatData.RemoveHandlersForPart(p);
-      
+
     }
     #endregion
 
@@ -113,39 +107,34 @@ namespace DynamicBatteryStorage
     #region Game Events
     public void onEditorPartDeleted(Part part)
     {
-      if (Settings.DebugMode)
-        Utils.Log("[VAB VesselDataManager][Editor]: Part Delete");
+      Utils.Log("[VAB VesselDataManager][Editor]: Part Delete", Utils.LogType.VesselData);
       if (!HighLogic.LoadedSceneIsEditor) { return; }
 
       InitializeEditorConstruct(EditorLogic.fetch.ship, false);
     }
     public void onEditorVesselReset()
     {
-      if (Settings.DebugMode)
-        Utils.Log("[VAB VesselDataManager][Editor]: Vessel RESET");
+      Utils.Log("[VAB VesselDataManager][Editor]: Vessel RESET", Utils.LogType.VesselData);
       if (!HighLogic.LoadedSceneIsEditor) { return; }
       InitializeEditorConstruct(EditorLogic.fetch.ship, true);
     }
     public void onEditorVesselStart()
     {
-      if (Settings.DebugMode)
-        Utils.Log("[VAB VesselDataManager]: Vessel START");
+      Utils.Log("[VAB VesselDataManager]: Vessel START", Utils.LogType.VesselData);
       if (!HighLogic.LoadedSceneIsEditor) { return; }
       InitializeEditorConstruct(EditorLogic.fetch.ship, true);
     }
     public void onEditorVesselLoad(ShipConstruct ship, KSP.UI.Screens.CraftBrowserDialog.LoadType type)
     {
-      if (Settings.DebugMode)
-        Utils.Log("[RadioactivitySimulator][Editor]: Vessel LOAD");
+      Utils.Log("[RadioactivitySimulator][Editor]: Vessel LOAD", Utils.LogType.VesselData);
       if (!HighLogic.LoadedSceneIsEditor) { return; }
       InitializeEditorConstruct(ship, true);
     }
     public void onEditorVesselPartRemoved(GameEvents.HostTargetAction<Part, Part> p)
     {
-      if (Settings.DebugMode)
-        Utils.Log("[VAB VesselDataManager][Editor]: Vessel PART REMOVE");
+      Utils.Log("[VAB VesselDataManager][Editor]: Vessel PART REMOVE", Utils.LogType.VesselData);
       if (!HighLogic.LoadedSceneIsEditor) { return; }
-     
+
       if (electricalData == null || heatData == null)
         InitializeEditorConstruct(EditorLogic.fetch.ship, false);
       else
@@ -153,8 +142,7 @@ namespace DynamicBatteryStorage
     }
     public void onEditorVesselModified(ShipConstruct ship)
     {
-      if (Settings.DebugMode)
-        Utils.Log("[VAB VesselDataManager][Editor]: Vessel MODIFIED");
+      Utils.Log("[VAB VesselDataManager][Editor]: Vessel MODIFIED", Utils.LogType.VesselData);
       if (!HighLogic.LoadedSceneIsEditor) { return; }
       InitializeEditorConstruct(ship, false);
     }

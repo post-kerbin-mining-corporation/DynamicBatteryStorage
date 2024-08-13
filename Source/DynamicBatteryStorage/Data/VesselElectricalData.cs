@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
 
 namespace DynamicBatteryStorage
 {
@@ -10,12 +7,12 @@ namespace DynamicBatteryStorage
   /// <summary>
   /// This  class holds a model of the vessel's electrical data
   /// </summary>
-  public class VesselElectricalData: VesselData
+  public class VesselElectricalData : VesselData
   {
 
     /// <param name="vesselParts">Th elist of parts comprising a vessel</param>
     public VesselElectricalData(List<Part> vesselParts) : base(vesselParts)
-    {}
+    { }
 
     /// <summary>
     /// Set up the appropriate PowerHandler component for a PartModule which polls the underlying PartModule for relevant properties
@@ -25,10 +22,8 @@ namespace DynamicBatteryStorage
       if (Settings.IsSupportedPartModule(pm.moduleName, ResourcesSupported.Power))
       {
         HandlerModuleData data = Settings.GetPartModuleData(pm.moduleName, ResourcesSupported.Power);
-        if (Settings.DebugMode)
-        {
-          Utils.Log(String.Format("[{0}]: Detected supported power handler for {1}: {2}",  this.GetType().Name, pm.moduleName, data.handlerModuleName));
-        }
+        Utils.Log(String.Format("[{0}]: Detected supported power handler for {1}: {2}", this.GetType().Name, pm.moduleName, data.handlerModuleName), Utils.LogType.VesselData);
+
 
         string typeName = this.GetType().AssemblyQualifiedName;
         typeName = typeName.Replace("VesselElectricalData", data.handlerModuleName);
@@ -40,7 +35,7 @@ namespace DynamicBatteryStorage
         }
         catch (ArgumentNullException)
         {
-          Utils.Log(String.Format("Failed to instantiate {0} (config as {1}) when trying to configure a handler for {2}", typeName, data.handlerModuleName, pm.moduleName));
+          Utils.Log(String.Format("Failed to instantiate {0} (config as {1}) when trying to configure a handler for {2}", typeName, data.handlerModuleName, pm.moduleName), Utils.LogType.VesselData);
         }
       }
     }
@@ -53,7 +48,7 @@ namespace DynamicBatteryStorage
       List<string> handlerStates = new List<string>();
       if (handlers != null)
       {
-        for (int i=0; i < handlers.Count; i++)
+        for (int i = 0; i < handlers.Count; i++)
         {
           handlerStates.Add(handlers[i].ToString());
         }
@@ -68,8 +63,9 @@ namespace DynamicBatteryStorage
       if (HighLogic.LoadedSceneIsEditor)
       {
         EditorLogic.fetch.ship.UpdateResourceSets();
-       EditorLogic.fetch.ship.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, true, out EC, out maxEC, true);
-      } else if (HighLogic.LoadedSceneIsFlight)
+        EditorLogic.fetch.ship.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, true, out EC, out maxEC, true);
+      }
+      else if (HighLogic.LoadedSceneIsFlight)
       {
         FlightGlobals.ActiveVessel.GetConnectedResourceTotals(PartResourceLibrary.ElectricityHashcode, out EC, out maxEC);
       }
@@ -96,7 +92,6 @@ namespace DynamicBatteryStorage
               production += pwr;
           }
         }
-
         return production;
       }
       else
@@ -104,6 +99,5 @@ namespace DynamicBatteryStorage
         return CurrentProduction;
       }
     }
-
   }
 }

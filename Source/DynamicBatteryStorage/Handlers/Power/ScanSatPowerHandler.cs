@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DynamicBatteryStorage
+﻿namespace DynamicBatteryStorage
 {
   public class SCANsatPowerHandler : ModuleDataHandler
   {
@@ -14,10 +12,10 @@ namespace DynamicBatteryStorage
         {
           return -(float)pm.resHandler.inputResources[i].rate;
 
-          
+
         }
       }
-      
+
       return 0f;
     }
     protected override double GetValueFlight()

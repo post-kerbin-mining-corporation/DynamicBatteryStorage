@@ -6,8 +6,8 @@ namespace DynamicBatteryStorage
   // NOTE: The VAB stuff here might need updates
   public class RealBatteryPowerHandler : ModuleDataHandler
   {
-    public RealBatteryPowerHandler(HandlerModuleData moduleData):base(moduleData)
-    {}
+    public RealBatteryPowerHandler(HandlerModuleData moduleData) : base(moduleData)
+    { }
     protected override double GetValueEditor()
     {
       double results = 0d;
@@ -16,7 +16,8 @@ namespace DynamicBatteryStorage
       {
         producer = false;
         consumer = true;
-      } else
+      }
+      else
       {
         producer = true;
         consumer = false;
@@ -32,7 +33,8 @@ namespace DynamicBatteryStorage
       {
         producer = false;
         consumer = true;
-      } else
+      }
+      else
       {
         producer = true;
         consumer = false;

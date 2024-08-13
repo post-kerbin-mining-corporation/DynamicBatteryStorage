@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-
-
 namespace DynamicBatteryStorage
 {
 
-  // Fission Reactor
+  /// <summary>
+  /// Handler for ModuleFissionReactor
+  /// </summary>
   public class FissionReactorHeatHandler: ModuleDataHandler
   {
     public FissionReactorHeatHandler(HandlerModuleData moduleData):base(moduleData)
@@ -31,10 +26,11 @@ namespace DynamicBatteryStorage
       double.TryParse(pm.Fields.GetValue("AvailablePower").ToString(), out results);
       return results;
     }
-
   }
 
-  // Flow radiator
+  /// <summary>
+  /// Handler for the fission flow radiator
+  /// </summary>
   public class FissionFlowRadiatorHeatHandler: ModuleDataHandler
   {
     ModuleEnginesFX engine;
@@ -51,7 +47,6 @@ namespace DynamicBatteryStorage
       multiEngine = pm.GetComponent<MultiModeEngine>();
       return true;
     }
-
     protected override double GetValueEditor()
     {
       double results = 0d;

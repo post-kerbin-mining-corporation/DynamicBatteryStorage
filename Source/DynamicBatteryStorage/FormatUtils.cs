@@ -1,12 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace DynamicBatteryStorage
 {
-
+  /// <summary>
+  /// Useful utilities for string formatting
+  /// </summary>
   public static class FormatUtils
   {
     public const double KERBIN_DAY_LENGTH = 6d;
@@ -114,7 +113,6 @@ namespace DynamicBatteryStorage
       {
         result = String.Format( "{0} ms", msec);
       }
-
       return result;
     }
   }

@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-
 
 namespace DynamicBatteryStorage
 {
@@ -14,6 +9,7 @@ namespace DynamicBatteryStorage
   public class ModuleDeployableSolarPanelPowerHandler : ModuleDataHandler
   {
     ModuleDeployableSolarPanel panel;
+    ModuleResource resource;
     public ModuleDeployableSolarPanelPowerHandler(HandlerModuleData moduleData) : base(moduleData)
     { }
 
@@ -21,19 +17,47 @@ namespace DynamicBatteryStorage
     {
       base.Initialize(pm);
       panel = (ModuleDeployableSolarPanel)pm;
+      if (panel.resHandler.outputResources != null && panel.resHandler.outputResources.Count > 0)
+      {
+        for (int i = 0; i < panel.resHandler.outputResources.Count; i++)
+        {
+          if (panel.resHandler.outputResources[i].id == PartResourceLibrary.ElectricityHashcode)
+          {
+            resource = panel.resHandler.outputResources[i];
+          }
+        }
+      }
       return true;
     }
 
     protected override double GetValueEditor()
     {
+      double rate = 0d;
       if (panel != null)
-        return (double)panel.chargeRate * solarEfficiency;
-      return 0d;
+      {
+        if (resource != null)
+        {
+          rate = resource.rate;
+        }
+        else
+        {
+          rate = panel.chargeRate;
+        }
+        if (panel.panelType == ModuleDeployableSolarPanel.PanelType.SPHERICAL)
+        {
+          rate *= 0.25d;
+        }
+        if (panel.panelType == ModuleDeployableSolarPanel.PanelType.CYLINDRICAL)
+        {
+          rate *= 0.3183d;
+        }
+      }
+      return rate * solarEfficiency;
     }
     protected override double GetValueFlight()
     {
       if (panel != null)
-        return (double)panel.flowRate;
+        return panel._flowRate;
       return 0d;
     }
   }
@@ -115,7 +139,8 @@ namespace DynamicBatteryStorage
     protected override double GetValueFlight()
     {
       if (light != null)
-        return -1.0d*light.resourceAmount;
+        if (light.isOn)
+          return -1.0d * light.resourceAmount;
       return 0d;
     }
     protected override double GetValueEditor()
@@ -578,7 +603,7 @@ namespace DynamicBatteryStorage
         {
           if (lab.processResources[i].name == "ElectricCharge")
           {
-            processRate = -1.0d* lab.processResources[i].amount;
+            processRate = -1.0d * lab.processResources[i].amount;
             return processRate;
           }
         }

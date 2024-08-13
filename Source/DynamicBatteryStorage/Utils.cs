@@ -1,19 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace DynamicBatteryStorage
 {
   public static class Utils
   {
-    public static string logTag = "Dynamic Battery Storage";
-
-    public static void Log(string toLog)
+    public enum LogType
     {
-      Debug.Log(String.Format("[{0}]: {1}", logTag, toLog));
+      UI,
+      Settings,
+      Modules,
+      Handlers,
+      DynamicStorage,
+      VesselData,
+      Loading,
+      Any
     }
+    public static string logTag = "DBS";
+    /// <summary>
+    /// Log a message with the mod name tag prefixed
+    /// </summary>
+    /// <param name="str">message string </param>
+    public static void Log(string str, LogType logType)
+    {
+      bool doLog = false;
+      if (logType == LogType.Settings && Settings.DebugSettings) doLog = true;
+      if (logType == LogType.UI && Settings.DebugUI) doLog = true;
+      if (logType == LogType.Loading && Settings.DebugLoading) doLog = true;
+      if (logType == LogType.Modules && Settings.DebugModules) doLog = true;
+      if (logType == LogType.Handlers && Settings.DebugHandlers) doLog = true;
+      if (logType == LogType.DynamicStorage && Settings.DebugDynamicStorage) doLog = true;
+      if (logType == LogType.VesselData && Settings.DebugVesselData) doLog = true;
+      if (logType == LogType.Any) doLog = true;
+
+      if (doLog)
+        Debug.Log(String.Format("[{0}]{1}", logTag, str));
+    }
+
     public static void Warn(string toLog)
     {
       Debug.LogWarning(String.Format("[{0}]: {1}", logTag, toLog));
@@ -42,5 +66,46 @@ namespace DynamicBatteryStorage
       }
       return false;
     }
+    /// <summary>
+    /// Get a reference in a child of a type
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="name"></param>
+    /// <param name="parent"></param>
+    /// <returns></returns>
+    public static T FindChildOfType<T>(string name, Transform parent)
+    {
+      T result = default(T);
+      try
+      {
+        result = parent.FindDeepChild(name).GetComponent<T>();
+      }
+      catch (NullReferenceException e)
+      {
+        Debug.LogError($"Couldn't find {name} in children of {parent.name}");
+      }
+      return result;
+    }
   }
 }
+
+public static class TransformDeepChildExtension
+{
+  //Breadth-first search
+  public static Transform FindDeepChild(this Transform aParent, string aName)
+  {
+    Queue<Transform> queue = new Queue<Transform>();
+    queue.Enqueue(aParent);
+    while (queue.Count > 0)
+    {
+      var c = queue.Dequeue();
+      if (c.name == aName)
+        return c;
+      foreach (Transform t in c)
+        queue.Enqueue(t);
+    }
+    return null;
+  }
+}
+
+

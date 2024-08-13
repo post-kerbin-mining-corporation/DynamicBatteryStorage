@@ -1,15 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
 
 namespace DynamicBatteryStorage
 {
-
   /// <summary>
-  /// This Vessel Module calculates vessel energy production and consumption, and chooses a part to act as a 'battery buffer' at high time warp speeds
-  ///
+  /// This Vessel Module calculates and stores the Electrical and Core Heat data for a vessel
   /// </summary>
   public class VesselDataManager : VesselModule
   {
@@ -36,7 +30,6 @@ namespace DynamicBatteryStorage
       base.OnStart();
 
       // These events need to trigger a refresh
-      //GameEvents.onVesselDestroy.Add(new EventData<Vessel>.OnEvent(RefreshVesselData));
       GameEvents.onVesselGoOnRails.Add(new EventData<Vessel>.OnEvent(RefreshVesselData));
       GameEvents.onVesselWasModified.Add(new EventData<Vessel>.OnEvent(RefreshVesselData));
     }
@@ -44,7 +37,6 @@ namespace DynamicBatteryStorage
     void OnDestroy()
     {
       // Clean up events when the item is destroyed
-      //GameEvents.onVesselDestroy.Remove(RefreshVesselData);
       GameEvents.onVesselGoOnRails.Remove(RefreshVesselData);
       GameEvents.onVesselWasModified.Remove(RefreshVesselData);
     }
@@ -70,8 +62,7 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void RefreshVesselData(Vessel eventVessel)
     {
-      if (Settings.DebugMode)
-        Utils.Log(String.Format("[{0}]: Refreshing VesselData from Vessel event", this.GetType().Name));
+      Utils.Log(String.Format("[{0}]: Refreshing VesselData from Vessel event", this.GetType().Name), Utils.LogType.VesselData);
       RefreshVesselData();
     }
     /// <summary>
@@ -79,18 +70,15 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void RefreshVesselData(ConfigNode node)
     {
-      if (Settings.DebugMode)
-        Utils.Log(String.Format("[{0}]: Refreshing VesselData from save node event", this.GetType().Name));
+      Utils.Log(String.Format("[{0}]: Refreshing VesselData from save node event", this.GetType().Name), Utils.LogType.VesselData);
       RefreshVesselData();
     }
-
 
     /// <summary>
     /// Referesh the data classes
     /// </summary>
     protected void RefreshVesselData()
     {
-
       if (vessel == null || vessel.Parts == null)
         return;
 
@@ -99,13 +87,9 @@ namespace DynamicBatteryStorage
 
       dataReady = true;
 
-      if (Settings.DebugMode)
-      {
-        Utils.Log(String.Format("Dumping electrical database: \n{0}", electricalData.ToString()));
-        Utils.Log(String.Format("Dumping thermal database: \n{0}", heatData.ToString()));
-      }
+      Utils.Log(String.Format("Dumping electrical database: \n{0}", electricalData.ToString()), Utils.LogType.VesselData);
+      Utils.Log(String.Format("Dumping thermal database: \n{0}", heatData.ToString()), Utils.LogType.VesselData);
 
     }
-
   }
 }

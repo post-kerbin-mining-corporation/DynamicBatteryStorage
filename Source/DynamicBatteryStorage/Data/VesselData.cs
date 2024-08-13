@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using UnityEngine;
 
 namespace DynamicBatteryStorage
 {
@@ -60,23 +58,20 @@ namespace DynamicBatteryStorage
       {
         if (handlers[i] == null || handlers[i].PM == null || handlers[i].PM.part == null || !handlers[i].PM.part.isAttached)
         {
-
           handlers.RemoveAt(i);
-          Utils.Log(String.Format("A handler was removed"));
+          Utils.Log(String.Format("A handler was removed"), Utils.LogType.Handlers);
+
         }
       }
-      if (Settings.DebugMode)
-      {
-        Utils.Log(String.Format("[{0}]: Checking {1} new candidate PMs", this.GetType().Name, modulesToSetup.Count));
-      }
+      Utils.Log(String.Format("[{0}]: Checking {1} new candidate PMs", this.GetType().Name, modulesToSetup.Count), Utils.LogType.Handlers);
+
       for (int i = modulesToSetup.Count - 1; i >= 0; --i)
       {
         SetupDataHandler(modulesToSetup[i]);
         modules.Add(modulesToSetup[i]);
       }
-
-
     }
+
     /// <summary>
     /// Removes handlers associated with a specific part
     /// </summary>
@@ -93,11 +88,13 @@ namespace DynamicBatteryStorage
             if (modules[j] == handlers[i].PM)
             {
               modules.RemoveAt(j);
-              Utils.Log(String.Format("A module was removed"));
+              Utils.Log(String.Format("A module was removed"), Utils.LogType.Handlers);
+
             }
           }
           handlers.RemoveAt(i);
-          Utils.Log(String.Format("A modulehandler was removed"));
+          Utils.Log(String.Format("A modulehandler was removed"), Utils.LogType.Handlers);
+
         }
       }
     }
@@ -148,10 +145,12 @@ namespace DynamicBatteryStorage
     /// <summary>
     /// Calculates total vessel consumption
     /// </summary>
-    public double CurrentConsumption {
-      get {
+    public double CurrentConsumption
+    {
+      get
+      {
         double consumption = 0d;
-        for (int i=0; i < handlers.Count; i++)
+        for (int i = 0; i < handlers.Count; i++)
         {
           if (HighLogic.LoadedSceneIsFlight || handlers[i].Simulated)
           {
@@ -167,10 +166,12 @@ namespace DynamicBatteryStorage
     /// <summary>
     /// Calculates total vessel  production
     /// </summary>
-    public double CurrentProduction {
-      get {
+    public double CurrentProduction
+    {
+      get
+      {
         double production = 0d;
-        for (int i=0; i < handlers.Count; i++)
+        for (int i = 0; i < handlers.Count; i++)
         {
           if (HighLogic.LoadedSceneIsFlight || handlers[i].Simulated)
           {
