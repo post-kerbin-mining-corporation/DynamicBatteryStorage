@@ -33,14 +33,7 @@ namespace DynamicBatteryStorage
       /// If kopernicus is using the multistar settings, we need to show this in the editor but NOT in flight
       if (Settings.Kopernicus && Settings.KopernicusMultiStar)
       {
-        if (HighLogic.LoadedSceneIsEditor)
-        {
-          return true;
-        }
-        else
-        {
-          return false;
-        }
+        return HighLogic.LoadedSceneIsEditor;
       }
       return true;
     }
@@ -58,7 +51,7 @@ namespace DynamicBatteryStorage
         {
           rate = panel.chargeRate;
         }
-        // don't ask
+
         if (Settings.Kopernicus && Settings.KopernicusMultiStar)
         {
           rate = cachedRate;

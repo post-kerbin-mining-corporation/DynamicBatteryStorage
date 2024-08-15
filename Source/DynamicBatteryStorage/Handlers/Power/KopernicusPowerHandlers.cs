@@ -3,36 +3,29 @@
 namespace DynamicBatteryStorage
 {
 
-  // Special power handler for Kopernicus's replaced panels
+  /// <summary>
+  /// Handler for Kopernicus > v209 solar panel type
+  /// </summary>
   public class KopernicusSolarPanelPowerHandler : ModuleDataHandler
-  {
-   
+  {   
     public KopernicusSolarPanelPowerHandler(HandlerModuleData moduleData) : base(moduleData)
     { }
 
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
-      /// If kopernicus is using the multistar settings, we need to only show this thing in flight
+      /// If kopernicus is using the multistar settings, we need to only show this thing in flight as the new handler wipes the data in editor
+      /// We need to rely on the 
       if (Settings.KopernicusMultiStar)
       {
-        if (HighLogic.LoadedSceneIsEditor)
-        {
-          return false;
-        }
-        else
-        {
-          return true;
-        }
+        return HighLogic.LoadedSceneIsFlight;
       }
-      else
-      {
-        return true;
-      }
+      return true;
     }
 
     protected override double GetValueEditor()
     {
+      /// Invalid in editor
       return 0f;
     }
     protected override double GetValueFlight()
