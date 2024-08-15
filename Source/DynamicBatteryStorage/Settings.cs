@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using UniLinq;
 using UnityEngine;
 
 namespace DynamicBatteryStorage
@@ -35,6 +37,7 @@ namespace DynamicBatteryStorage
 
     public static bool Enabled = true;
     public static bool Kopernicus = false;
+    public static bool KopernicusMultiStar = false;
     public static float TimeWarpLimit = 100f;
     public static float BufferScaling = 1.75f;
 
@@ -140,6 +143,15 @@ namespace DynamicBatteryStorage
         {
           Utils.Log("[Settings]: Kopernicus detected", Utils.LogType.Any);
           Settings.Kopernicus = true;
+
+          Assembly kopernicusAssembly = AssemblyLoader.loadedAssemblies.FirstOrDefault(b => b.assembly.GetName().Name == "Kopernicus")?.assembly;
+
+          Type starType = kopernicusAssembly.GetType("Kopernicus.Components.KopernicusStar");
+          var msObj = starType.GetField("UseMultiStarLogic",
+            BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy).GetValue(null);
+          KopernicusMultiStar = (bool)msObj;
+          Utils.Log($"[Settings] Kopernicus Multi Star Logic is {KopernicusMultiStar}",Utils.LogType.Any);
+
         }
       }
     }
