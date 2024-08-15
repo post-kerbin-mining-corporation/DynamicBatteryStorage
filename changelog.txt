@@ -1,6 +1,7 @@
 v2.3.1
 ------
 - Fixes to support Kopenicus 209+ solar panels
+- Updated Chinese translation
 
 v2.3.0
 ------
