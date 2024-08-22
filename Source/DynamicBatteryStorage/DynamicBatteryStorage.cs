@@ -49,7 +49,9 @@ namespace DynamicBatteryStorage
     public override Activation GetActivation()
     {
       if (Settings.Enabled)
-        return Activation.LoadedVessels;
+      {
+        return Activation.Always;
+      }
       else
         return Activation.Never;
     }
@@ -57,7 +59,7 @@ namespace DynamicBatteryStorage
     {
       base.OnStart();
 
-      if (!enabled) return;
+      if (!Settings.Enabled) return;
 
       bufferScale = Settings.BufferScaling;
       timeWarpLimit = Settings.TimeWarpLimit;
@@ -108,7 +110,6 @@ namespace DynamicBatteryStorage
         {
           vesselLoaded = false;
         }
-
         if (TimeWarp.CurrentRate < timeWarpLimit)
         {
           analyticMode = false;
@@ -174,6 +175,7 @@ namespace DynamicBatteryStorage
           Utils.Log(CreateVesselLogString(String.Format("Buffer needs {0:F2} EC space to reach target amount of {1:F2} EC", bufferDifference, originalMax + bufferDifference)), Utils.LogType.DynamicStorage);
 
           // Apply the buffer
+          bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax + bufferDifference));
           bufferStorage.amount = (double)Mathf.Clamp((float)bufferStorage.amount, 0f, (float)(originalMax + bufferDifference));
           bufferStorage.maxAmount = originalMax + bufferDifference;
         }
