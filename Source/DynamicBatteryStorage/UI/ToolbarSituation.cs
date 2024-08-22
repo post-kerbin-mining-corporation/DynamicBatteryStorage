@@ -109,10 +109,10 @@ namespace DynamicBatteryStorage.UI
           }
         }
         bodyDropdown.ClearOptions();
-        bodyDropdown.AddOptions(FlightGlobals.Bodies.Select(x => x.name).ToList());
+        bodyDropdown.AddOptions(FlightGlobals.Bodies.Select(x => x.bodyDisplayName.LocalizeRemoveGender()).ToList());
         for (int i = 0; i < bodyDropdown.options.Count; i++)
         {
-          if (bodyDropdown.options[i].text == currentBody.name)
+          if (bodyDropdown.options[i].text == currentBody.bodyDisplayName.LocalizeRemoveGender())
             bodyDropdown.SetValueWithoutNotify(i);
         }
         bodyDropdown.onValueChanged.AddListener(delegate { OnBodyDropdownChange(); });
@@ -254,7 +254,7 @@ namespace DynamicBatteryStorage.UI
       Utils.Log($"[ToolbarSituation]: Selected body {bodyDropdown.options[bodyDropdown.value].text}", Utils.LogType.UI);
       foreach (CelestialBody body in FlightGlobals.Bodies)
       {
-        if (body.name == bodyDropdown.options[bodyDropdown.value].text)
+        if (body.bodyDisplayName.LocalizeRemoveGender() == bodyDropdown.options[bodyDropdown.value].text)
         {
           currentBody = body;
           SetBody(currentBody);
