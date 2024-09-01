@@ -2,6 +2,7 @@ v2.3.3
 ------
 - Fixed SystemHeat heat exchangers not being detected correctly
 - Changes to debug logging to make it less verbose and easier to find problems
+- Added user-contibuted support for Weather Dependent Solar Panel
 
 v2.3.2
 ------
