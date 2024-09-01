@@ -62,16 +62,22 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void RefreshVesselData(Vessel eventVessel)
     {
-      Utils.Log(String.Format("[{0}]: Refreshing VesselData from Vessel event", this.GetType().Name), Utils.LogType.VesselData);
-      RefreshVesselData();
+      if (vessel != null && vessel.loaded)
+      {
+        Utils.Log(String.Format("[{0}]: Refreshing VesselData from Vessel event", this.GetType().Name), Utils.LogType.VesselData);
+        RefreshVesselData();
+      }
     }
     /// <summary>
     /// Referesh the data, given a ConfigNode event
     /// </summary>
     protected void RefreshVesselData(ConfigNode node)
     {
-      Utils.Log(String.Format("[{0}]: Refreshing VesselData from save node event", this.GetType().Name), Utils.LogType.VesselData);
-      RefreshVesselData();
+      if (vessel != null && vessel.loaded)
+      {
+        Utils.Log(String.Format("[{0}]: Refreshing VesselData from save node event", this.GetType().Name), Utils.LogType.VesselData);
+        RefreshVesselData();
+      }
     }
 
     /// <summary>
@@ -79,7 +85,7 @@ namespace DynamicBatteryStorage
     /// </summary>
     protected void RefreshVesselData()
     {
-      if (vessel == null || vessel.Parts == null)
+      if (vessel == null || vessel.Parts == null || !vessel.loaded)
         return;
 
       electricalData = new VesselElectricalData(vessel.Parts);
