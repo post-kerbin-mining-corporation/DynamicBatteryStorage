@@ -108,6 +108,7 @@
     <Compile Include="UI\ToolbarSituation.cs" />
     <Compile Include="UI\Tooltips.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="Handlers\Power\WDSPPowerHandlers.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

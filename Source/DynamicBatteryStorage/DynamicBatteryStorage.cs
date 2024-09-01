@@ -69,8 +69,6 @@ namespace DynamicBatteryStorage
       GameEvents.onVesselWasModified.Add(new EventData<Vessel>.OnEvent(CalculateElectricalData));
 
       FindDataManager();
-
-      Utils.Log(String.Format("[DynamicStorage] Initialization completed with buffer scale {0} and timewarp limit {1}", bufferScale, timeWarpLimit), Utils.LogType.DynamicStorage);
     }
 
     protected override void OnSave(ConfigNode node)
@@ -207,11 +205,17 @@ namespace DynamicBatteryStorage
 
     protected void CalculateElectricalData(Vessel eventVessel)
     {
-      CalculateElectricalData();
+      if (vessel != null && vessel.loaded)
+      {
+        CalculateElectricalData();
+      }
     }
     protected void CalculateElectricalData(ConfigNode node)
     {
-      CalculateElectricalData();
+      if (vessel != null && vessel.loaded)
+      {
+        CalculateElectricalData();
+      }
     }
 
     /// <summary>
