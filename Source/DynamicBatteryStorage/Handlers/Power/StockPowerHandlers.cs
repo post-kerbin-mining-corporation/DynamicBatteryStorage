@@ -31,7 +31,7 @@ namespace DynamicBatteryStorage
         }
       }
       /// If kopernicus is using the multistar settings, we need to show this in the editor but NOT in flight
-      if (Settings.Kopernicus && Settings.KopernicusMultiStar)
+      if (Settings.Kopernicus && Settings.KopernicusMultiStar || Settings.WeatherDrivenSolarPanel)
       {
         return HighLogic.LoadedSceneIsEditor;
       }

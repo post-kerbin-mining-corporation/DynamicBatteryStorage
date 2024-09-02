@@ -14,9 +14,8 @@ namespace DynamicBatteryStorage
         public override bool Initialize(PartModule pm)
         {
             base.Initialize(pm);
-            /// If kopernicus is using the multistar settings, we need to only show this thing in flight as the new handler wipes the data in editor
-            /// We need to rely on the 
-            if (Settings.KopernicusMultiStar)
+            /// seppuku.exe
+            if (Settings.WeatherDrivenSolarPanel)
             {
                 return HighLogic.LoadedSceneIsFlight;
             }
