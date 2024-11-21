@@ -29,8 +29,7 @@ namespace DynamicBatteryStorage
         }
         protected override double GetValueFlight()
         {
-            double results = 0d;
-            if (double.TryParse(pm.Fields.GetValue("currentOutput").ToString(), out results))
+            if (double.TryParse(pm.Fields.GetValue("currentOutput").ToString(), out double results))
             {
                 return results;
             }

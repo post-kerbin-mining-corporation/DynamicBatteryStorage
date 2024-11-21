@@ -5,18 +5,9 @@
     public FissionGeneratorPowerHandler(HandlerModuleData moduleData) : base(moduleData)
     { }
 
-    PartModule core;
-
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
-      for (int i = 0; i < pm.part.Modules.Count; i++)
-      {
-        if (pm.part.Modules[i].moduleName == "FissionReactor")
-        {
-          core = pm.part.Modules[i];
-        }
-      }
       return true;
     }
 

@@ -1,8 +1,11 @@
 v2.3.4
 ------
 - Stability updates: breaking the mod will now break it less
-- Performance updates: cut frame time cost of DBS on a 200 part vessel by 85%
-- Code cleanup to remove old thermal handling code now that nobody has missed it 
+- Performance updates: cut frame time cost of DBS on a 200 part vessel by something like 75%
+- Fixed issues with edtor reverts and reloads failing to reset the UI until you made a change to the vessel
+- Code cleanup
+ - Reworking of layout of handler code for ease of use
+ - Remove old thermal handling code now that nobody has missed it 
 
 v2.3.3
 ------

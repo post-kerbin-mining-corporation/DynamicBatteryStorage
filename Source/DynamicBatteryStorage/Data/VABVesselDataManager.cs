@@ -30,36 +30,29 @@ namespace DynamicBatteryStorage
     {
       enabled = Settings.Enabled;
       Instance = this;
-    }
-    protected void Start()
-    {
       SetupEditorCallbacks();
     }
-
     #region Editor
     protected void SetupEditorCallbacks()
     {
-      /// Add events for editor modifications
-      if (HighLogic.LoadedSceneIsEditor)
-      {
-        GameEvents.onEditorShipModified.Add(new EventData<ShipConstruct>.OnEvent(onEditorVesselModified));
-        GameEvents.onEditorRestart.Add(new EventVoid.OnEvent(onEditorVesselReset));
-        GameEvents.onEditorStarted.Add(new EventVoid.OnEvent(onEditorVesselStart));
-        GameEvents.onEditorPartDeleted.Add(new EventData<Part>.OnEvent(onEditorPartDeleted));
-        GameEvents.onEditorPodDeleted.Add(new EventVoid.OnEvent(onEditorVesselReset));
-        GameEvents.onEditorLoad.Add(new EventData<ShipConstruct, KSP.UI.Screens.CraftBrowserDialog.LoadType>.OnEvent(onEditorVesselLoad));
-        GameEvents.onPartRemove.Add(new EventData<GameEvents.HostTargetAction<Part, Part>>.OnEvent(onEditorVesselPartRemoved));
-      }
-      else
-      {
-        GameEvents.onEditorShipModified.Remove(new EventData<ShipConstruct>.OnEvent(onEditorVesselModified));
-        GameEvents.onEditorRestart.Remove(new EventVoid.OnEvent(onEditorVesselReset));
-        GameEvents.onEditorStarted.Remove(new EventVoid.OnEvent(onEditorVesselStart));
-        GameEvents.onEditorPodDeleted.Remove(new EventVoid.OnEvent(onEditorVesselReset));
-        GameEvents.onEditorPartDeleted.Remove(new EventData<Part>.OnEvent(onEditorPartDeleted));
-        GameEvents.onEditorLoad.Remove(new EventData<ShipConstruct, KSP.UI.Screens.CraftBrowserDialog.LoadType>.OnEvent(onEditorVesselLoad));
-        GameEvents.onPartRemove.Remove(new EventData<GameEvents.HostTargetAction<Part, Part>>.OnEvent(onEditorVesselPartRemoved));
-      }
+      GameEvents.onEditorShipModified.Add(new EventData<ShipConstruct>.OnEvent(onEditorVesselModified));
+      GameEvents.onEditorRestart.Add(new EventVoid.OnEvent(onEditorVesselReset));
+      GameEvents.onEditorStarted.Add(new EventVoid.OnEvent(onEditorVesselStart));
+      GameEvents.onEditorPartDeleted.Add(new EventData<Part>.OnEvent(onEditorPartDeleted));
+      GameEvents.onEditorPodDeleted.Add(new EventVoid.OnEvent(onEditorVesselReset));
+      GameEvents.onEditorLoad.Add(new EventData<ShipConstruct, KSP.UI.Screens.CraftBrowserDialog.LoadType>.OnEvent(onEditorVesselLoad));
+      GameEvents.onPartRemove.Add(new EventData<GameEvents.HostTargetAction<Part, Part>>.OnEvent(onEditorVesselPartRemoved));
+    }
+
+    void OnDestroy()
+    {
+      GameEvents.onEditorShipModified.Remove(new EventData<ShipConstruct>.OnEvent(onEditorVesselModified));
+      GameEvents.onEditorRestart.Remove(new EventVoid.OnEvent(onEditorVesselReset));
+      GameEvents.onEditorStarted.Remove(new EventVoid.OnEvent(onEditorVesselStart));
+      GameEvents.onEditorPodDeleted.Remove(new EventVoid.OnEvent(onEditorVesselReset));
+      GameEvents.onEditorPartDeleted.Remove(new EventData<Part>.OnEvent(onEditorPartDeleted));
+      GameEvents.onEditorLoad.Remove(new EventData<ShipConstruct, KSP.UI.Screens.CraftBrowserDialog.LoadType>.OnEvent(onEditorVesselLoad));
+      GameEvents.onPartRemove.Remove(new EventData<GameEvents.HostTargetAction<Part, Part>>.OnEvent(onEditorVesselPartRemoved));
     }
 
     protected void InitializeEditorConstruct(ShipConstruct ship, bool forceReset)
@@ -92,7 +85,7 @@ namespace DynamicBatteryStorage
     #region Game Events
     public void onEditorPartDeleted(Part part)
     {
-      Utils.Log("[VAB VesselDataManager][Editor]: Part Delete", Utils.LogType.VesselData);
+      Utils.Log("[VAB VesselDataManager][Editor]: Part DELETED", Utils.LogType.VesselData);
       if (!HighLogic.LoadedSceneIsEditor) { return; }
 
       InitializeEditorConstruct(EditorLogic.fetch.ship, false);
@@ -105,19 +98,25 @@ namespace DynamicBatteryStorage
     }
     public void onEditorVesselStart()
     {
-      Utils.Log("[VAB VesselDataManager]: Vessel START", Utils.LogType.VesselData);
+      Utils.Log("[VAB VesselDataManager][Editor]: Vessel START", Utils.LogType.VesselData);
+      if (!HighLogic.LoadedSceneIsEditor) { return; }
+      InitializeEditorConstruct(EditorLogic.fetch.ship, true);
+    }
+    public void onEditorVesselRestore()
+    {
+      Utils.Log("[VAB VesselDataManager]: Vessel RESTORE", Utils.LogType.VesselData);
       if (!HighLogic.LoadedSceneIsEditor) { return; }
       InitializeEditorConstruct(EditorLogic.fetch.ship, true);
     }
     public void onEditorVesselLoad(ShipConstruct ship, KSP.UI.Screens.CraftBrowserDialog.LoadType type)
     {
-      Utils.Log("[RadioactivitySimulator][Editor]: Vessel LOAD", Utils.LogType.VesselData);
+      Utils.Log("[VAB VesselDataManager][Editor]: Vessel LOAD", Utils.LogType.VesselData);
       if (!HighLogic.LoadedSceneIsEditor) { return; }
       InitializeEditorConstruct(ship, true);
     }
     public void onEditorVesselPartRemoved(GameEvents.HostTargetAction<Part, Part> p)
     {
-      Utils.Log("[VAB VesselDataManager][Editor]: Vessel PART REMOVE", Utils.LogType.VesselData);
+      Utils.Log("[VAB VesselDataManager][Editor]: Vessel PART REMOVED", Utils.LogType.VesselData);
       if (!HighLogic.LoadedSceneIsEditor) { return; }
 
       if (electricalData == null)

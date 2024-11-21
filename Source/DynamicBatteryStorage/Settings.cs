@@ -161,7 +161,8 @@ namespace DynamicBatteryStorage
         // Search for wdsp
         if (a.name.StartsWith("WeatherDrivenSolarPanel", StringComparison.Ordinal))
         {
-          Settings.WeatherDrivenSolarPanel = true;
+          WeatherDrivenSolarPanel = true;
+          Utils.Log($"[Settings] Weather Dependent Solar Panel logic is  Multi Star Logic is {WeatherDrivenSolarPanel}", Utils.LogType.Any);
         }
           
       }

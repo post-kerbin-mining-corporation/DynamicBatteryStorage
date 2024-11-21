@@ -27,8 +27,9 @@
           }
         }
       }
-      /// If kopernicus is using the multistar settings, we need to show this in the editor but NOT in flight
-      if (Settings.Kopernicus && Settings.KopernicusMultiStar || Settings.WeatherDrivenSolarPanel)
+      /// In the case where Kopernicus is installed and using its >= v209 multistar logic, the solar panel management should only work in editor. In flight it is replaced with the Kop model
+      /// In the case where WDSP is installed, the solar panel management should only work in editor. In flight it is replaced with the WDSP model
+      if ((Settings.Kopernicus && Settings.KopernicusMultiStar) || Settings.WeatherDrivenSolarPanel)
       {
         return HighLogic.LoadedSceneIsEditor;
       }
