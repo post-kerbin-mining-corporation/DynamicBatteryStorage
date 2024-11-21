@@ -1,3 +1,9 @@
+v2.3.4
+------
+- Stability updates: breaking the mod will now break it less
+- Performance updates: cut frame time cost of DBS on a 200 part vessel by 85%
+- Code cleanup to remove old thermal handling code now that nobody has missed it 
+
 v2.3.3
 ------
 - Fixed SystemHeat heat exchangers not being detected correctly

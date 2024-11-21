@@ -32,7 +32,6 @@ namespace DynamicBatteryStorage.UI
       get { return powerUI; }
     }
     protected VesselElectricalData electricalData;
-    protected VesselThermalData thermalData;
 
     protected ToolbarSituation situationUI;
     protected ToolbarPower powerUI;
@@ -84,7 +83,7 @@ namespace DynamicBatteryStorage.UI
         }
         if (detailUI != null)
         {
-          detailUI.UpdateData(electricalData, thermalData);
+          detailUI.UpdateData(electricalData);
         }
         if (advancedUI != null)
         {
@@ -146,10 +145,6 @@ namespace DynamicBatteryStorage.UI
     public void SetElectricalData(VesselElectricalData data)
     {
       electricalData = data;
-    }
-    public void SetThermalData(VesselThermalData data)
-    {
-      thermalData = data;
     }
   }
 }

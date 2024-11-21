@@ -2,7 +2,7 @@ using System;
 
 namespace DynamicBatteryStorage
 {
-  public class ModuleDataHandler
+  public abstract class ModuleDataHandler
   {
     // The associated PartModule to monitor
     protected PartModule pm;
@@ -91,7 +91,7 @@ namespace DynamicBatteryStorage
     /// <summary>
     /// Gets the monitored value
     /// </summary>
-    public virtual double GetValue()
+    public double GetValue()
     {
       if (HighLogic.LoadedSceneIsFlight)
       {
@@ -107,21 +107,15 @@ namespace DynamicBatteryStorage
     /// <summary>
     /// Gets the monitored value in flight
     /// </summary>
-    protected virtual double GetValueFlight()
-    {
-      return 0d;
-    }
+    protected abstract double GetValueFlight();
     /// <summary>
     /// Gets the monitored value in the editor
     /// </summary>
-    protected virtual double GetValueEditor()
-    {
-      return 0d;
-    }
+    protected abstract double GetValueEditor();
     /// <summary>
     /// Accessor for the name of the module.
     /// </summary>
-    public virtual string ModuleName()
+    public string ModuleName()
     {
       return pm.moduleName;
     }
@@ -139,10 +133,7 @@ namespace DynamicBatteryStorage
     /// </summary>
     public override string ToString()
     {
-      string pState = "Consuming";
-      if (Producer)
-        pState = "Producing";
-      return String.Format("{0}: {1} {2:F2} units/s", ModuleName(), pState, GetValue());
+      return String.Format("{0}: {1} {2:F2} units/s", ModuleName(), producer ? "Producing" : "Consuming", GetValue());
     }
 
   }

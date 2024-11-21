@@ -10,9 +10,7 @@ namespace DynamicBatteryStorage
   {
     PartModule antennaModule = null;
 
-    public RemoteTechPowerHandler(HandlerModuleData moduleData) : base(moduleData)
-    {
-    }
+    public RemoteTechPowerHandler(HandlerModuleData moduleData) : base(moduleData) { }
 
     public override bool Initialize(PartModule pm)
     {

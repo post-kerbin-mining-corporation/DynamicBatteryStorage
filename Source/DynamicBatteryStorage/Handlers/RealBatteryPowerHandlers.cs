@@ -1,7 +1,6 @@
 
 namespace DynamicBatteryStorage
 {
-
   // RealBattery: Realistic behaving batteries; https://github.com/blackliner/RealBattery
   // NOTE: The VAB stuff here might need updates
   public class RealBatteryPowerHandler : ModuleDataHandler
@@ -10,8 +9,7 @@ namespace DynamicBatteryStorage
     { }
     protected override double GetValueEditor()
     {
-      double results = 0d;
-      double.TryParse(pm.Fields.GetValue("lastECpower").ToString(), out results);
+      double.TryParse(pm.Fields.GetValue("lastECpower").ToString(), out double results);
       if (results > 0)
       {
         producer = false;
@@ -27,8 +25,7 @@ namespace DynamicBatteryStorage
     }
     protected override double GetValueFlight()
     {
-      double results = 0d;
-      double.TryParse(pm.Fields.GetValue("lastECpower").ToString(), out results);
+      double.TryParse(pm.Fields.GetValue("lastECpower").ToString(), out double results);
       if (results > 0)
       {
         producer = false;

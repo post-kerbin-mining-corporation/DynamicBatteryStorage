@@ -79,21 +79,34 @@
     <Compile Include="Data\VesselData.cs" />
     <Compile Include="Data\VesselDataManager.cs" />
     <Compile Include="Data\VesselElectricalData.cs" />
-    <Compile Include="Data\VesselThermalData.cs" />
     <Compile Include="DynamicBatteryStorage.cs" />
     <Compile Include="FormatUtils.cs" />
     <Compile Include="HandlerConfiguration.cs" />
     <Compile Include="HandlerModuleData.cs" />
     <Compile Include="Handlers\GenericFieldDataHandler.cs" />
-    <Compile Include="Handlers\Heat\NFTHeatHandlers.cs" />
-    <Compile Include="Handlers\Heat\StockHeatHandlers.cs" />
     <Compile Include="Handlers\ModuleDataHandler.cs" />
-    <Compile Include="Handlers\Power\KopernicusPowerHandlers.cs" />
-    <Compile Include="Handlers\Power\NFTPowerHandlers.cs" />
-    <Compile Include="Handlers\Power\RealBatteryPowerHandlers.cs" />
-    <Compile Include="Handlers\Power\RemoteTechPowerHandler.cs" />
-    <Compile Include="Handlers\Power\ScanSatPowerHandler.cs" />
-    <Compile Include="Handlers\Power\StockPowerHandlers.cs" />
+    <Compile Include="Handlers\KopernicusPowerHandlers.cs" />
+    <Compile Include="Handlers\PostKerbin\DischargeCapacitorPowerHandler.cs" />
+    <Compile Include="Handlers\PostKerbin\FissionGeneratorPowerHandler.cs" />
+    <Compile Include="Handlers\PostKerbin\ModuleChargeableEnginePowerHandler.cs" />
+    <Compile Include="Handlers\PostKerbin\ModuleCryoTankPowerHandler.cs" />
+    <Compile Include="Handlers\PostKerbin\ModuleCurvedSolarPanelPowerHandler.cs" />
+    <Compile Include="Handlers\PostKerbin\ModuleDeployableCentrifugePowerHandler.cs" />
+    <Compile Include="Handlers\RealBatteryPowerHandlers.cs" />
+    <Compile Include="Handlers\RemoteTechPowerHandler.cs" />
+    <Compile Include="Handlers\ScanSatPowerHandler.cs" />
+    <Compile Include="Handlers\Stock\ModuleActiveRadiatorPowerHandler.cs" />
+    <Compile Include="Handlers\Stock\ModuleAlternatorPowerHandler.cs" />
+    <Compile Include="Handlers\Stock\ModuleCommandPowerHandler.cs" />
+    <Compile Include="Handlers\Stock\ModuleDataTransmitterPowerHandler.cs" />
+    <Compile Include="Handlers\Stock\ModuleDeployableSolarPanelPowerHandler.cs" />
+    <Compile Include="Handlers\Stock\ModuleEnginesPowerHandler.cs" />
+    <Compile Include="Handlers\Stock\ModuleGeneratorPowerHandler.cs" />
+    <Compile Include="Handlers\Stock\ModuleLightPowerHandler.cs" />
+    <Compile Include="Handlers\Stock\ModuleResourceConverterPowerHandler.cs" />
+    <Compile Include="Handlers\Stock\ModuleResourceHarvesterPowerHandler.cs" />
+    <Compile Include="Handlers\Stock\ModuleScienceConverterPowerHandler.cs" />
+    <Compile Include="Handlers\Stock\ModuleScienceLabPowerHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UI\SystemsMonitorUI.cs" />
@@ -108,7 +121,7 @@
     <Compile Include="UI\ToolbarSituation.cs" />
     <Compile Include="UI\Tooltips.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="Handlers\Power\WDSPPowerHandlers.cs" />
+    <Compile Include="Handlers\WDSPPowerHandlers.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -1,3 +1,5 @@
+using System;
+
 namespace DynamicBatteryStorage
 {
   /// <summary>
@@ -6,11 +8,14 @@ namespace DynamicBatteryStorage
   /// </summary>
   public class GenericFieldDataHandler : ModuleDataHandler
   {
-    private string editorFieldName;
-    private string flightFieldName;
+    private readonly string editorFieldName;
+    private readonly string flightFieldName;
 
-    private double editorValueScalar = 1.0d;
-    private double flightValueScalar = 1.0d;
+    private readonly double editorValueScalar = 1.0d;
+    private readonly double flightValueScalar = 1.0d;
+
+    private BaseField editorField;
+    private BaseField flightField;
 
     public GenericFieldDataHandler(HandlerModuleData moduleData) : base(moduleData)
     {
@@ -23,16 +28,34 @@ namespace DynamicBatteryStorage
     public override bool Initialize(PartModule pm)
     {
       base.Initialize(pm);
+      try
+      {
+        editorField = pm.Fields[editorFieldName];
+      }
+      catch (Exception)
+      {
+        Utils.Warn($"[GenericFieldDataHandler] Issue locating editor field name {editorFieldName} on {pm.moduleName}");
+        return false;
+      }
+      try
+      {
+        flightField = pm.Fields[flightFieldName];
+      }
+      catch (Exception)
+      {
+        Utils.Warn($"[GenericFieldDataHandler] Issue locating flight field name {flightFieldName} on {pm.moduleName}");
+        return false;
+      }
       return true;
     }
     protected override double GetValueEditor()
     {
-      double.TryParse(pm.Fields.GetValue(editorFieldName).ToString(), out double results);
+      double.TryParse(editorField.GetValue(pm).ToString(), out double results);
       return results * editorValueScalar;
     }
     protected override double GetValueFlight()
     {
-      double.TryParse(pm.Fields.GetValue(flightFieldName).ToString(), out double results);
+      double.TryParse(flightField.GetValue(pm).ToString(), out double results);
       return results * flightValueScalar;
     }
   }

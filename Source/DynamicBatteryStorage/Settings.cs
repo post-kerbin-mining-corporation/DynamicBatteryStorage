@@ -59,9 +59,11 @@ namespace DynamicBatteryStorage
     public static Dictionary<string, UIHandlerCategory> HandlerCategoryData;
     public static List<HandlerModuleData> HandlerPartModuleData;
 
-    private static string CONFIG_NODE_NAME = "DynamicBatteryStorage/DYNAMICBATTERYSTORAGE";
-    private static string UI_HANDLER_NODE_NAME = "HANDLERCATEGORY";
-    private static string MODULE_HANDLER_NODE_NAME = "PARTMODULEHANDLER";
+    public static readonly string ELECTRICITY_RESOURCE_NAME = "ElectricCharge";
+
+    private static readonly string CONFIG_NODE_NAME = "DynamicBatteryStorage/DYNAMICBATTERYSTORAGE";
+    private static readonly string UI_HANDLER_NODE_NAME = "HANDLERCATEGORY";
+    private static readonly string MODULE_HANDLER_NODE_NAME = "PARTMODULEHANDLER";
 
     /// <summary>
     /// Load data from configuration

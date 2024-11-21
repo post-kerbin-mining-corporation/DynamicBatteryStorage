@@ -10,8 +10,6 @@ namespace DynamicBatteryStorage
     #region Accessors
 
     public VesselElectricalData ElectricalData { get { return electricalData; } }
-    public VesselThermalData HeatData { get { return heatData; } }
-
     public bool Ready { get { return dataReady; } }
 
     #endregion
@@ -22,7 +20,6 @@ namespace DynamicBatteryStorage
     bool vesselLoaded = false;
 
     VesselElectricalData electricalData;
-    VesselThermalData heatData;
     #endregion
 
     protected override void OnStart()
@@ -89,13 +86,8 @@ namespace DynamicBatteryStorage
         return;
 
       electricalData = new VesselElectricalData(vessel.Parts);
-      heatData = new VesselThermalData(vessel.Parts);
-
       dataReady = true;
-
       Utils.Log(String.Format("Dumping electrical database: \n{0}", electricalData.ToString()), Utils.LogType.VesselData);
-      Utils.Log(String.Format("Dumping thermal database: \n{0}", heatData.ToString()), Utils.LogType.VesselData);
-
     }
   }
 }

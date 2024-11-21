@@ -15,8 +15,6 @@ namespace DynamicBatteryStorage
 
     public static EditorVesselDataManager Instance { get; private set; }
     public VesselElectricalData ElectricalData { get { return electricalData; } }
-    public VesselThermalData HeatData { get { return heatData; } }
-
     public bool Ready { get { return dataReady; } }
 
     #endregion
@@ -26,7 +24,6 @@ namespace DynamicBatteryStorage
     bool dataReady = false;
 
     VesselElectricalData electricalData;
-    VesselThermalData heatData;
     #endregion
 
     protected void Awake()
@@ -75,31 +72,19 @@ namespace DynamicBatteryStorage
         else
           electricalData.RefreshData(false, ship.Parts);
 
-        if (heatData == null || forceReset)
-          heatData = new VesselThermalData(ship.Parts);
-        else
-          heatData.RefreshData(false, ship.Parts);
-
-
         Utils.Log(String.Format("Dumping electrical database: \n{0}", electricalData.ToString()), Utils.LogType.VesselData);
-        Utils.Log(String.Format("Dumping thermal database: \n{0}", heatData.ToString()), Utils.LogType.VesselData);
-
         dataReady = true;
       }
       else
       {
         Utils.Log(String.Format("Ship is null"), Utils.LogType.VesselData);
         electricalData = new VesselElectricalData(new List<Part>());
-        heatData = new VesselThermalData(new List<Part>());
       }
     }
 
     protected void RemovePart(Part p)
     {
-
       electricalData.RemoveHandlersForPart(p);
-      heatData.RemoveHandlersForPart(p);
-
     }
     #endregion
 
@@ -135,7 +120,7 @@ namespace DynamicBatteryStorage
       Utils.Log("[VAB VesselDataManager][Editor]: Vessel PART REMOVE", Utils.LogType.VesselData);
       if (!HighLogic.LoadedSceneIsEditor) { return; }
 
-      if (electricalData == null || heatData == null)
+      if (electricalData == null)
         InitializeEditorConstruct(EditorLogic.fetch.ship, false);
       else
         RemovePart(p.target);
