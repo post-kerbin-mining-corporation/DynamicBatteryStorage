@@ -36,8 +36,11 @@ namespace DynamicBatteryStorage
   {
 
     public static bool Enabled = true;
+
+    public static bool WeatherDrivenSolarPanel = false;
     public static bool Kopernicus = false;
     public static bool KopernicusMultiStar = false;
+
     public static float TimeWarpLimit = 100f;
     public static float BufferScaling = 1.75f;
 
@@ -56,9 +59,11 @@ namespace DynamicBatteryStorage
     public static Dictionary<string, UIHandlerCategory> HandlerCategoryData;
     public static List<HandlerModuleData> HandlerPartModuleData;
 
-    private static string CONFIG_NODE_NAME = "DynamicBatteryStorage/DYNAMICBATTERYSTORAGE";
-    private static string UI_HANDLER_NODE_NAME = "HANDLERCATEGORY";
-    private static string MODULE_HANDLER_NODE_NAME = "PARTMODULEHANDLER";
+    public static readonly string ELECTRICITY_RESOURCE_NAME = "ElectricCharge";
+
+    private static readonly string CONFIG_NODE_NAME = "DynamicBatteryStorage/DYNAMICBATTERYSTORAGE";
+    private static readonly string UI_HANDLER_NODE_NAME = "HANDLERCATEGORY";
+    private static readonly string MODULE_HANDLER_NODE_NAME = "PARTMODULEHANDLER";
 
     /// <summary>
     /// Load data from configuration
@@ -139,6 +144,7 @@ namespace DynamicBatteryStorage
           Utils.Log("[Settings]: Kerbalism detected. DBS will disable itself.", Utils.LogType.Any);
           Settings.Enabled = false;
         }
+        // Search for kopernicus
         if (a.name.StartsWith("Kopernicus", StringComparison.Ordinal))
         {
           Utils.Log("[Settings]: Kopernicus detected", Utils.LogType.Any);
@@ -151,8 +157,14 @@ namespace DynamicBatteryStorage
             BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy).GetValue(null);
           KopernicusMultiStar = (bool)msObj;
           Utils.Log($"[Settings] Kopernicus Multi Star Logic is {KopernicusMultiStar}",Utils.LogType.Any);
-
         }
+        // Search for wdsp
+        if (a.name.StartsWith("WeatherDrivenSolarPanel", StringComparison.Ordinal))
+        {
+          WeatherDrivenSolarPanel = true;
+          Utils.Log($"[Settings] Weather Dependent Solar Panel logic is  Multi Star Logic is {WeatherDrivenSolarPanel}", Utils.LogType.Any);
+        }
+          
       }
     }
 

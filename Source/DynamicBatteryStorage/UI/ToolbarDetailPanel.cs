@@ -77,20 +77,20 @@ namespace DynamicBatteryStorage.UI
       detailPanelScrollRect.scrollSensitivity = 20f;
     }
 
-    public void UpdateData(VesselElectricalData electricalData, VesselThermalData thermalData)
+    public void UpdateData(VesselElectricalData electricalData)
     {
-      UpdateHandlerList(electricalData, thermalData);
+      UpdateHandlerList(electricalData);
     }
 
-    protected void UpdateHandlerList(VesselElectricalData electricalData, VesselThermalData thermalData)
+    protected void UpdateHandlerList(VesselElectricalData electricalData)
     {
       // If no cached list, rebuild it from scratch
       if (cachedHandlers == null)
-        RebuildCachedList(GetHandlersForUIMode(electricalData, thermalData));
+        RebuildCachedList(GetHandlersForUIMode(electricalData));
 
       // If the list changed, rebuild it from components
-      var firstNotSecond = GetHandlersForUIMode(electricalData, thermalData).Except(cachedHandlers).ToList();
-      var secondNotFirst = cachedHandlers.Except(GetHandlersForUIMode(electricalData, thermalData)).ToList();
+      var firstNotSecond = GetHandlersForUIMode(electricalData).Except(cachedHandlers).ToList();
+      var secondNotFirst = cachedHandlers.Except(GetHandlersForUIMode(electricalData)).ToList();
 
       if (firstNotSecond.Any() || secondNotFirst.Any())
       {
@@ -98,20 +98,16 @@ namespace DynamicBatteryStorage.UI
         {
           Utils.Log("[ToolbarDetailPanel]: Cached handler list does not appear to match the current handler list", Utils.LogType.UI);
         }
-        RebuildCachedList(GetHandlersForUIMode(electricalData, thermalData));
+        RebuildCachedList(GetHandlersForUIMode(electricalData));
       }
     }
-    protected List<ModuleDataHandler> GetHandlersForUIMode(VesselElectricalData electricalData, VesselThermalData thermalData)
+    protected List<ModuleDataHandler> GetHandlersForUIMode(VesselElectricalData electricalData)
     {
 
       if (mode == DetailPanelMode.ConsumerPower)
         return electricalData.VesselConsumers;
       if (mode == DetailPanelMode.ProducerPower)
         return electricalData.VesselProducers;
-      if (mode == DetailPanelMode.ConsumerThermal)
-        return thermalData.VesselConsumers;
-      if (mode == DetailPanelMode.ProducerThermal)
-        return thermalData.VesselProducers;
 
       return electricalData.VesselConsumers;
     }

@@ -1,8 +1,5 @@
-﻿using System;
-
-namespace DynamicBatteryStorage
+﻿namespace DynamicBatteryStorage
 {
-
   /// <summary>
   /// Handler for Kopernicus > v209 solar panel type
   /// </summary>
@@ -28,6 +25,7 @@ namespace DynamicBatteryStorage
       /// Invalid in editor
       return 0f;
     }
+
     protected override double GetValueFlight()
     {
       double results = 0d;
@@ -36,8 +34,6 @@ namespace DynamicBatteryStorage
         return results;
       }
       return results;
-
     }
   }
-
 }

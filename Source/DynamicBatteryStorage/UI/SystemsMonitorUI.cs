@@ -16,25 +16,6 @@ namespace DynamicBatteryStorage.UI
     private VesselDataManager vesselData;
     private EditorVesselDataManager editorVesselData;
 
-    public VesselThermalData ThermalData
-    {
-      get
-      {
-        if (HighLogic.LoadedSceneIsFlight && vesselData)
-        {
-          return vesselData.HeatData;
-        }
-        else
-        {
-          if (editorVesselData)
-          {
-            return editorVesselData.HeatData;
-          }
-        }
-        return null;
-      }
-    }
-
     public VesselElectricalData ElectricalData
     {
       get
@@ -153,10 +134,6 @@ namespace DynamicBatteryStorage.UI
       if (ElectricalData != null && toolbarPanel != null)
       {
         toolbarPanel.SetElectricalData(ElectricalData);
-      }
-      if (ThermalData != null && toolbarPanel != null)
-      {
-        toolbarPanel.SetThermalData(ThermalData);
       }
 
       /// Set the window position
