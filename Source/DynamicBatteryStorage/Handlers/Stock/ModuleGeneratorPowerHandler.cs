@@ -37,7 +37,7 @@ namespace DynamicBatteryStorage
         {
           producer = true;
           consumer = false;
-          resource = gen.resHandler.inputResources[i];
+          resource = gen.resHandler.outputResources[i];
           toMonitor = true;
         }
       }
