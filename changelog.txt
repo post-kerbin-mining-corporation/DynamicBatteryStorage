@@ -1,3 +1,7 @@
+v2.3.5
+------
+- Fixed a NRE with ModuleGenerator handlers
+
 v2.3.4
 ------
 - Stability updates: breaking the mod will now break it less
