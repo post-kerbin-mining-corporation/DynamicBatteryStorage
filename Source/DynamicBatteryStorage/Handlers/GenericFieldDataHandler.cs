@@ -50,12 +50,20 @@ namespace DynamicBatteryStorage
     }
     protected override double GetValueEditor()
     {
-      double.TryParse(editorField.GetValue(pm).ToString(), out double results);
+      double results = 0d;
+      if (editorField != null)
+      {
+        double.TryParse(editorField.GetValue(pm).ToString(), out results);
+      }
       return results * editorValueScalar;
     }
     protected override double GetValueFlight()
     {
-      double.TryParse(flightField.GetValue(pm).ToString(), out double results);
+      double results = 0d;
+      if (flightField != null)
+      {
+        double.TryParse(flightField.GetValue(pm).ToString(), out results);
+      }
       return results * flightValueScalar;
     }
   }
