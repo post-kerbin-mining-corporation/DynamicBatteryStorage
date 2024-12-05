@@ -1,3 +1,8 @@
+v2.3.6
+------
+- Changed how fission reactors are measured in-flight so they don't result in miscalculation of vessel generation (requires latest SH version)
+- Another hardening fix
+
 v2.3.5
 ------
 - Fixed a NRE with ModuleGenerator handlers
