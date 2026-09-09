@@ -20,7 +20,23 @@ namespace DynamicBatteryStorage
       if (converter == null)
         return false;
 
+      return UpdatePowerRate();
+    }
+
+    // Some converter implementations, including MKS USI_Converter, apply or
+    // replace their recipe after the handler is initialized. Re-read the
+    // current recipe whenever the monitor calculates a value so editor
+    // planning follows the selected bay loadout.
+    private bool UpdatePowerRate()
+    {
+      if (converter == null || converter.inputList == null || converter.outputList == null)
+        return false;
+
       bool toMonitor = false;
+      producer = false;
+      consumer = false;
+      converterEcRate = 0d;
+
       for (int i = 0; i < converter.inputList.Count; i++)
       {
         if (converter.inputList[i].ResourceName == Settings.ELECTRICITY_RESOURCE_NAME)
@@ -41,30 +57,36 @@ namespace DynamicBatteryStorage
           toMonitor = true;
         }
       }
-      return toMonitor;
+      // MKS applies USI_Converter recipes after handler discovery. Keep the
+      // handler even when the initial recipe is empty so later calculations
+      // can see the selected bay loadout.
+      return toMonitor || converter.GetType().Name == "USI_Converter";
     }
 
     protected override double GetValueEditor()
     {
-      if (converter != null)
-      {
-        if (producer)
-          return converterEcRate;
-        else
-          return -converterEcRate;
-      }
+      if (!UpdatePowerRate())
+        return 0d;
+
+      if (producer)
+        return converterEcRate;
+
+      if (consumer)
+        return -converterEcRate;
+
       return 0d;
     }
     protected override double GetValueFlight()
     {
-      if (converter != null)
-      {
-        if (converter.IsActivated)
-          if (producer)
-            return converterEcRate * converter.lastTimeFactor;
-          else
-            return converterEcRate * converter.lastTimeFactor * -1.0d;
-      }
+      if (!UpdatePowerRate() || !converter.IsActivated)
+        return 0d;
+
+      if (producer)
+        return converterEcRate * converter.lastTimeFactor;
+
+      if (consumer)
+        return converterEcRate * converter.lastTimeFactor * -1.0d;
+
       return 0d;
     }
 
