@@ -21,12 +21,24 @@ namespace DynamicBatteryStorage
       if (harvester == null)
         return false;
 
+      bool toMonitor = UpdatePowerRate();
+      // MKS populates USI_Harvester inputList after handler initialization.
+      // Keep the handler alive so it can see the selected loadout later.
+      return toMonitor || harvester.GetType().Name == "USI_Harvester";
+    }
+
+    private bool UpdatePowerRate()
+    {
+      converterEcRate = 0.0d;
+      if (harvester == null || harvester.inputList == null)
+        return false;
+
       bool toMonitor = false;
       for (int i = 0; i < harvester.inputList.Count; i++)
       {
         if (harvester.inputList[i].ResourceName == Settings.ELECTRICITY_RESOURCE_NAME)
         {
-          converterEcRate = harvester.inputList[i].Ratio;
+          converterEcRate += harvester.inputList[i].Ratio;
           toMonitor = true;
         }
       }
@@ -37,6 +49,7 @@ namespace DynamicBatteryStorage
     {
       if (harvester != null)
       {
+        UpdatePowerRate();
         return -converterEcRate;
       }
       return 0d;
@@ -45,6 +58,7 @@ namespace DynamicBatteryStorage
     {
       if (harvester != null)
       {
+        UpdatePowerRate();
         if (harvester.IsActivated)
           return converterEcRate * harvester.lastTimeFactor * -1.0d;
       }
